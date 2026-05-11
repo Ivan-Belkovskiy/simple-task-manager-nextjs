@@ -1,0 +1,56 @@
+.task-list {
+    width: 1360px;
+    border: 4px solid #0077ff;
+    border-radius: 10px;
+    min-height: 250px;
+    max-height: 700px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-top-width: 15px;
+}
+
+.task-list__filters {
+    width: 100%;
+    border-bottom: 9px solid #0077ff;
+    height: 60px;
+    display: flex;
+    align-items: center;
+}
+
+.task-list__filter {
+    min-width: 40px;
+    border: 1px solid #002fff;
+    padding: 0 10px;
+    margin: 0 10px;
+    /* font-size: 20px; */
+    color: #002fff;
+    /* margin-left: 20px; */
+    height: 75%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.task-list__filters-title {
+    font-size: 20px;
+    color: #002fff;
+    margin-left: 20px;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.task-list__content {
+    width: 100%;
+}
+
+.task-list__select {
+    background-color: #0099ff;
+    border-radius: 7px;
+    color: #fff;
+    padding: 4px;
+    cursor: pointer;
+    margin-left: 6px;
+}
