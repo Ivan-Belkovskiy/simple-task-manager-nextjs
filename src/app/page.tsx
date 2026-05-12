@@ -18,6 +18,7 @@ export type Task = Prisma.tasksGetPayload<{
 
 export type Category = Prisma.task_categoriesGetPayload<{}>;
 export type Priority = Prisma.task_prioritiesGetPayload<{}>;
+export type User = Prisma.usersGetPayload<{}>;
 
 export default async function Home() {
   const tasks: Task[] = await prisma.tasks.findMany({
@@ -39,6 +40,7 @@ export default async function Home() {
 
   const categories = await prisma.task_categories.findMany();
   const priorities = await prisma.task_priorities.findMany();
+  const users = await prisma.users.findMany();
 
   return (
     <div className="page-wrapper">
@@ -46,7 +48,7 @@ export default async function Home() {
         {/* <h1 className="app-title">Менеджер Задач</h1> */}
         <h1 className="date-display">{new Date().toLocaleDateString('ru-RU')}</h1>
         {/* <hr className="divider" /> */}
-        <TaskList initialTasks={tasks} categories={categories} priorities={priorities} />
+        <TaskList initialTasks={tasks} categories={categories} priorities={priorities} users={users} />
       </main>
     </div>
   );

@@ -28,7 +28,7 @@
     /* margin-left: 20px; */
     height: 75%;
     display: flex;
-    justify-content: center;
+    /* justify-content: center; */
     align-items: center;
 }
 
@@ -40,6 +40,10 @@
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.task-list__label {
+    /* white-space: nowrap; */
 }
 
 .task-list__content {

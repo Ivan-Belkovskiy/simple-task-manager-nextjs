@@ -11,7 +11,7 @@
 }
 
 .task-block__left {
-    width: 25%;
+    width: 35%;
     height: 100%;
     display: flex;
     flex-direction: row;
@@ -22,7 +22,7 @@
 }
 
 .task-block__right {
-    width: 75%;
+    width: 65%;
     height: 100%;
     display: flex;
     flex-direction: row;

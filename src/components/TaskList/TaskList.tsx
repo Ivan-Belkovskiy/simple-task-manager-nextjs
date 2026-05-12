@@ -1,22 +1,24 @@
 'use client';
 
 import "./TaskList.css";
-import { Task, Category, Priority } from "@/app/page";
+import { Task, Category, Priority, User } from "@/app/page";
 import { Prisma } from "@prisma/client"
 import TaskBlock from "./TaskBlock/TaskBlock";
 import { useEffect, useState } from "react";
+import MultiSelect from "../UI/MultiSelect/MultiSelect";
 
-export default function TaskList({ initialTasks, categories, priorities }: {
+export default function TaskList({ initialTasks, categories, priorities, users }: {
     initialTasks: Task[],
     categories: Category[],
     priorities: Priority[],
+    users: User[]
 
 }) {
 
     const [filterCategory, setFilterCategory] = useState<number | string>("[[ANY]]");
     const [filterPriority, setFilterPriority] = useState<number | string>("[[ANY]]");
+    const [filterUsers, setFilterUsers] = useState<(string | number)[]>(users.map(u => u.id));
 
-    useEffect(() => {})
 
     return (
         <div className="task-list">
@@ -52,11 +54,24 @@ export default function TaskList({ initialTasks, categories, priorities }: {
                         ))}
                     </select>
                 </div>
+                <div className="task-list__filter">
+                    <div className="task-list__label">Ответственный за выполнение:</div>
+                    <MultiSelect
+                        className="task-list__select"
+                        value={filterUsers}
+                        onSelect={(newValue) => setFilterUsers(newValue)}
+                        options={users.map(user => ({
+                            label: user.name,
+                            value: user.id,
+                        }))}
+                    />
+                </div>
             </div>
             <div className="task-list__content">
                 {initialTasks.filter(t => (
                     t.category_id === (filterCategory === '[[ANY]]' ? t.category_id : Number(filterCategory)) &&
-                    t.priority_id === (filterPriority === '[[ANY]]' ? t.priority_id : Number(filterPriority))
+                    t.priority_id === (filterPriority === '[[ANY]]' ? t.priority_id : Number(filterPriority)) &&
+                    t.task_users.some(u => filterUsers.includes(u.users.id))
                 )).map((task, idx) => (
                     <TaskBlock idx={idx} data={task} key={idx} />
                 ))}
