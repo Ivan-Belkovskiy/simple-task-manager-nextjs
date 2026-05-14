@@ -43,7 +43,7 @@ export default function TaskEditorModal({ taskData, categories, priorities, user
         // formData.append("categoryId", String(editingData.category));
         // formData.append("completeBeforeDate", String(editingData.completeBefore));
 
-        await updateTask(taskData.id, JSON.stringify(editingData));
+        await updateTask(taskData.id, editingData);
 
         // await createTask(formData, editingData.users.map(v => Number(v)));
 
@@ -68,12 +68,15 @@ export default function TaskEditorModal({ taskData, categories, priorities, user
         priority: data.priority_id,
         category: data.category_id || "[[NONE]]",
         users: data.task_users.map(i => i.users.id),
+        completeBefore: data.complete_before_date
+            ? new Date(data.complete_before_date).toISOString().split('T')[0]
+            : "",
         // completeBefore: data.complete_before_date,
     })
 
     useEffect(() => {
         setEditingData(
-           initEditingData(taskData)
+            initEditingData(taskData)
         )
     }, [taskData]);
 
@@ -186,7 +189,7 @@ export default function TaskEditorModal({ taskData, categories, priorities, user
                             ]}
                         />
                     </div>
-                    {/* <div className="task-editor-modal__block">
+                    <div className="task-editor-modal__block">
                         <span className="task-editor-modal__label">Выполнить до:</span>
                         <input
                             type="date"
@@ -197,14 +200,11 @@ export default function TaskEditorModal({ taskData, categories, priorities, user
                                 completeBefore: e.target.value
                             })}
                         />
-                    </div> */}
-                    {/* <div className="task-editor-modal__block">
-                        <button className="task-editor-modal__button add-task-button" onClick={() => onAddTask()}>Добавить задачу</button>
-                    </div> */}
+                    </div>
                 </div>
                 <div className="task-editor-modal__buttons">
-                    <button className="task-editor-modal__button cancel-edit-button" onClick={() => onClose?.()}>Отменить изменения</button>
                     <button className="task-editor-modal__button confirm-edit-button" onClick={() => confirmChanges()}>Сохранить изменения</button>
+                    <button className="task-editor-modal__button cancel-edit-button" onClick={() => onClose?.()}>Отменить изменения</button>
                 </div>
             </div>
 

@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import TaskList from "@/components/TaskList/TaskList";
 import "./page.css";
 import { prisma } from "@/lib/prisma";

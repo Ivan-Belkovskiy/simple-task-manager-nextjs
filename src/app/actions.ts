@@ -138,21 +138,26 @@ export async function completeTask(id: number) {
     }
 }
 
-export async function updateTask(id: number, d: string) {
+export async function updateTask(id: number, data: EditingTaskData) {
     try {
-        const data = JSON.parse(d) as EditingTaskData;
-        console.log('NAME ::: ' + (data.name))
+        // const data = JSON.parse(d) as EditingTaskData;
+        // console.log('NAME ::: ' + (data.name))
         await prisma.tasks.update({
             data: {
                 name: data.name,
                 description: data.description,
                 priority_id: data.priority,
                 category_id: (data.category && data.category !== '[[NONE]]') ? Number(data.category) : null,
-                // task_users: {
-                //     create: data.users.map((userId) => ({
-                //         user_id: Number(userId),
-                //     })),
-                // },
+                complete_before_date: data.completeBefore ? new Date(data.completeBefore) : null,
+                
+                task_users: {
+
+                    deleteMany: {},
+
+                    create: data.users.map((userId) => ({
+                        user_id: Number(userId),
+                    })),
+                },
             },
             where: {
                 id: id,

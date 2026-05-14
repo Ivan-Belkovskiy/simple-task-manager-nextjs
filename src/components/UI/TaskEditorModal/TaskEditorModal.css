@@ -56,7 +56,7 @@
 
 .task-editor-modal__content {
     width: 100%;
-    height: 75%;
+    height: 80%;
     display: flex;
     flex-direction: column;
     justify-content: start;
@@ -109,7 +109,7 @@
 
 .task-editor-modal__buttons {
     width: 100%;
-    height: 15%;
+    height: 10%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -125,6 +125,7 @@
     color: #fff;
     font-size: 24px;
     cursor: pointer;
+    transition: all 0.25s ease 0s;
 }
 
 .confirm-edit-button {
@@ -137,4 +138,24 @@
     color: #fff;
     font-size: 24px;
     cursor: pointer;
+    transition: all 0.25s ease 0s;
+}
+
+.confirm-edit-button:hover {
+    background-color: #288d00;
+}
+
+.cancel-edit-button:hover {
+    background-color: #920000;
+}
+
+.task-editor-modal .multi-select__option:hover,
+.task-editor-modal .custom-select__option:hover {
+    background-color: #ffa600;
+}
+
+.task-editor-modal .multi-select__option.selected,
+.task-editor-modal .custom-select__option.selected {
+    background-color: #fffb00;
+    color: #0f43f0;
 }
