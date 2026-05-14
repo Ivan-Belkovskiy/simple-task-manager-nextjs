@@ -73,7 +73,7 @@ export default function TaskList({ initialTasks, categories, priorities, users }
                     t.priority_id === (filterPriority === '[[ANY]]' ? t.priority_id : Number(filterPriority)) &&
                     t.task_users.some(u => filterUsers.includes(u.users.id))
                 )).map((task, idx) => (
-                    <TaskBlock idx={idx} data={task} key={idx} />
+                    <TaskBlock idx={idx} data={task} key={task.id} categories={categories} users={users} priorities={priorities} />
                 ))}
             </div>
         </div>

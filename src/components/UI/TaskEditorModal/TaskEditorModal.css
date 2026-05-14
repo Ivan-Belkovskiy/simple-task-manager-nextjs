@@ -1,0 +1,140 @@
+.task-editor-modal__overlay {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    z-index: 60;
+    background-color: #00000062;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.task-editor-modal {
+    width: 50%;
+    height: 70%;
+    background-color: #fff;
+    border-radius: 25px;
+    border: 8px solid #f0c400;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.task-editor-modal__header {
+    width: 100%;
+    height: 10%;
+    font-size: 26px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.task-editor-modal__title {
+    width: 90%;
+    height: 10%;
+    font-size: 26px;
+    color: #f0c400;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.task-editor-modal__button.close-modal-btn {
+    width: 40px;
+    height: 40px;
+    background-color: #b40000;
+    color: #fff;
+}
+
+.task-editor-modal__button.close-modal-btn:hover {
+    cursor: pointer;
+    outline: 3px solid #ff0000;
+    color: #ff0000;
+}
+
+.task-editor-modal__content {
+    width: 100%;
+    height: 75%;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+}
+
+.task-editor-modal__block {
+    width: 100%;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+}
+
+.task-editor-modal__label {
+    color: #f0c400;
+}
+
+.task-editor-modal__input {
+    outline: none;
+    border: 2px solid #f0c400;
+    padding: 0 1px;
+    color: #f0c400;
+}
+
+.task-editor-modal__select {
+    outline: none;
+    border: 2px solid #f0c400;
+    padding: 0 1px;
+    color: #f0c400;
+    cursor: pointer;
+}
+
+.task-editor-modal__select .multi-select__dropdown,
+.task-editor-modal__select .custom-select__dropdown {
+    background-color: #f0c400;
+    color: #fff;
+}
+
+
+.task-editor-modal__input:focus {
+    outline: 2px solid #fbff00;
+}
+
+.task-name-input {
+    width: 350px;
+}
+
+.task-editor-modal__buttons {
+    width: 100%;
+    height: 15%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.cancel-edit-button {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #ff0000;
+    color: #fff;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.confirm-edit-button {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #3bd100;
+    color: #fff;
+    font-size: 24px;
+    cursor: pointer;
+}

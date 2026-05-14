@@ -172,3 +172,57 @@
 .task-block__button.delete-btn:hover {
     background-color: #580000e5;
 }
+
+.complete-before-date {
+    color: #cf0000;
+}
+
+
+
+
+.task-block__button.cancel-delete-btn {
+    width: 100%;
+    height: 100%;
+    background-color: #0da100;
+    color: #fff;
+}
+
+.task-block__button.confirm-delete-btn {
+    width: 100%;
+    height: 100%;
+    background-color: #a10000;
+    color: #fff;
+}
+
+.task-block__button.cancel-delete-btn:hover {
+    background-color: #15ff00;
+}
+
+.task-block__button.confirm-delete-btn:hover {
+    background-color: #ff0000;
+}
+
+
+
+
+.task-block__button.confirm-complete-btn {
+    width: 100%;
+    height: 100%;
+    background-color: #0da100;
+    color: #fff;
+}
+
+.task-block__button.cancel-complete-btn {
+    width: 100%;
+    height: 100%;
+    background-color: #a10000;
+    color: #fff;
+}
+
+.task-block__button.confirm-complete-btn:hover {
+    background-color: #15ff00;
+}
+
+.task-block__button.cancel-complete-btn:hover {
+    background-color: #ff0000;
+}
