@@ -66,6 +66,9 @@ export default function TaskList({ initialTasks, categories, priorities, users }
                         }))}
                     />
                 </div>
+                {/* <div className="task-list__filter"> */}
+                    <button className="task-list__button filters-expand-button">Ещё...</button>
+                {/* </div> */}
             </div>
             <div className="task-list__content">
                 {initialTasks.filter(t => (

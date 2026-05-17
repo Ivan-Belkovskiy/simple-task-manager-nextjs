@@ -5,6 +5,7 @@ interface SimpleModalButton {
     text?: string;
     className?: string;
     style?: CSSProperties;
+    disabled?: boolean;
     onClick?: () => void;
 }
 
@@ -31,6 +32,7 @@ export default function SimpleModal({ title, message, buttons, styles }: {
                     {buttons?.map((btn, idx) => (
                         <button
                             className={`simple-modal__button ${btn.className}`}
+                            disabled={btn.disabled}
                             key={idx}
                             onClick={btn.onClick}
                         >{btn.text}</button>

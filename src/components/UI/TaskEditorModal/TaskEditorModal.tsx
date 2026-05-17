@@ -4,10 +4,11 @@ import { Category, Priority, Task, User } from "@/app/page";
 import "./TaskEditorModal.css";
 import MultiSelect from "../MultiSelect/MultiSelect";
 import { useEffect, useState } from "react";
-import { createTask, updateTask } from "@/app/actions";
+import { createTask, createTaskNew, updateTask } from "@/app/actions";
 import UserListModal from "../UserListModal/UserListModal";
 import CustomSelect from "../CustomSelect/CustomSelect";
 import CategoryListModal from "../CategoryListModal/CategoryListModal";
+import { getLocalDateString } from "@/utils/date";
 
 export interface EditingTaskData {
     name: string,
@@ -26,10 +27,13 @@ export default function TaskEditorModal({ taskData, categories, priorities, user
     onClose?: () => void;
 }) {
 
+    const [isLoading, setLoading] = useState(false);
+
     const [userModalOpened, setUserModalOpened] = useState(false);
     const [categoryModalOpened, setCategoryModalOpened] = useState(false);
 
     const confirmChanges = async () => {
+        setLoading(true);
         // if (
         //     !newTaskData.name ||
         //     !newTaskData.priority ||
@@ -43,7 +47,11 @@ export default function TaskEditorModal({ taskData, categories, priorities, user
         // formData.append("categoryId", String(editingData.category));
         // formData.append("completeBeforeDate", String(editingData.completeBefore));
 
-        await updateTask(taskData.id, editingData);
+        if (taskData.completed) {
+            await createTaskNew(editingData);
+        } else {
+            await updateTask(taskData.id, editingData);
+        }
 
         // await createTask(formData, editingData.users.map(v => Number(v)));
 
@@ -52,6 +60,7 @@ export default function TaskEditorModal({ taskData, categories, priorities, user
         //     description: '',
         //     users: [],
         // });
+        setLoading(false);
 
         onClose?.();
     }
@@ -68,9 +77,13 @@ export default function TaskEditorModal({ taskData, categories, priorities, user
         priority: data.priority_id,
         category: data.category_id || "[[NONE]]",
         users: data.task_users.map(i => i.users.id),
-        completeBefore: data.complete_before_date
-            ? new Date(data.complete_before_date).toISOString().split('T')[0]
-            : "",
+        completeBefore: (taskData.completed) ? (
+            new Date().toISOString().split('T')[0]
+        ) : (
+            data.complete_before_date
+                ? new Date(data.complete_before_date).toISOString().split('T')[0]
+                : ""
+        ),
         // completeBefore: data.complete_before_date,
     })
 
@@ -81,10 +94,10 @@ export default function TaskEditorModal({ taskData, categories, priorities, user
     }, [taskData]);
 
     return (
-        <div className="task-editor-modal__overlay">
+        <div className={`task-editor-modal__overlay ${(taskData.completed) ? 'reupload-mode' : ''}`}>
             <div className="task-editor-modal">
                 <div className="task-editor-modal__header">
-                    <h1 className="task-editor-modal__title">Редактировать задачу</h1>
+                    <h1 className="task-editor-modal__title">{(taskData.completed) ? "Повторное создание задачи" : "Редактировать задачу"}</h1>
                     <button className="task-editor-modal__button close-modal-btn" onClick={() => {
                         setEditingData({
                             name: '',
@@ -193,18 +206,38 @@ export default function TaskEditorModal({ taskData, categories, priorities, user
                         <span className="task-editor-modal__label">Выполнить до:</span>
                         <input
                             type="date"
+                            min={getLocalDateString(new Date())}
                             className="task-editor-modal__input"
                             value={editingData.completeBefore || ""}
-                            onChange={(e) => setEditingData({
-                                ...editingData,
-                                completeBefore: e.target.value
-                            })}
+                            onChange={(e) => {
+                                const today = getLocalDateString(new Date());
+                                if (
+                                    e.target.value >= today
+                                    // new Date(e.target.value).getTime() > new Date().getTime()
+                                ) {
+                                    setEditingData({
+                                        ...editingData,
+                                        completeBefore: e.target.value
+                                    });
+                                }
+                            }}
                         />
                     </div>
+                    {(taskData.completed) && (
+                        <div className="task-editor-modal__block">
+                            <div className="task-editor-modal__notification reupload-task-notification">ПРИМЕЧАНИЕ: Будет создана <b>отдельная</b> новая задача с введенными выше настройками, которая <b>не будет иметь связи</b> с данной выполненной задачей!</div>
+                        </div>
+                    )}
                 </div>
                 <div className="task-editor-modal__buttons">
-                    <button className="task-editor-modal__button confirm-edit-button" onClick={() => confirmChanges()}>Сохранить изменения</button>
-                    <button className="task-editor-modal__button cancel-edit-button" onClick={() => onClose?.()}>Отменить изменения</button>
+                    {(taskData.completed) ? (
+                        <button disabled={isLoading} className="task-editor-modal__button confirm-reupload-button" onClick={() => confirmChanges()}>Создать задачу повторно</button>
+                    ) : (
+                        <>
+                            <button disabled={isLoading} className="task-editor-modal__button cancel-edit-button" onClick={() => onClose?.()}>Отменить изменения</button>
+                            <button disabled={isLoading} className="task-editor-modal__button confirm-edit-button" onClick={() => confirmChanges()}>Сохранить изменения</button>
+                        </>
+                    )}
                 </div>
             </div>
 

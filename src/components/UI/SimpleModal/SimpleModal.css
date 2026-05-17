@@ -46,3 +46,8 @@
     align-items: center;
     flex-direction: row;
 }
+
+.simple-modal__button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}

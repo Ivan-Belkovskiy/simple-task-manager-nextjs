@@ -30,6 +30,26 @@
     align-items: center;
 }
 
+
+.task-list__button.filters-expand-button {
+    min-width: 40px;
+    border: 1px solid #002fff;
+    padding: 0 10px;
+    margin: 0 10px;
+    color: #002fff;
+    height: 75%;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.25s ease 0s;
+}
+
+.task-list__button.filters-expand-button:hover {
+    background-color: #002fff;
+    color: #fff;
+}
+
+
 .task-list__filters-title {
     font-size: 20px;
     color: #002fff;

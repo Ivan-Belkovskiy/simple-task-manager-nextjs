@@ -164,6 +164,15 @@
     background-color: #585200e5;
 }
 
+.task-block__button.reupload-btn {
+    background-color: #7900a8;
+    color: #fff;
+}
+
+.task-block__button.reupload-btn:hover {
+    background-color: #42005c;
+}
+
 .task-block__button.delete-btn {
     background-color: #a10000;
     color: #fff;
@@ -225,4 +234,9 @@
 
 .task-block__button.cancel-complete-btn:hover {
     background-color: #ff0000;
+}
+
+.task-block__infobox-label.completed-at,
+.task-block__infobox-value.completed-at {
+    color: #0c8d00;
 }

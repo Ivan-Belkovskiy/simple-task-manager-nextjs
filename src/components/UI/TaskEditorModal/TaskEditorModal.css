@@ -35,11 +35,13 @@
     width: 90%;
     height: 10%;
     font-size: 26px;
-    color: #f0c400;
+    color: #d1ab00;
     display: flex;
     justify-content: center;
     align-items: center;
 }
+
+
 
 .task-editor-modal__button.close-modal-btn {
     width: 40px;
@@ -74,27 +76,27 @@
 }
 
 .task-editor-modal__label {
-    color: #f0c400;
+    color: #d1ab00;
 }
 
 .task-editor-modal__input {
     outline: none;
-    border: 2px solid #f0c400;
+    border: 2px solid #d1ab00;
     padding: 0 1px;
-    color: #f0c400;
+    color: #d1ab00;
 }
 
 .task-editor-modal__select {
     outline: none;
-    border: 2px solid #f0c400;
+    border: 2px solid #d1ab00;
     padding: 0 1px;
-    color: #f0c400;
+    color: #d1ab00;
     cursor: pointer;
 }
 
 .task-editor-modal__select .multi-select__dropdown,
 .task-editor-modal__select .custom-select__dropdown {
-    background-color: #f0c400;
+    background-color: #d1ab00;
     color: #fff;
 }
 
@@ -141,12 +143,29 @@
     transition: all 0.25s ease 0s;
 }
 
+.confirm-reupload-button {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #e600c7;
+    color: #fff;
+    font-size: 24px;
+    cursor: pointer;
+    transition: all 0.25s ease 0s;
+}
+
 .confirm-edit-button:hover {
     background-color: #288d00;
 }
 
 .cancel-edit-button:hover {
     background-color: #920000;
+}
+
+.confirm-reupload-button:hover {
+    background-color: #a100a1;
 }
 
 .task-editor-modal .multi-select__option:hover,
@@ -158,4 +177,68 @@
 .task-editor-modal .custom-select__option.selected {
     background-color: #fffb00;
     color: #0f43f0;
+}
+
+.task-editor-modal__button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+
+
+
+
+.task-editor-modal__overlay.reupload-mode {
+
+    .task-editor-modal {
+        border-color: #a500e6;
+    }
+
+    .task-editor-modal__title {
+        color: #a500e6;
+    }
+
+    .task-editor-modal__content {
+
+        .task-editor-modal__input,
+        .task-editor-modal__label,
+        .task-editor-modal__select {
+            color: #a500e6;
+            border-color: #a500e6;
+            outline-color: #e600e6;
+        }
+    }
+
+    .task-editor-modal .multi-select__option,
+    .task-editor-modal .custom-select__option {
+        background-color: #8a00e6;
+        color: #fff;
+    }
+
+    .task-editor-modal .multi-select__option:hover,
+    .task-editor-modal .custom-select__option:hover {
+        background-color: #b800e6;
+        color: #fff;
+    }
+
+    .task-editor-modal .multi-select__option.selected,
+    .task-editor-modal .custom-select__option.selected {
+        background-color: #e600c7;
+        color: #ffffff;
+    }
+
+    .task-editor-modal__select .multi-select__dropdown,
+    .task-editor-modal__select .custom-select__dropdown {
+        background-color: #ffffff;
+    }
+
+    .task-editor-modal__notification.reupload-task-notification {
+        width: 90%;
+        background-color: #a500e6;
+        color: #fff;
+        text-align: center;
+        padding: 10px;
+        user-select: none;
+    }
+
 }

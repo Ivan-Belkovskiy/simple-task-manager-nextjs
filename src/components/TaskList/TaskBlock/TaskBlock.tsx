@@ -8,18 +8,28 @@ import TaskEditorModal from "@/components/UI/TaskEditorModal/TaskEditorModal";
 
 export default function TaskBlock({ idx, data, categories, users, priorities }: { idx: number, data: Task, categories: Category[], users: User[], priorities: Priority[] }) {
 
+    const [isLoading, setLoading] = useState(false);
+
     const [openedModal, setOpenedModal] = useState<"confirm-delete" | "confirm-complete" | "edit-task" | null>(null);
 
     const confirmDeleteTask = async () => {
         if (!data.id) return;
 
+        setLoading(true);
         await deleteTask(data.id);
+        setLoading(false);
+
+        setOpenedModal(null);
     }
 
     const confirmCompleteTask = async () => {
         if (!data.id) return;
 
+        setLoading(true);
         await completeTask(data.id);
+        setLoading(false);
+
+        setOpenedModal(null);
     }
 
     return (
@@ -53,8 +63,8 @@ export default function TaskBlock({ idx, data, categories, users, priorities }: 
                     {(data.completed) ? (
                         <>
                             <hr />
-                            <div className="task-block__infobox-label">Выполнена</div>
-                            <div className="task-block__infobox-value">{data.completed_at?.toLocaleDateString('ru-RU')}</div>
+                            <div className="task-block__infobox-label completed-at">Выполнена</div>
+                            <div className="task-block__infobox-value completed-at">{data.completed_at?.toLocaleDateString('ru-RU')}</div>
                         </>
                     ) : (data.complete_before_date) && (
                         <>
@@ -73,9 +83,9 @@ export default function TaskBlock({ idx, data, categories, users, priorities }: 
                         }}
                     >{data.completed ? 'Выполнена' : 'Выполнить'}</button>
                     <button
-                        className={`task-block__button edit-btn`}
+                        className={`task-block__button ${(data.completed) ? 'reupload-btn' : 'edit-btn'}`}
                         onClick={() => setOpenedModal('edit-task')}
-                    >Редактировать</button>
+                    >{(data.completed) ? "Повторить" : "Редактировать"}</button>
                     <button
                         className={`task-block__button delete-btn`}
                         onClick={() => setOpenedModal('confirm-delete')}
@@ -89,11 +99,13 @@ export default function TaskBlock({ idx, data, categories, users, priorities }: 
                         text: "Отмена",
                         className: "task-block__button cancel-delete-btn",
                         onClick: () => setOpenedModal(null),
+                        disabled: isLoading
                     },
                     {
                         text: "Подтвердить",
                         className: "task-block__button confirm-delete-btn",
                         onClick: () => confirmDeleteTask(),
+                        disabled: isLoading
                     }
                 ]} styles={{
                     title: {
@@ -114,11 +126,13 @@ export default function TaskBlock({ idx, data, categories, users, priorities }: 
                         text: "Отмена",
                         className: "task-block__button cancel-complete-btn",
                         onClick: () => setOpenedModal(null),
+                        disabled: isLoading
                     },
                     {
                         text: "Подтвердить",
                         className: "task-block__button confirm-complete-btn",
                         onClick: () => confirmCompleteTask(),
+                        disabled: isLoading
                     }
                 ]} styles={{
                     title: {

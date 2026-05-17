@@ -2,7 +2,6 @@
 
 import { prisma } from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
-import { Task } from "./page";
 import { EditingTaskData } from "@/components/UI/TaskEditorModal/TaskEditorModal";
 
 export async function createUser(name: string) {
@@ -124,6 +123,7 @@ export async function completeTask(id: number) {
         await prisma.tasks.update({
             data: {
                 completed: true,
+                completed_at: new Date()
             },
             where: {
                 id: id,
@@ -146,8 +146,8 @@ export async function updateTask(id: number, data: EditingTaskData) {
             data: {
                 name: data.name,
                 description: data.description,
-                priority_id: data.priority,
                 category_id: (data.category && data.category !== '[[NONE]]') ? Number(data.category) : null,
+                priority_id: data.priority,
                 complete_before_date: data.completeBefore ? new Date(data.completeBefore) : null,
                 
                 task_users: {
@@ -169,6 +169,39 @@ export async function updateTask(id: number, data: EditingTaskData) {
         return { success: true };
     } catch (error) {
         console.error(error);
+        return { success: false };
+    }
+}
+
+export async function createTaskNew(data: EditingTaskData) {
+    // const name = formData.get("name") as string;
+    // const description = formData.get("description") as string;
+    // const categoryId = formData.get("categoryId");
+    // const priorityId = formData.get("priorityId");
+    // const completeBefore = formData.get("completeBeforeDate");
+
+    try {
+        await prisma.tasks.create({
+            data: {
+                name: data.name,
+                description: data.description,
+                completed: false,
+                category_id: (data.category && data.category !== '[[NONE]]') ? Number(data.category) : null,
+                priority_id: data.priority,
+                complete_before_date: data.completeBefore ? new Date(data.completeBefore) : null,
+
+                task_users: {
+                    create: data.users.map((userId) => ({
+                        user_id: Number(userId),
+                    })),
+                },
+            },
+        });
+
+        revalidatePath("/");
+        return { success: true };
+    } catch (error) {
+        console.error("Ошибка создания задачи:", error);
         return { success: false };
     }
 }

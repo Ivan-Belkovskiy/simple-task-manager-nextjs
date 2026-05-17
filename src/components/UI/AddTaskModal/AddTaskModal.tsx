@@ -1,5 +1,7 @@
 'use client';
 
+
+import { getLocalDateString } from "@/utils/date";
 import { Category, Priority, Task, User } from "@/app/page";
 import "./AddTaskModal.css";
 import MultiSelect from "../MultiSelect/MultiSelect";
@@ -15,11 +17,14 @@ export default function AddTaskModal({ categories, priorities, users, onClose }:
     users: User[];
     onClose?: () => void;
 }) {
+    
+    const [isLoading, setLoading] = useState(false);
 
     const [userModalOpened, setUserModalOpened] = useState(false);
     const [categoryModalOpened, setCategoryModalOpened] = useState(false);
 
     const onAddTask = async () => {
+        setLoading(true);
         // if (
         //     !newTaskData.name ||
         //     !newTaskData.priority ||
@@ -36,13 +41,26 @@ export default function AddTaskModal({ categories, priorities, users, onClose }:
         await createTask(formData, newTaskData.users.map(v => Number(v)));
 
         setNewTaskData({
-            name: '',
-            description: '',
-            users: [],
+            ...initialTaskData,
+            // name: '',
+            // description: '',
+            // users: [],
         });
+
+        setLoading(false);
 
         onClose?.();
     }
+
+
+    const initialTaskData = ({
+        name: '',
+        description: '',
+        users: [],
+        priority: 0,
+        category: 0,
+        completeBefore: getLocalDateString(new Date()),
+    });
 
     const [newTaskData, setNewTaskData] = useState<{
         name: string,
@@ -53,9 +71,10 @@ export default function AddTaskModal({ categories, priorities, users, onClose }:
         completeBefore?: string
         // complete_before_date: 
     }>({
-        name: '',
-        description: '',
-        users: [],
+        ...initialTaskData,
+        // name: '',
+        // description: '',
+        // users: [],
     });
 
     return (
@@ -65,9 +84,10 @@ export default function AddTaskModal({ categories, priorities, users, onClose }:
                     <h1 className="add-task-modal__title">Добавить задачу</h1>
                     <button className="add-task-modal__button close-modal-btn" onClick={() => {
                         setNewTaskData({
-                            name: '',
-                            description: '',
-                            users: [],
+                            ...initialTaskData,
+                            // name: '',
+                            // description: '',
+                            // users: [],
                         });
                         onClose?.();
                     }}>⨉</button>
@@ -184,11 +204,20 @@ export default function AddTaskModal({ categories, priorities, users, onClose }:
                         <input
                             type="date"
                             className="add-task-modal__input"
+                            min={getLocalDateString(new Date())}
                             value={newTaskData.completeBefore || ""}
-                            onChange={(e) => setNewTaskData({
-                                ...newTaskData,
-                                completeBefore: e.target.value
-                            })}
+                            onChange={(e) => {
+                                const today = getLocalDateString(new Date());
+                                if (
+                                    e.target.value >= today
+                                    // new Date(e.target.value).getTime() > new Date().getTime()
+                                ) {
+                                    setNewTaskData({
+                                        ...newTaskData,
+                                        completeBefore: e.target.value
+                                    })
+                                }
+                            }}
                         />
                     </div>
                     {/* <div className="add-task-modal__block">
@@ -196,7 +225,7 @@ export default function AddTaskModal({ categories, priorities, users, onClose }:
                     </div> */}
                 </div>
                 <div className="add-task-modal__buttons">
-                    <button className="add-task-modal__button add-task-button" onClick={() => onAddTask()}>Добавить задачу</button>
+                    <button disabled={isLoading} className="add-task-modal__button add-task-button" onClick={() => onAddTask()}>Добавить задачу</button>
                 </div>
             </div>
 
