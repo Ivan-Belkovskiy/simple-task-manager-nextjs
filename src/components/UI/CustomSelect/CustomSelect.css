@@ -1,6 +1,6 @@
 .custom-select {
     display: inline-block;
-    min-width: 300px;
+    min-width: 100px;
     width: stretch auto;
     position: relative;
     user-select: none;

@@ -12,10 +12,10 @@
 }
 
 .task-editor-modal {
-    width: 50%;
-    height: 70%;
+    width: 100%;
+    height: 100%;
     background-color: #fff;
-    border-radius: 25px;
+    /* border-radius: 25px; */
     border: 8px solid #f0c400;
     display: flex;
     flex-direction: column;
@@ -24,7 +24,7 @@
 
 .task-editor-modal__header {
     width: 100%;
-    height: 10%;
+    height: 7%;
     font-size: 26px;
     display: flex;
     justify-content: center;
@@ -32,7 +32,7 @@
 }
 
 .task-editor-modal__title {
-    width: 90%;
+    width: 80%;
     height: 10%;
     font-size: 26px;
     color: #d1ab00;
@@ -58,7 +58,7 @@
 
 .task-editor-modal__content {
     width: 100%;
-    height: 80%;
+    height: 83%;
     display: flex;
     flex-direction: column;
     justify-content: start;
@@ -106,7 +106,7 @@
 }
 
 .task-name-input {
-    width: 350px;
+    width: 70%;
 }
 
 .task-editor-modal__buttons {
@@ -114,7 +114,7 @@
     height: 10%;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: end;
 }
 
 .cancel-edit-button {
@@ -170,7 +170,7 @@
 
 .task-editor-modal .multi-select__option:hover,
 .task-editor-modal .custom-select__option:hover {
-    background-color: #ffa600;
+    background-color: #ffa600 !important;
 }
 
 .task-editor-modal .multi-select__option.selected,
@@ -185,6 +185,23 @@
 }
 
 
+.task-editor-modal__select.task-category-select {
+    width: 55%;
+}
+
+.task-editor-modal__select.task-user-select {
+    width: 32%;
+}
+
+.task-editor-modal__list.task-user-list {
+    width: 80%;
+    border: 2px solid #d1ab00;
+    color: #d1ab00;
+}
+
+.task-editor-modal__list.task-user-list .interactive-list__option.selected {
+    background-color: #fffb00;
+}
 
 
 
@@ -195,6 +212,7 @@
     }
 
     .task-editor-modal__title {
+        font-size: 23px;
         color: #a500e6;
     }
 
@@ -239,6 +257,70 @@
         text-align: center;
         padding: 10px;
         user-select: none;
+    }
+
+    .task-editor-modal__list.task-user-list {
+        width: 80%;
+        border: 2px solid #a500e6;
+        color: #a500e6;
+    }
+
+    .task-editor-modal__list.task-user-list .interactive-list__option.selected {
+        background-color: #e600c7;
+        color: #fff;
+    }
+
+}
+
+
+.task-editor-modal .--desktop-only {
+    display: none;
+}
+
+.task-editor-modal .--mobile-only {
+    display: inherit;
+}
+
+
+@media (min-width: 1024px) {
+
+    .task-editor-modal .--mobile-only {
+        display: none;
+    }
+
+    .task-editor-modal .--desktop-only {
+        display: inherit;
+    }
+
+    .task-editor-modal {
+        width: 50%;
+        height: 70%;
+        border-radius: 25px;
+    }
+
+    .task-editor-modal__header {
+        height: 10%;
+    }
+
+    .task-editor-modal__title {
+        font-size: 26px;
+        width: 90%;
+    }
+
+    .task-name-input {
+        width: 50%;
+    }
+
+    .task-category-select {
+        width: 50%;
+    }
+
+    .task-user-select {
+        width: 50%;
+    }
+
+    .task-editor-modal__buttons {
+        align-items: center;
     }
 
 }

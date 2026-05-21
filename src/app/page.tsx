@@ -45,6 +45,7 @@ export default async function Home() {
   const categories = await prisma.task_categories.findMany();
   const priorities = await prisma.task_priorities.findMany();
   const users = await prisma.users.findMany();
+  
 
 
   return (

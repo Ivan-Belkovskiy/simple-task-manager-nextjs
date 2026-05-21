@@ -10,6 +10,7 @@ import { createTask } from "@/app/actions";
 import UserListModal from "../UserListModal/UserListModal";
 import CustomSelect from "../CustomSelect/CustomSelect";
 import CategoryListModal from "../CategoryListModal/CategoryListModal";
+import InteractiveList from "../InteractiveList/InteractiveList";
 
 export default function AddTaskModal({ categories, priorities, users, onClose }: {
     categories: Category[];
@@ -57,7 +58,7 @@ export default function AddTaskModal({ categories, priorities, users, onClose }:
         name: '',
         description: '',
         users: [],
-        priority: 0,
+        priority: priorities[0].id,
         category: 0,
         completeBefore: getLocalDateString(new Date()),
     });
@@ -176,10 +177,34 @@ export default function AddTaskModal({ categories, priorities, users, onClose }:
                             ))}
                         </select> */}
                     </div>
-                    <div className="add-task-modal__block">
+                    <div className="add-task-modal__block --desktop-only">
                         <span className="add-task-modal__label">Ответственный за выполнение:</span>
                         <MultiSelect
-                            className="add-task-modal__select"
+                            className="add-task-modal__select task-user-select"
+                            value={newTaskData.users}
+                            onSelect={(newValue) => setNewTaskData({
+                                ...newTaskData,
+                                users: newValue,
+                            })}
+                            options={[
+                                ...users.map(user => ({
+                                    label: user.name,
+                                    value: user.id,
+                                })),
+                                {
+                                    label: "Добавить пользователя...",
+                                    value: "[[ADD]]",
+                                    type: "button",
+                                    btnCallback: () => setUserModalOpened(true)
+                                }
+                            ]}
+                        />
+                    </div>
+                    <div className="add-task-modal__block flex-col --mobile-only">
+                        <span className="add-task-modal__label">Ответственный за выполнение:</span>
+                        
+                        <InteractiveList
+                            className="add-task-modal__list task-user-list"
                             value={newTaskData.users}
                             onSelect={(newValue) => setNewTaskData({
                                 ...newTaskData,

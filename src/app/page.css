@@ -9,7 +9,7 @@
     height: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    /* justify-content: center; */
     align-items: center;
 }
 
@@ -25,3 +25,9 @@
     width: 90%;
     border: 3px solid #008cff;
 } */
+
+@media (min-width: 1024px) {
+    .page-container {
+        justify-content: center;
+    }
+}

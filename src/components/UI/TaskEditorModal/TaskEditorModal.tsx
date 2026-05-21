@@ -9,6 +9,7 @@ import UserListModal from "../UserListModal/UserListModal";
 import CustomSelect from "../CustomSelect/CustomSelect";
 import CategoryListModal from "../CategoryListModal/CategoryListModal";
 import { getLocalDateString } from "@/utils/date";
+import InteractiveList from "../InteractiveList/InteractiveList";
 
 export interface EditingTaskData {
     name: string,
@@ -179,10 +180,34 @@ export default function TaskEditorModal({ taskData, categories, priorities, user
                         />
 
                     </div>
-                    <div className="task-editor-modal__block">
+                    <div className="task-editor-modal__block --desktop-only">
                         <span className="task-editor-modal__label">Ответственный за выполнение:</span>
                         <MultiSelect
-                            className="task-editor-modal__select"
+                            className="task-editor-modal__select task-user-select"
+                            value={editingData.users}
+                            onSelect={(newValue) => setEditingData({
+                                ...editingData,
+                                users: newValue,
+                            })}
+                            options={[
+                                ...users.map(user => ({
+                                    label: user.name,
+                                    value: user.id,
+                                })),
+                                {
+                                    label: "Добавить пользователя...",
+                                    value: "[[ADD]]",
+                                    type: "button",
+                                    btnCallback: () => setUserModalOpened(true)
+                                }
+                            ]}
+                        />
+                    </div>
+                    <div className="task-editor-modal__block flex-col --mobile-only">
+                        <span className="task-editor-modal__label">Ответственный за выполнение:</span>
+
+                        <InteractiveList
+                            className="task-editor-modal__list task-user-list"
                             value={editingData.users}
                             onSelect={(newValue) => setEditingData({
                                 ...editingData,
