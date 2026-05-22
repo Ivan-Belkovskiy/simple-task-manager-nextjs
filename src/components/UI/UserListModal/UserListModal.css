@@ -41,7 +41,8 @@
     gap: 10px;
     border: 4px solid #0b0bdb;
     padding: 10px 0;
-
+    
+    overflow-y: auto;
 }
 
 .user-list-modal__user {
