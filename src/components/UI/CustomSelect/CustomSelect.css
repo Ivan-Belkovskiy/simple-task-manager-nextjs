@@ -13,7 +13,11 @@
 
 .custom-select__display-left {
     width: 90%;
-    display: flex;
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-align: left;
+    text-overflow: ellipsis;
     align-items: center;
     justify-content: left;
 }
@@ -35,6 +39,27 @@
     z-index: 20;
     cursor: default;
     display: none;
+
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+.custom-select__dropdown::-webkit-scrollbar {
+    width: 7px;
+    background-color: #0098df;
+}
+
+.custom-select__dropdown::-webkit-scrollbar-thumb {
+    background-color: #ffa600;
+}
+
+@media (min-width: 1024px) {
+
+    .custom-select__dropdown {
+        max-height: 200px;
+        overflow-y: auto;
+    }
+
 }
 
 .custom-select__option {

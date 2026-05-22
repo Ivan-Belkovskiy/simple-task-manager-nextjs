@@ -245,6 +245,11 @@ export default function AddTaskModal({ categories, priorities, users, onClose }:
                             }}
                         />
                     </div>
+                    {/* <select className="add-task-modal__select">
+                        {Array(40).fill('', 0, 40).map((_, n) => (
+                            <option value={n} key={n}>Option #{n + 1}</option>
+                        ))}
+                    </select> */}
                     {/* <div className="add-task-modal__block">
                         <button className="add-task-modal__button add-task-button" onClick={() => onAddTask()}>Добавить задачу</button>
                     </div> */}

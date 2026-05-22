@@ -63,6 +63,7 @@
     flex-direction: column;
     justify-content: start;
     align-items: center;
+    overflow-y: auto;
     gap: 10px;
     padding: 10px 0;
 }
@@ -212,7 +213,7 @@
     }
 
     .task-editor-modal__title {
-        font-size: 23px;
+        font-size: 21px;
         color: #a500e6;
     }
 

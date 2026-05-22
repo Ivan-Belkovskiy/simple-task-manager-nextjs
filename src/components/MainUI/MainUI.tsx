@@ -17,7 +17,10 @@ export default function MainUI({ categories, priorities, users }: {
     return (
         <div className="main-ui">
             <FloatingActionButton
-                content="+"
+                content={{
+                    desktop: "+",
+                    mobile: "+ Создать задачу"
+                }}
                 position={{
                     right: 15,
                     bottom: 15,

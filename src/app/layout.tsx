@@ -32,7 +32,15 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        {/* <nav className="navigation-panel --mobile-only">
+          <div className="navigation-panel__left">
+            <span className="app-logo">Менеджер Задач 2.0</span>
+          </div>
+          <div className="navigation-panel__right"></div>
+        </nav> */}
+        <main>{children}</main>
+      </body>
     </html>
   );
 }

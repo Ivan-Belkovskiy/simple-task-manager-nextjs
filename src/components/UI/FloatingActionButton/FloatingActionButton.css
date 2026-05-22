@@ -1,10 +1,14 @@
 .floating-action-btn {
     position: absolute;
-    width: 100px;
-    height: 100px;
-    border-radius: 100px;
+    /* top: auto !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    margin: 10px; */
+    /* width: 50%; */
+    /* padding: 10px; */
     background-color: #0b0bdb;
-    border: 8px solid #00eeff;
+    border: 2px solid #00eeff;
     font-size: 50px;
     color: #00eeff;
     cursor: pointer;
@@ -25,7 +29,56 @@
     scale: 1;
 }
 
-.floating-action-btn:hover .floating-action-btn__content {
+.floating-action-btn__content.--mobile-only {
+    font-size: 22px;
+}
+
+.floating-action-btn:hover .floating-action-btn__content.--desktop-only {
     scale: 1.4;
     /* rotate: 225deg; */
+}
+
+.floating-action-btn__content.--mobile-only {
+    display: flex;
+}
+
+.floating-action-btn__content.--desktop-only {
+    display: none;
+}
+
+@media (max-width: 1023px) {
+
+    .floating-action-btn {
+        top: auto !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        margin: 10px;
+    }
+
+}
+
+@media (min-width: 1024px) {
+
+    .floating-action-btn {
+        position: absolute;
+        width: 100px;
+        height: 100px;
+        border-radius: 100px;
+        background-color: #0b0bdb;
+        border: 8px solid #00eeff;
+        font-size: 50px;
+        color: #00eeff;
+        cursor: pointer;
+        z-index: 50;
+    }
+
+    .floating-action-btn__content.--mobile-only {
+        display: none;
+    }
+
+    .floating-action-btn__content.--desktop-only {
+        display: flex;
+    }
+
 }

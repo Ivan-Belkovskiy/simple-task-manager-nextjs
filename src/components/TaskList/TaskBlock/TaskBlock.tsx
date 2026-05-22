@@ -5,17 +5,20 @@ import { RefObject, useRef, useState } from "react";
 import SimpleModal from "@/components/UI/SimpleModal/SimpleModal";
 import TaskEditorModal from "@/components/UI/TaskEditorModal/TaskEditorModal";
 import SimpleDropdown from "@/components/UI/SimpleDropdown/SimpleDropdown";
+import TaskInfoModal from "@/components/UI/TaskInfoModal/TaskInfoModal";
 
 
 export default function TaskBlock({ idx, data, categories, users, priorities, bodyRef }: { idx: number, data: Task, categories: Category[], users: User[], priorities: Priority[], bodyRef?: RefObject<HTMLElement | null> }) {
 
     const [isLoading, setLoading] = useState(false);
 
+    const [isExpanded, setExpanded] = useState(false);
+
     const [openedModal, setOpenedModal] = useState<"confirm-delete" | "confirm-complete" | "edit-task" | null>(null);
 
     const confirmDeleteTask = async () => {
         if (!data.id) return;
-        
+
         setLoading(true);
         await deleteTask(data.id);
         setLoading(false);
@@ -34,10 +37,17 @@ export default function TaskBlock({ idx, data, categories, users, priorities, bo
     }
 
     return (
-        <div className="task-block">
+        <div className={`task-block ${(isExpanded ? 'expanded' : '')}`}>
             <div className="task-block__left">
                 <span className="task-block__idx">{idx + 1}</span>
-                <span className="task-block__name">{data.name}</span>
+                <div className="task-block__info">
+                    <span className="task-block__name">{data.name}</span>
+                    <div
+                        className={`task-block__description`}
+                        onClick={() => setExpanded(p => !p)}
+                    >{data.description}</div>
+                </div>
+                {/* <span className="task-block__name">{data.name}</span> */}
             </div>
             <div className="task-block__right">
                 <div className="task-block__infobox">
@@ -111,7 +121,7 @@ export default function TaskBlock({ idx, data, categories, users, priorities, bo
                         </>
                     )}
                 </div>
-                <SimpleDropdown
+                {/* <SimpleDropdown
                     className="task-block__dropdown more-data-dropdown"
                     buttonLabel="Ещё ▽"
                     position={{
@@ -181,9 +191,87 @@ export default function TaskBlock({ idx, data, categories, users, priorities, bo
                         >Удалить</button>
                     </div>
 
-                </SimpleDropdown>
-                {/* <button className="task-block__button more-data-button">Ещё ▽</button> */}
+                </SimpleDropdown> */}
+                <button
+                    className="task-block__button more-data-button"
+                    onClick={() => setExpanded(true)}
+                >Ещё ▽</button>
             </div>
+
+            {isExpanded && (
+                <TaskInfoModal title={data.name} onClose={() => setExpanded(false)}>
+
+                    <div className="task-block__modal-mobile-data">
+                        <div className="task-block__data --mobile-only">
+                            {data.description || "- Нет описания -"}
+                        </div>
+
+                        <div className="task-block__data --mobile-only">
+                            <div className="task-block__infobox">
+                                <span className="task-block__infobox-label">Приоритет</span>
+                                <span className="task-block__infobox-value" style={{
+                                    color: (data.task_priorities?.display_color || '')
+                                }}>{data.task_priorities?.name}</span>
+                            </div>
+
+                            <div className="task-block__infobox">
+                                <span className="task-block__infobox-label">Категория</span>
+                                <span className="task-block__infobox-value">{data.task_categories?.name || " — "}</span>
+                            </div>
+                        </div>
+
+                        <div className="task-block__data --mobile-only">
+                            <div className="task-block__infobox users-infobox-mobile">
+                                {data.task_users.map((user, i) => (
+                                    <div className="task-block__user" key={i}>{user.users.name}</div>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="task-block__data --mobile-only">
+                            <div className="task-block__infobox">
+                                <div className="task-block__infobox-label">Создана</div>
+                                <div className="task-block__infobox-value">{data.created_at?.toLocaleDateString('ru-RU')}</div>
+                            </div>
+                            <div className="task-block__infobox">
+                                {(data.completed) ? (
+                                    <>
+                                        <div className="task-block__infobox-label completed-at">Выполнена</div>
+                                        <div className="task-block__infobox-value completed-at">{data.completed_at?.toLocaleDateString('ru-RU')}</div>
+                                    </>
+                                ) : (data.complete_before_date) && (
+                                    <>
+                                        <div className="task-block__infobox-label complete-before-date">Выполнить до</div>
+                                        <div className="task-block__infobox-value complete-before-date">{data.complete_before_date?.toLocaleDateString('ru-RU')}</div>
+                                    </>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="task-block__buttons">
+                        <button
+                            className={`task-block__button complete-btn ${(data.completed) ? 'completed' : ''}`}
+                            onClick={() => {
+                                if (!data.completed) setOpenedModal('confirm-complete');
+                            }}
+                        >{data.completed ? 'Выполнена' : 'Выполнить'}</button>
+                        <button
+                            className={`task-block__button ${(data.completed) ? 'reupload-btn' : 'edit-btn'}`}
+                            onClick={() => setOpenedModal('edit-task')}
+                        >{(data.completed) ? "Повторить" : "Редактировать"}</button>
+                        <button
+                            className={`task-block__button delete-btn`}
+                            onClick={() => setOpenedModal('confirm-delete')}
+                        >Удалить</button>
+                        <button
+                            className={`task-block__button close-btn`}
+                            onClick={() => setExpanded(false)}
+                        >↲ Назад</button>
+                    </div>
+
+                </TaskInfoModal>
+            )}
 
             {(openedModal === 'confirm-delete') && (
                 <SimpleModal title={`Удалить задачу "${data.name}"?`} buttons={[

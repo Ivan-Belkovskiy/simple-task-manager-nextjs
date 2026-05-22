@@ -39,6 +39,18 @@
     z-index: 20;
     cursor: default;
     display: none;
+
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+@media (min-width: 1024px) {
+
+    .multi-select__dropdown {
+        max-height: 200px;
+        overflow-y: auto;
+    }
+
 }
 
 .multi-select__option {
@@ -52,6 +64,7 @@
 .multi-select__option input[type=checkbox] {
     margin-right: 6px;
 }
+
 /* 
 .multi-select__option:hover {
     background-color: #0077ff;

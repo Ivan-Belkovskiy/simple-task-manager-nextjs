@@ -5,7 +5,10 @@ import "./FloatingActionButton.css";
 
 export default function FloatingActionButton({ styles, content, position, onClick }: {
     styles?: CSSProperties;
-    content?: string;
+    content?: string | {
+        mobile?: string;
+        desktop?: string;
+    };
     position?: {
         top?: number;
         right?: number;
@@ -15,6 +18,12 @@ export default function FloatingActionButton({ styles, content, position, onClic
     onClick?: () => void;
     // position?: "top-left" | "top-right" | "bottom-left" | "bottom-right";
 }) {
+
+    const display = {
+        mobile: (typeof content === 'string') ? content : content?.mobile,
+        desktop: (typeof content === 'string') ? content : content?.desktop
+    };
+
     return (
         <button
             className="floating-action-btn"
@@ -27,7 +36,8 @@ export default function FloatingActionButton({ styles, content, position, onClic
             }}
             onClick={onClick}
         >
-            <div className="floating-action-btn__content">{content}</div>
+            <div className="floating-action-btn__content --desktop-only">{display.desktop}</div>
+            <div className="floating-action-btn__content --mobile-only">{display.mobile}</div>
         </button>
     )
 }
