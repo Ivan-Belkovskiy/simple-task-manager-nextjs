@@ -6,9 +6,10 @@ import SimpleModal from "@/components/UI/SimpleModal/SimpleModal";
 import TaskEditorModal from "@/components/UI/TaskEditorModal/TaskEditorModal";
 import SimpleDropdown from "@/components/UI/SimpleDropdown/SimpleDropdown";
 import TaskInfoModal from "@/components/UI/TaskInfoModal/TaskInfoModal";
+import TextHighlight from "@/components/UI/TextHighlight/TextHighlight";
 
 
-export default function TaskBlock({ idx, data, categories, users, priorities, bodyRef }: { idx: number, data: Task, categories: Category[], users: User[], priorities: Priority[], bodyRef?: RefObject<HTMLElement | null> }) {
+export default function TaskBlock({ idx, data, categories, users, priorities, bodyRef, filterString = "" }: { idx: number, data: Task, categories: Category[], users: User[], priorities: Priority[], filterString?: string; bodyRef?: RefObject<HTMLElement | null> }) {
 
     const [isLoading, setLoading] = useState(false);
 
@@ -41,7 +42,10 @@ export default function TaskBlock({ idx, data, categories, users, priorities, bo
             <div className="task-block__left">
                 <span className="task-block__idx">{idx + 1}</span>
                 <div className="task-block__info">
-                    <span className="task-block__name">{data.name}</span>
+                    <span className="task-block__name">
+                        <TextHighlight text={data.name} highlight={filterString} />
+                        {/* {data.name} */}
+                    </span>
                     <div
                         className={`task-block__description`}
                         onClick={() => setExpanded(p => !p)}
