@@ -129,7 +129,7 @@ export default function TaskList({ initialTasks, categories, priorities, users }
                         </div>
                     </div> */}
 
-                    {isFiltersExpanded && (
+                    {(isFiltersExpanded || isFiltersExpandedMobile) && (
                         <div className="task-list__filters-row">
                             <div className="task-list__filter">
                                 <div className="task-list__label">Найти задачу:</div>
