@@ -4,10 +4,12 @@
     width: 100%;
     height: 90px;
     display: flex;
+    border-bottom: 4px solid #0066ff;
+    background-color: #fff;
 }
 
-.task-block {
-    border-bottom: 4px solid #0066ff;
+.task-block.completed {
+    background-color: #cfffcb;
 }
 
 .task-block__left {
@@ -177,12 +179,12 @@
 }
 
 .task-block__button.complete-btn.completed {
-    background-color: #10c400;
+    background-color: #0d9c00;
     color: #fff;
 }
 
 .task-block__button.complete-btn.completed:hover {
-    background-color: #0da100;
+    background-color: #0a7c00;
 }
 
 .task-block__button.edit-btn {
@@ -513,6 +515,13 @@
         padding: 0 10px;
         border: 1px solid #0066ff;
         border-radius: 6px;
+    }
+
+    .task-block__infobox.category-infobox {
+        max-width: 220px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
     }
 
     .task-block__buttons {

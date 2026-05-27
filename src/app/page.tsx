@@ -52,7 +52,7 @@ export default async function Home() {
     <div className="page-wrapper">
       <main className="page-container">
         {/* <h1 className="app-title">Менеджер Задач</h1> */}
-        <h1 className="date-display">{new Date().toLocaleDateString('ru-RU')}</h1>
+        <h1 className="date-display">{new Date().toLocaleString('ru-RU')}</h1>
         {/* <hr className="divider" /> */}
         <TaskList initialTasks={tasks} categories={categories} priorities={priorities} users={users} />
 

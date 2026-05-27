@@ -38,7 +38,7 @@ export default function TaskBlock({ idx, data, categories, users, priorities, bo
     }
 
     return (
-        <div className={`task-block ${(isExpanded ? 'expanded' : '')}`}>
+        <div className={`task-block ${(isExpanded ? 'expanded' : '')} ${data.completed ? 'completed' : ''}`}>
             <div className="task-block__left">
                 <span className="task-block__idx">{idx + 1}</span>
                 <div className="task-block__info">
@@ -61,7 +61,7 @@ export default function TaskBlock({ idx, data, categories, users, priorities, bo
                     }}>{data.task_priorities?.name}</span>
                 </div>
 
-                <div className="task-block__infobox">
+                <div className="task-block__infobox category-infobox">
                     <span className="task-block__infobox-label">Категория</span>
                     <span className="task-block__infobox-value">{data.task_categories?.name || " — "}</span>
                 </div>
