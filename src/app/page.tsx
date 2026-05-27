@@ -7,6 +7,7 @@ import { Prisma } from "@prisma/client";
 import Image from "next/image";
 import FloatingActionButton from "@/components/UI/FloatingActionButton/FloatingActionButton";
 import MainUI from "@/components/MainUI/MainUI";
+import AppContainer from "@/components/AppContainer/AppContainer";
 
 export type Task = Prisma.tasksGetPayload<{
   include: {
@@ -50,14 +51,7 @@ export default async function Home() {
 
   return (
     <div className="page-wrapper">
-      <main className="page-container">
-        {/* <h1 className="app-title">Менеджер Задач</h1> */}
-        <h1 className="date-display">{new Date().toLocaleString('ru-RU')}</h1>
-        {/* <hr className="divider" /> */}
-        <TaskList initialTasks={tasks} categories={categories} priorities={priorities} users={users} />
-
-        <MainUI categories={categories} priorities={priorities} users={users} />
-      </main>
+      <AppContainer tasks={tasks} categories={categories} priorities={priorities} users={users} />
     </div>
   );
 }
