@@ -227,7 +227,7 @@ export default function AddTaskModal({ categories, priorities, users, onClose }:
                     <div className="add-task-modal__block">
                         <span className="add-task-modal__label">Выполнить до:</span>
                         <input
-                            type="date"
+                            type="datetime-local"
                             className="add-task-modal__input"
                             min={getLocalDateString(new Date())}
                             value={newTaskData.completeBefore || ""}
@@ -240,10 +240,14 @@ export default function AddTaskModal({ categories, priorities, users, onClose }:
                                     setNewTaskData({
                                         ...newTaskData,
                                         completeBefore: e.target.value
-                                    })
-                                }
+                                    });
+                                } else setNewTaskData({
+                                    ...newTaskData,
+                                    completeBefore: today,
+                                })
                             }}
                         />
+                        {/* <input type="datetime-local" className="add-task-modal__input" /> */}
                     </div>
                     {/* <select className="add-task-modal__select">
                         {Array(40).fill('', 0, 40).map((_, n) => (

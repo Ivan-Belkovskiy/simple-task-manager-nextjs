@@ -21,13 +21,13 @@ export default function AppContainer({ tasks, categories, priorities, users }: A
    return (
       <main className="app-container">
          {/* <h1 className="app-title">Менеджер Задач</h1> */}
-         <h1 className="date-display">{currentDate?.toLocaleString('ru-RU') || "[Загрузка...] Менеджер Задач 2.0"}</h1>
+         <h1 className="date-display">{currentDate?.toLocaleString('ru-RU').replace(',', ' |') || "[Загрузка...] Менеджер Задач 2.0"}</h1>
          {/* <hr className="divider" /> */}
          <TaskList isEditMode={isEditMode} initialTasks={tasks} categories={categories} priorities={priorities} users={users} />
 
          <MainUI isEditMode={isEditMode} categories={categories} priorities={priorities} users={users} />
 
-         <RealtimeController isEditMode={isEditMode} currentDate={currentDate} setCurrentDate={setCurrentDate} />
+         <RealtimeController tasks={tasks} isEditMode={isEditMode} currentDate={currentDate} setCurrentDate={setCurrentDate} />
       </main>
    )
 }

@@ -48,7 +48,7 @@ export default function TaskEditorModal({ taskData, categories, priorities, user
         // formData.append("categoryId", String(editingData.category));
         // formData.append("completeBeforeDate", String(editingData.completeBefore));
 
-        if (taskData.completed) {
+        if (taskData.completed || taskData.rejected) {
             await createTaskNew(editingData);
         } else {
             await updateTask(taskData.id, editingData);
@@ -78,11 +78,13 @@ export default function TaskEditorModal({ taskData, categories, priorities, user
         priority: data.priority_id,
         category: data.category_id || "[[NONE]]",
         users: data.task_users.map(i => i.users.id),
-        completeBefore: (taskData.completed) ? (
-            new Date().toISOString().split('T')[0]
+        completeBefore: (taskData.completed || taskData.rejected) ? (
+            getLocalDateString(new Date())
         ) : (
             data.complete_before_date
-                ? new Date(data.complete_before_date).toISOString().split('T')[0]
+                ? getLocalDateString(
+                    new Date(data.complete_before_date)
+                )
                 : ""
         ),
         // completeBefore: data.complete_before_date,
@@ -95,10 +97,10 @@ export default function TaskEditorModal({ taskData, categories, priorities, user
     }, [taskData]);
 
     return (
-        <div className={`task-editor-modal__overlay ${(taskData.completed) ? 'reupload-mode' : ''}`}>
+        <div className={`task-editor-modal__overlay ${(taskData.completed || taskData.rejected) ? 'reupload-mode' : ''}`}>
             <div className="task-editor-modal">
                 <div className="task-editor-modal__header">
-                    <h1 className="task-editor-modal__title">{(taskData.completed) ? "Повторное создание задачи" : "Редактировать задачу"}</h1>
+                    <h1 className="task-editor-modal__title">{(taskData.completed || taskData.rejected) ? "Повторное создание задачи" : "Редактировать задачу"}</h1>
                     <button className="task-editor-modal__button close-modal-btn" onClick={() => {
                         setEditingData({
                             name: '',
@@ -230,7 +232,7 @@ export default function TaskEditorModal({ taskData, categories, priorities, user
                     <div className="task-editor-modal__block">
                         <span className="task-editor-modal__label">Выполнить до:</span>
                         <input
-                            type="date"
+                            type="datetime-local"
                             min={getLocalDateString(new Date())}
                             className="task-editor-modal__input"
                             value={editingData.completeBefore || ""}
@@ -244,18 +246,21 @@ export default function TaskEditorModal({ taskData, categories, priorities, user
                                         ...editingData,
                                         completeBefore: e.target.value
                                     });
-                                }
+                                } else setEditingData({
+                                    ...editingData,
+                                    completeBefore: today
+                                });
                             }}
                         />
                     </div>
-                    {(taskData.completed) && (
+                    {(taskData.completed || taskData.rejected) && (
                         <div className="task-editor-modal__block">
                             <div className="task-editor-modal__notification reupload-task-notification">ПРИМЕЧАНИЕ: Будет создана <b>отдельная</b> новая задача с введенными выше настройками, которая <b>не будет иметь связи</b> с данной выполненной задачей!</div>
                         </div>
                     )}
                 </div>
                 <div className="task-editor-modal__buttons">
-                    {(taskData.completed) ? (
+                    {(taskData.completed || taskData.rejected) ? (
                         <button disabled={isLoading} className="task-editor-modal__button confirm-reupload-button" onClick={() => confirmChanges()}>Создать задачу повторно</button>
                     ) : (
                         <>

@@ -127,7 +127,7 @@ export default function TaskBlock({ isEditMode, idx, data, categories, users, pr
                     ) : (data.complete_before_date) && (
                         <>
                             {/* <hr /> */}
-                            <div className="task-block__infobox-label complete-before-date">Выполнить до</div>
+                            <div className={`task-block__infobox-label complete-before-date ${(data.rejected) ? 'rejected' : ''}`}>{(data.rejected) ? "Пропущена" : "Выполнить до"}</div>
                             <div className="task-block__infobox-value complete-before-date">{data.complete_before_date?.toLocaleDateString('ru-RU')}</div>
                         </>
                     )}
@@ -225,7 +225,7 @@ export default function TaskBlock({ isEditMode, idx, data, categories, users, pr
                                 }}>{data.task_priorities?.name}</span>
                             </div>
 
-                            <div className="task-block__infobox">
+                            <div className="task-block__infobox category-infobox">
                                 <span className="task-block__infobox-label">Категория</span>
                                 <span className="task-block__infobox-value">{data.task_categories?.name || " — "}</span>
                             </div>
@@ -252,7 +252,7 @@ export default function TaskBlock({ isEditMode, idx, data, categories, users, pr
                                     </>
                                 ) : (data.complete_before_date) && (
                                     <>
-                                        <div className="task-block__infobox-label complete-before-date">Выполнить до</div>
+                                        <div className="task-block__infobox-label complete-before-date">{(data.rejected) ? "Пропущена" : "Выполнить до"}</div>
                                         <div className="task-block__infobox-value complete-before-date">{data.complete_before_date?.toLocaleDateString('ru-RU')}</div>
                                     </>
                                 )}
@@ -262,15 +262,15 @@ export default function TaskBlock({ isEditMode, idx, data, categories, users, pr
 
                     <div className="task-block__buttons">
                         <button
-                            className={`task-block__button complete-btn ${(data.completed) ? 'completed' : ''}`}
+                            className={`task-block__button complete-btn ${(data.completed) ? 'completed' : ''} ${(data.rejected) ? 'rejected' : ''}`}
                             onClick={() => {
-                                if (!data.completed) updateOpenedModal('confirm-complete');
+                                if (!data.completed && !data.rejected) updateOpenedModal('confirm-complete');
                             }}
-                        >{data.completed ? 'Выполнена' : 'Выполнить'}</button>
+                        >{(data.rejected) ? 'Пропущена' : (data.completed ? 'Выполнена' : 'Выполнить')}</button>
                         <button
-                            className={`task-block__button ${(data.completed) ? 'reupload-btn' : 'edit-btn'}`}
+                            className={`task-block__button ${(data.completed || data.rejected) ? 'reupload-btn' : 'edit-btn'}`}
                             onClick={() => updateOpenedModal('edit-task')}
-                        >{(data.completed) ? "Повторить" : "Редактировать"}</button>
+                        >{(data.completed || data.rejected) ? "Повторить" : "Редактировать"}</button>
                         <button
                             className={`task-block__button delete-btn`}
                             onClick={() => updateOpenedModal('confirm-delete')}

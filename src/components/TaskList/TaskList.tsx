@@ -20,11 +20,15 @@ const stateFilters: Record<string, StateFilterDefinition> = {
     },
     "[COMPLETED=0]": {
         disp: "Не выполнена",
-        fn: (task) => !task.completed,
+        fn: (task) => !task.completed && !task.rejected,
     },
     "[COMPLETED=1]": {
         disp: "Выполнена",
-        fn: (task) => task.completed,
+        fn: (task) => task.completed && !task.rejected,
+    },
+    "[REJECTED]": {
+        disp: "Пропущена/Отклонена",
+        fn: (task) => task.rejected,
     }
 };
 

@@ -3,10 +3,10 @@
 import { ReactNode } from "react";
 import "./TaskInfoModal.css";
 
-export default function TaskInfoModal({ title, children, onClose }: { title?: string; children?: ReactNode; onClose?: () => void }) {
+export default function TaskInfoModal({ className, title, children, onClose }: { className?: string, title?: string; children?: ReactNode; onClose?: () => void }) {
     return (
         <div className="task-info-modal__overlay">
-            <div className="task-info-modal">
+            <div className={`task-info-modal ${className}`}>
                 <div className="task-info-modal__header">
                     <h1 className="task-info-modal__title">{title}</h1>
                     {/* <button className="task-info-modal__button close-modal-btn" onClick={onClose}>⨉</button> */}

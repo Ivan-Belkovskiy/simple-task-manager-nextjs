@@ -112,6 +112,11 @@
     color: #0066ff;
 }
 
+.task-block__infobox-label.rejected {
+    font-size: 0.79rem;
+    font-weight: bold;
+}
+
 .task-block__infobox-value {
     width: 100%;
     height: 50%;
@@ -602,8 +607,26 @@
     }
 
     .task-block__infobox-label,
-    .task-block__infobox.category-infobox .task-block__infobox-value {
+    .task-block__infobox.category-infobox .task-block__infobox-value,
+    .task-block__button.more-data-button {
         color: #0d9700;
+    }
+
+    .task-info-modal {
+
+        border-color: #0d9700;
+
+        * {
+            border-color: #0d9700;
+        }
+
+        .task-block__infobox-label,
+        .task-block__infobox.category-infobox .task-block__infobox-label,
+        .task-info-modal__title,
+        .task-block__data.--mobile-only {
+            color: #0d9700;
+        }
+
     }
 
 }
@@ -630,8 +653,30 @@
     }
 
     .task-block__infobox-label,
-    .task-block__infobox.category-infobox .task-block__infobox-value {
+    .task-block__infobox.category-infobox .task-block__infobox-value,
+    .task-block__button.more-data-button {
         color: #c40000;
+    }
+
+    .task-info-modal {
+        border-color: #c40000;
+    }
+
+    .task-info-modal {
+
+        border-color: #c40000;
+
+        * {
+            border-color: #c40000;
+        }
+
+        .task-block__infobox-label,
+        .task-block__infobox.category-infobox .task-block__infobox-label,
+        .task-info-modal__title,
+        .task-block__data.--mobile-only {
+            color: #c40000;
+        }
+
     }
 
 }
