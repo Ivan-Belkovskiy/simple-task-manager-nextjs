@@ -1,38 +1,36 @@
-// ./src/components/RealtimeController.tsx
-
 'use client';
+
 import { useRouter } from "next/navigation";
-import { Dispatch, SetStateAction, useEffect } from "react";
+import { Dispatch, RefObject, SetStateAction, useEffect, useRef } from "react";
 
 interface RealtimeControllerProps {
+    isEditMode?: RefObject<boolean>;
+
     currentDate?: Date;
     setCurrentDate?: Dispatch<SetStateAction<Date | undefined>>;
 }
 
-export default function RealtimeController({ currentDate, setCurrentDate }: RealtimeControllerProps) {
+export default function RealtimeController({ isEditMode, currentDate, setCurrentDate }: RealtimeControllerProps) {
     const router = useRouter();
 
+    const timerRef = useRef(0);
+
     useEffect(() => {
-        console.log('[▦] Realtime Controller is working!!!');
-
-        const checkDate = () => {
-            const now = new Date();
-            if (setCurrentDate) {
-                // if (now.getDate() !== currentDate?.getDate()) {
-                    setCurrentDate(now);
-                    router.refresh();
-                // }
-            }
-        };
-
-        // checkDate();
-
         const interval = setInterval(() => {
-            checkDate();
+            timerRef.current += 1;
+
+            const now = new Date();
+
+            if (setCurrentDate) setCurrentDate(now);
+
+            if (timerRef.current >= 10 && !isEditMode?.current) {
+                router.refresh();
+                timerRef.current = 0;
+            }
         }, 1000);
 
         return () => clearInterval(interval);
-    });
+    }, [isEditMode, router]);
 
     return <></>;
 }

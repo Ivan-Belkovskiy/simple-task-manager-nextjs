@@ -1,7 +1,7 @@
 import { completeTask, deleteTask } from "@/app/actions";
 import "./TaskBlock.css";
 import { Category, Priority, Task, User } from "@/app/page";
-import { RefObject, useRef, useState } from "react";
+import { Dispatch, RefObject, SetStateAction, useRef, useState } from "react";
 import SimpleModal from "@/components/UI/SimpleModal/SimpleModal";
 import TaskEditorModal from "@/components/UI/TaskEditorModal/TaskEditorModal";
 import SimpleDropdown from "@/components/UI/SimpleDropdown/SimpleDropdown";
@@ -9,13 +9,20 @@ import TaskInfoModal from "@/components/UI/TaskInfoModal/TaskInfoModal";
 import TextHighlight from "@/components/UI/TextHighlight/TextHighlight";
 
 
-export default function TaskBlock({ idx, data, categories, users, priorities, bodyRef, filterString = "" }: { idx: number, data: Task, categories: Category[], users: User[], priorities: Priority[], filterString?: string; bodyRef?: RefObject<HTMLElement | null> }) {
+export default function TaskBlock({ isEditMode, idx, data, categories, users, priorities, bodyRef, filterString = "" }: { isEditMode?: RefObject<boolean>, idx: number, data: Task, categories: Category[], users: User[], priorities: Priority[], filterString?: string; bodyRef?: RefObject<HTMLElement | null> }) {
 
     const [isLoading, setLoading] = useState(false);
 
     const [isExpanded, setExpanded] = useState(false);
 
     const [openedModal, setOpenedModal] = useState<"confirm-delete" | "confirm-complete" | "edit-task" | null>(null);
+
+    const updateOpenedModal = (value: "confirm-delete" | "confirm-complete" | "edit-task" | null) => {
+        setOpenedModal(value);
+        if (isEditMode) isEditMode.current = (
+            value ? true : false
+        );
+    }
 
     const confirmDeleteTask = async () => {
         if (!data.id) return;
@@ -24,7 +31,7 @@ export default function TaskBlock({ idx, data, categories, users, priorities, bo
         await deleteTask(data.id);
         setLoading(false);
 
-        setOpenedModal(null);
+        updateOpenedModal(null);
     }
 
     const confirmCompleteTask = async () => {
@@ -34,11 +41,11 @@ export default function TaskBlock({ idx, data, categories, users, priorities, bo
         await completeTask(data.id);
         setLoading(false);
 
-        setOpenedModal(null);
+        updateOpenedModal(null);
     }
 
     return (
-        <div className={`task-block ${(isExpanded ? 'expanded' : '')} ${data.completed ? 'completed' : ''}`}>
+        <div className={`task-block ${(isExpanded ? 'expanded' : '')} ${data.completed ? 'completed' : ''} ${data.rejected ? 'rejected' : ''}`}>
             <div className="task-block__left">
                 <span className="task-block__idx">{idx + 1}</span>
                 <div className="task-block__info">
@@ -84,7 +91,7 @@ export default function TaskBlock({ idx, data, categories, users, priorities, bo
                     ) : (data.complete_before_date) && (
                         <>
                             <hr />
-                            <div className="task-block__infobox-label complete-before-date">Выполнить до</div>
+                            <div className="task-block__infobox-label complete-before-date">{(data.rejected) ? "Пропущена" : "Выполнить до"}</div>
                             <div className="task-block__infobox-value complete-before-date">{data.complete_before_date?.toLocaleDateString('ru-RU')}</div>
                         </>
                     )}
@@ -92,18 +99,18 @@ export default function TaskBlock({ idx, data, categories, users, priorities, bo
 
                 <div className="task-block__buttons">
                     <button
-                        className={`task-block__button complete-btn ${(data.completed) ? 'completed' : ''}`}
+                        className={`task-block__button complete-btn ${(data.completed) ? 'completed' : ''} ${(data.rejected) ? 'rejected' : ''}`}
                         onClick={() => {
-                            if (!data.completed) setOpenedModal('confirm-complete');
+                            if (!data.completed && !data.rejected) updateOpenedModal('confirm-complete');
                         }}
-                    >{data.completed ? 'Выполнена' : 'Выполнить'}</button>
+                    >{data.rejected ? 'Пропущена' : (data.completed ? 'Выполнена' : 'Выполнить')}</button>
                     <button
-                        className={`task-block__button ${(data.completed) ? 'reupload-btn' : 'edit-btn'}`}
-                        onClick={() => setOpenedModal('edit-task')}
-                    >{(data.completed) ? "Повторить" : "Редактировать"}</button>
+                        className={`task-block__button ${(data.completed || data.rejected) ? 'reupload-btn' : 'edit-btn'}`}
+                        onClick={() => updateOpenedModal('edit-task')}
+                    >{(data.completed || data.rejected) ? "Повторить" : "Редактировать"}</button>
                     <button
                         className={`task-block__button delete-btn`}
-                        onClick={() => setOpenedModal('confirm-delete')}
+                        onClick={() => updateOpenedModal('confirm-delete')}
                     >Удалить</button>
                 </div>
             </div>
@@ -182,16 +189,16 @@ export default function TaskBlock({ idx, data, categories, users, priorities, bo
                         <button
                             className={`task-block__button complete-btn ${(data.completed) ? 'completed' : ''}`}
                             onClick={() => {
-                                if (!data.completed) setOpenedModal('confirm-complete');
+                                if (!data.completed) updateOpenedModal('confirm-complete');
                             }}
                         >{data.completed ? 'Выполнена' : 'Выполнить'}</button>
                         <button
                             className={`task-block__button ${(data.completed) ? 'reupload-btn' : 'edit-btn'}`}
-                            onClick={() => setOpenedModal('edit-task')}
+                            onClick={() => updateOpenedModal('edit-task')}
                         >{(data.completed) ? "Повторить" : "Редактировать"}</button>
                         <button
                             className={`task-block__button delete-btn`}
-                            onClick={() => setOpenedModal('confirm-delete')}
+                            onClick={() => updateOpenedModal('confirm-delete')}
                         >Удалить</button>
                     </div>
 
@@ -257,16 +264,16 @@ export default function TaskBlock({ idx, data, categories, users, priorities, bo
                         <button
                             className={`task-block__button complete-btn ${(data.completed) ? 'completed' : ''}`}
                             onClick={() => {
-                                if (!data.completed) setOpenedModal('confirm-complete');
+                                if (!data.completed) updateOpenedModal('confirm-complete');
                             }}
                         >{data.completed ? 'Выполнена' : 'Выполнить'}</button>
                         <button
                             className={`task-block__button ${(data.completed) ? 'reupload-btn' : 'edit-btn'}`}
-                            onClick={() => setOpenedModal('edit-task')}
+                            onClick={() => updateOpenedModal('edit-task')}
                         >{(data.completed) ? "Повторить" : "Редактировать"}</button>
                         <button
                             className={`task-block__button delete-btn`}
-                            onClick={() => setOpenedModal('confirm-delete')}
+                            onClick={() => updateOpenedModal('confirm-delete')}
                         >Удалить</button>
                         <button
                             className={`task-block__button close-btn`}
@@ -282,7 +289,7 @@ export default function TaskBlock({ idx, data, categories, users, priorities, bo
                     {
                         text: "Отмена",
                         className: "task-block__button cancel-delete-btn",
-                        onClick: () => setOpenedModal(null),
+                        onClick: () => updateOpenedModal(null),
                         disabled: isLoading
                     },
                     {
@@ -309,7 +316,7 @@ export default function TaskBlock({ idx, data, categories, users, priorities, bo
                     {
                         text: "Отмена",
                         className: "task-block__button cancel-complete-btn",
-                        onClick: () => setOpenedModal(null),
+                        onClick: () => updateOpenedModal(null),
                         disabled: isLoading
                     },
                     {
@@ -337,7 +344,7 @@ export default function TaskBlock({ idx, data, categories, users, priorities, bo
                     categories={categories}
                     users={users}
                     priorities={priorities}
-                    onClose={() => setOpenedModal(null)}
+                    onClose={() => updateOpenedModal(null)}
                 />
             )}
         </div>

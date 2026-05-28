@@ -8,6 +8,7 @@ import Image from "next/image";
 import FloatingActionButton from "@/components/UI/FloatingActionButton/FloatingActionButton";
 import MainUI from "@/components/MainUI/MainUI";
 import AppContainer from "@/components/AppContainer/AppContainer";
+import { validateTasks } from "./actions";
 
 export type Task = Prisma.tasksGetPayload<{
   include: {
@@ -26,6 +27,9 @@ export type Priority = Prisma.task_prioritiesGetPayload<{}>;
 export type User = Prisma.usersGetPayload<{}>;
 
 export default async function Home() {
+
+  await validateTasks();
+
   const tasks: Task[] = await prisma.tasks.findMany({
     include: {
       task_categories: true,
@@ -38,6 +42,7 @@ export default async function Home() {
     },
     orderBy: [
       { completed: 'asc' },
+      { rejected: 'asc' },
       { complete_before_date: 'asc' },
       { priority_id: 'desc' },
     ]
@@ -46,7 +51,7 @@ export default async function Home() {
   const categories = await prisma.task_categories.findMany();
   const priorities = await prisma.task_priorities.findMany();
   const users = await prisma.users.findMany();
-  
+
 
 
   return (

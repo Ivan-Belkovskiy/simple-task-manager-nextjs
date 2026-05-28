@@ -149,7 +149,7 @@ export async function updateTask(id: number, data: EditingTaskData) {
                 category_id: (data.category && data.category !== '[[NONE]]') ? Number(data.category) : null,
                 priority_id: data.priority,
                 complete_before_date: data.completeBefore ? new Date(data.completeBefore) : null,
-                
+
                 task_users: {
 
                     deleteMany: {},
@@ -202,6 +202,26 @@ export async function createTaskNew(data: EditingTaskData) {
         return { success: true };
     } catch (error) {
         console.error("Ошибка создания задачи:", error);
+        return { success: false };
+    }
+}
+
+export async function validateTasks() {
+    try {
+        await prisma.tasks.updateMany({
+            where: {
+                complete_before_date: { lt: new Date() },
+                completed: false,
+                rejected: false
+            },
+            data: {
+                rejected: true
+            }
+        });
+
+        revalidatePath('/');
+        return { success: true };
+    } catch (error) {
         return { success: false };
     }
 }

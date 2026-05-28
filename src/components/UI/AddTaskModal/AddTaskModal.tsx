@@ -59,7 +59,7 @@ export default function AddTaskModal({ categories, priorities, users, onClose }:
         description: '',
         users: [],
         priority: priorities[0].id,
-        category: 0,
+        category: '[[NONE]]',
         completeBefore: getLocalDateString(new Date()),
     });
 

@@ -4,7 +4,7 @@ import "./TaskList.css";
 import { Task, Category, Priority, User } from "@/app/page";
 import { Prisma } from "@prisma/client"
 import TaskBlock from "./TaskBlock/TaskBlock";
-import { useEffect, useRef, useState } from "react";
+import { Dispatch, RefObject, SetStateAction, useEffect, useRef, useState } from "react";
 import MultiSelect from "../UI/MultiSelect/MultiSelect";
 import InteractiveList from "../UI/InteractiveList/InteractiveList";
 
@@ -28,7 +28,9 @@ const stateFilters: Record<string, StateFilterDefinition> = {
     }
 };
 
-export default function TaskList({ initialTasks, categories, priorities, users }: {
+export default function TaskList({ isEditMode, initialTasks, categories, priorities, users }: {
+    isEditMode?: RefObject<boolean>;
+
     initialTasks: Task[],
     categories: Category[],
     priorities: Priority[],
@@ -229,6 +231,7 @@ export default function TaskList({ initialTasks, categories, priorities, users }
                         priorities={priorities}
                         bodyRef={bodyRef}
                         filterString={filterString}
+                        isEditMode={isEditMode}
                     />
                 ))}
             </div>

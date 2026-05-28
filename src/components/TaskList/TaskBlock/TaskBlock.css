@@ -12,6 +12,11 @@
     background-color: #cfffcb;
 }
 
+
+.task-block.rejected {
+    background-color: #ffe7e0;
+}
+
 .task-block__left {
     /* width: 35%; */
     width: 76%;
@@ -68,6 +73,8 @@
     align-items: center;
     text-align: center;
     background-color: #00eeff;
+    color: #0c00af;
+    font-weight: bold;
 }
 
 .task-block__name {
@@ -75,6 +82,7 @@
     font-size: 15px;
     color: #003cff;
 }
+
 
 .task-block__infobox {
     width: 100%;
@@ -185,6 +193,15 @@
 
 .task-block__button.complete-btn.completed:hover {
     background-color: #0a7c00;
+}
+
+.task-block__button.complete-btn.rejected {
+    background-color: #bb6a00;
+    color: #fff;
+}
+
+.task-block__button.complete-btn.rejected:hover {
+    background-color: #804900;
 }
 
 .task-block__button.edit-btn {
@@ -308,6 +325,8 @@
     background-color: #0066ff;
     color: #fff;
 }
+
+
 
 
 
@@ -555,6 +574,64 @@
     .task-block__buttons .task-block__button:last-child {
         border-bottom-left-radius: 6px;
         border-bottom-right-radius: 6px;
+    }
+
+}
+
+
+.task-block.completed {
+
+    .task-block__idx {
+        background-color: #12d400;
+        color: #ffffff;
+    }
+
+    .task-block__name {
+        color: #0d9700;
+    }
+
+    .task-block__description {
+        color: #0d9700;
+        border-color: #0d9700;
+    }
+
+
+    .task-block__infobox,
+    .task-block__buttons {
+        border-color: #0d9700;
+    }
+
+    .task-block__infobox-label,
+    .task-block__infobox.category-infobox .task-block__infobox-value {
+        color: #0d9700;
+    }
+
+}
+
+.task-block.rejected {
+
+    .task-block__idx {
+        background-color: #c40000;
+        color: #ffffff;
+    }
+
+    .task-block__name {
+        color: #c40000;
+    }
+
+    .task-block__description {
+        color: #c40000;
+        border-color: #c40000;
+    }
+
+    .task-block__infobox,
+    .task-block__buttons {
+        border-color: #c40000;
+    }
+
+    .task-block__infobox-label,
+    .task-block__infobox.category-infobox .task-block__infobox-value {
+        color: #c40000;
     }
 
 }
