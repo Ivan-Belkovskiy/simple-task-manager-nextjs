@@ -32,12 +32,15 @@ export default function AddTaskModal({ categories, priorities, users, onClose }:
         //     !newTaskData.users ||
         //     !newTaskData.completeBefore
         // ) return;
+
+        const completeBeforeDate = new Date(newTaskData.completeBefore!).toISOString();
+
         const formData = new FormData();
         formData.append("name", newTaskData.name);
         formData.append("description", newTaskData.description);
         formData.append("priorityId", String(newTaskData.priority));
         formData.append("categoryId", String(newTaskData.category));
-        formData.append("completeBeforeDate", String(newTaskData.completeBefore));
+        formData.append("completeBeforeDate", completeBeforeDate);
 
         await createTask(formData, newTaskData.users.map(v => Number(v)));
 

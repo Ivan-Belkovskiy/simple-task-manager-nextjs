@@ -49,9 +49,15 @@ export default function TaskEditorModal({ taskData, categories, priorities, user
         // formData.append("completeBeforeDate", String(editingData.completeBefore));
 
         if (taskData.completed || taskData.rejected) {
-            await createTaskNew(editingData);
+            await createTaskNew({
+                ...editingData,
+                completeBefore: editingData.completeBefore ? new Date(editingData.completeBefore).toISOString() : undefined
+            });
         } else {
-            await updateTask(taskData.id, editingData);
+            await updateTask(taskData.id, {
+                ...editingData,
+                completeBefore: editingData.completeBefore ? new Date(editingData.completeBefore).toISOString() : undefined
+            });
         }
 
         // await createTask(formData, editingData.users.map(v => Number(v)));
