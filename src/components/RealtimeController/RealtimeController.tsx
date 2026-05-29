@@ -1,5 +1,6 @@
 'use client';
 
+import { validateTasks } from "@/app/actions";
 import { Task } from "@/app/page";
 import { getLocalDateString } from "@/utils/date";
 import { useRouter } from "next/navigation";
@@ -26,7 +27,7 @@ export default function RealtimeController({ tasks, isEditMode, currentDate, set
     const timerRef = useRef(0);
 
     useEffect(() => {
-        const interval = setInterval(() => {
+        const interval = setInterval(async () => {
             timerRef.current += 1;
 
             const now = new Date();
@@ -34,12 +35,12 @@ export default function RealtimeController({ tasks, isEditMode, currentDate, set
             if (setCurrentDate) setCurrentDate(now);
             
             if (currentTasksRef.current?.[0]?.complete_before_date) {
-                console.log('NOW:   ' + getLocalDateString(new Date(now)));
-                console.log('COMPLETE BEFORE:   ' + getLocalDateString(new Date(currentTasksRef.current?.[0].complete_before_date)));
+                // console.log('NOW:   ' + getLocalDateString(new Date(now)));
+                // console.log('COMPLETE BEFORE:   ' + getLocalDateString(new Date(currentTasksRef.current?.[0].complete_before_date)));
                 if (currentTasksRef.current[0].complete_before_date < now) {
-                    console.warn(`[!] ЗАДАЧА ${currentTasksRef.current[0]?.name} ОТКЛОНЕНА!!!`)
-                    // alert('task reload');
-                    router.refresh(); // 
+                    // console.warn(`[!] ЗАДАЧА ${currentTasksRef.current[0]?.name} ОТКЛОНЕНА!!!`)
+                    await validateTasks();
+                    // router.refresh(); 
                 }
             }
             

@@ -208,7 +208,7 @@ export async function createTaskNew(data: EditingTaskData) {
 
 export async function validateTasks() {
     try {
-        await prisma.tasks.updateMany({
+        const updated = await prisma.tasks.updateMany({
             where: {
                 complete_before_date: { lt: new Date() },
                 completed: false,
@@ -219,7 +219,7 @@ export async function validateTasks() {
             }
         });
 
-        revalidatePath('/');
+        if (updated.count > 0) revalidatePath('/');
         return { success: true };
     } catch (error) {
         return { success: false };
