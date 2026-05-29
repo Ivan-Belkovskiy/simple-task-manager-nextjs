@@ -34,9 +34,10 @@ export default function RealtimeController({ tasks, isEditMode, currentDate, set
             if (setCurrentDate) setCurrentDate(now);
             
             if (currentTasksRef.current?.[0]?.complete_before_date) {
-                // console.log('NOW:   ' + getLocalDateString(new Date(now)));
-                // console.log('COMPLETE BEFORE:   ' + getLocalDateString(new Date(currentTasksRef.current?.[0].complete_before_date)));
+                console.log('NOW:   ' + getLocalDateString(new Date(now)));
+                console.log('COMPLETE BEFORE:   ' + getLocalDateString(new Date(currentTasksRef.current?.[0].complete_before_date)));
                 if (currentTasksRef.current[0].complete_before_date < now) {
+                    console.warn(`[!] ЗАДАЧА ${currentTasksRef.current[0]?.name} ОТКЛОНЕНА!!!`)
                     // alert('task reload');
                     router.refresh(); // 
                 }
