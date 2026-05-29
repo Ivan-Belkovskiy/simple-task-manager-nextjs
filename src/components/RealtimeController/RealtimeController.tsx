@@ -44,7 +44,7 @@ export default function RealtimeController({ tasks, isEditMode, currentDate, set
                 }
             }
             
-            if (timerRef.current >= 60 && !isEditMode?.current) {
+            if (timerRef.current >= 20 && !isEditMode?.current) {
 
                 router.refresh();
                 timerRef.current = 0;
