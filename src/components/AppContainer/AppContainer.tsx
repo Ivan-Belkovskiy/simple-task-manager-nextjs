@@ -6,6 +6,7 @@ import MainUI from "../MainUI/MainUI";
 import TaskList from "../TaskList/TaskList";
 import { useRef, useState } from "react";
 import RealtimeController from "../RealtimeController/RealtimeController";
+import TaskNotificationModal from "../UI/TaskNotificationModal/TaskNotificationModal";
 
 interface AppContainerProps {
    tasks: Task[];
@@ -18,6 +19,10 @@ export default function AppContainer({ tasks, categories, priorities, users }: A
    const isEditMode = useRef(false);
    // const [isEditMode, setEditMode] = useState(false);
    const [currentDate, setCurrentDate] = useState<Date>();
+
+   const activateNotificationRef = useRef<((data: Task) => void) | null>(null);
+   const isOpenedNotificationRef = useRef<boolean>(false);
+
    return (
       <main className="app-container">
          {/* <h1 className="app-title">Менеджер Задач</h1> */}
@@ -27,7 +32,9 @@ export default function AppContainer({ tasks, categories, priorities, users }: A
 
          <MainUI isEditMode={isEditMode} categories={categories} priorities={priorities} users={users} />
 
-         <RealtimeController tasks={tasks} isEditMode={isEditMode} currentDate={currentDate} setCurrentDate={setCurrentDate} />
+         <TaskNotificationModal activateRef={activateNotificationRef} isOpenedRef={isOpenedNotificationRef} />
+
+         <RealtimeController activateNotificationRef={activateNotificationRef} isNotificationOpenRef={isOpenedNotificationRef} tasks={tasks} isEditMode={isEditMode} currentDate={currentDate} setCurrentDate={setCurrentDate} />
       </main>
    )
 }

@@ -1,0 +1,104 @@
+.task-notification-modal__overlay {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background: #00000071;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 60;
+}
+
+.task-notification-modal {
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 10px solid #ff0000;
+}
+
+.task-notification-modal__header {
+    width: 100%;
+    height: 10%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    ;
+    border-bottom: 9px solid #ff0000;
+}
+
+.task-notification-modal__title {
+    font-size: 25px;
+    color: #f00;
+}
+
+.task-notification-modal__content {
+    width: 100%;
+    height: 86%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    font-size: 19px;
+    padding: 0 10px;
+    color: #f00;
+}
+
+/* .task-notification-modal__content b {
+    display: inline-block;
+} */
+
+.task-notification-modal__buttons {
+    width: 100%;
+    height: 8%;
+    border-top: 9px solid #ff0000;
+}
+
+.task-notification-modal__button {
+    width: 100%;
+    height: 100%;
+    background-color: #06c000;
+    color: #fff;
+    font-size: 20px;
+}
+
+.task-notification-modal__button:hover {
+    cursor: pointer;
+    background-color: #047400;
+    color: #fff;
+}
+
+
+@media (min-width: 1024px) {
+
+    .task-notification-modal {
+        width: 70%;
+        height: 50%;
+        border-radius: 10px;
+    }
+
+    .task-notification-modal__header {
+        height: 16%;
+    }
+
+    .task-notification-modal__content {
+        width: 100%;
+        height: 78%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        font-size: 19px;
+        color: #f00;
+    }
+
+    .task-notification-modal__buttons {
+        height: 16%;
+    }
+
+}

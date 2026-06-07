@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
 import { EditingTaskData } from "@/components/UI/TaskEditorModal/TaskEditorModal";
+import { Notification } from "./page";
 
 export async function createUser(name: string) {
     try {
@@ -69,7 +70,7 @@ export async function deleteCategory(id: number) {
 }
 
 
-export async function createTask(formData: FormData, selectedUserIds: number[]) {
+export async function createTask(formData: FormData, selectedUserIds: number[], notifications?: { offset: number }[]) {
     const name = formData.get("name") as string;
     const description = formData.get("description") as string;
     const categoryId = formData.get("categoryId");
@@ -91,6 +92,13 @@ export async function createTask(formData: FormData, selectedUserIds: number[]) 
                         user_id: userId,
                     })),
                 },
+
+                task_notifications: {
+                    create: notifications?.map(n => ({
+                        hour_offset: n.offset,
+                        activated: false,
+                    }))
+                }
             },
         });
 
@@ -138,32 +146,72 @@ export async function completeTask(id: number) {
     }
 }
 
+// export async function updateTask(id: number, data: EditingTaskData) {
+//     try {
+//         // const data = JSON.parse(d) as EditingTaskData;
+//         // console.log('NAME ::: ' + (data.name))
+//         await prisma.tasks.update({
+//             data: {
+//                 name: data.name,
+//                 description: data.description,
+//                 category_id: (data.category && data.category !== '[[NONE]]') ? Number(data.category) : null,
+//                 priority_id: data.priority,
+//                 complete_before_date: data.completeBefore ? new Date(data.completeBefore) : null,
+
+//                 task_users: {
+
+//                     deleteMany: {},
+
+//                     create: data.users.map((userId) => ({
+//                         user_id: Number(userId),
+//                     })),
+//                 },
+
+//                 // task_notifications: {
+
+//                 //     deleteMany: {},
+
+//                 //     create: data.notifications
+//                 // }
+//             },
+//             where: {
+//                 id: id,
+//             }
+//         });
+//         // console.log(data);
+
+//         revalidatePath('/');
+//         return { success: true };
+//     } catch (error) {
+//         console.error(error);
+//         return { success: false };
+//     }
+// }
+
 export async function updateTask(id: number, data: EditingTaskData) {
     try {
-        // const data = JSON.parse(d) as EditingTaskData;
-        // console.log('NAME ::: ' + (data.name))
         await prisma.tasks.update({
+            where: { id: id },
             data: {
                 name: data.name,
                 description: data.description,
                 category_id: (data.category && data.category !== '[[NONE]]') ? Number(data.category) : null,
                 priority_id: data.priority,
                 complete_before_date: data.completeBefore ? new Date(data.completeBefore) : null,
-
                 task_users: {
-
                     deleteMany: {},
-
-                    create: data.users.map((userId) => ({
-                        user_id: Number(userId),
-                    })),
+                    create: data.users.map((userId) => ({ user_id: Number(userId) })),
                 },
-            },
-            where: {
-                id: id,
+                // Обновляем уведомления
+                task_notifications: {
+                    deleteMany: {}, // Удаляем старые
+                    create: data.notifications?.map(n => ({
+                        hour_offset: Number(n.hour_offset),
+                        activated: n.activated || false, // Сохраняем статус активации
+                    }))
+                },
             }
         });
-        // console.log(data);
 
         revalidatePath('/');
         return { success: true };
@@ -195,6 +243,14 @@ export async function createTaskNew(data: EditingTaskData) {
                         user_id: Number(userId),
                     })),
                 },
+
+                task_notifications: {
+                    create: data.notifications?.map(n => ({
+                        hour_offset: n.hour_offset,
+                        activated: false,
+                    }))
+                }
+
             },
         });
 
@@ -220,6 +276,24 @@ export async function validateTasks() {
         });
 
         if (updated.count > 0) revalidatePath('/');
+        return { success: true };
+    } catch (error) {
+        return { success: false };
+    }
+}
+
+export async function activateNotification(notificationId: number) {
+    try {
+        await prisma.task_notifications.update({
+            where: {
+                id: notificationId,
+            },
+            data: {
+                activated: true,
+            }
+        });
+
+        revalidatePath('/');
         return { success: true };
     } catch (error) {
         return { success: false };

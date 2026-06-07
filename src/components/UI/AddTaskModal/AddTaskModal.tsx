@@ -1,7 +1,7 @@
 'use client';
 
 
-import { getLocalDateString } from "@/utils/date";
+import { formatHourTextForNotification, getLocalDateString } from "@/utils/datetime";
 import { Category, Priority, Task, User } from "@/app/page";
 import "./AddTaskModal.css";
 import MultiSelect from "../MultiSelect/MultiSelect";
@@ -18,7 +18,7 @@ export default function AddTaskModal({ categories, priorities, users, onClose }:
     users: User[];
     onClose?: () => void;
 }) {
-    
+
     const [isLoading, setLoading] = useState(false);
 
     const [userModalOpened, setUserModalOpened] = useState(false);
@@ -42,7 +42,7 @@ export default function AddTaskModal({ categories, priorities, users, onClose }:
         formData.append("categoryId", String(newTaskData.category));
         formData.append("completeBeforeDate", completeBeforeDate);
 
-        await createTask(formData, newTaskData.users.map(v => Number(v)));
+        await createTask(formData, newTaskData.users.map(v => Number(v)), notifications);
 
         setNewTaskData({
             ...initialTaskData,
@@ -66,6 +66,8 @@ export default function AddTaskModal({ categories, priorities, users, onClose }:
         completeBefore: getLocalDateString(new Date()),
     });
 
+    const [notifications, setNotifications] = useState<{ offset: number }[]>([]);
+
     const [newTaskData, setNewTaskData] = useState<{
         name: string,
         description: string,
@@ -80,6 +82,23 @@ export default function AddTaskModal({ categories, priorities, users, onClose }:
         // description: '',
         // users: [],
     });
+
+    const addNotification = () => {
+
+        if ((notifications[
+            (notifications.length - 1)
+        ]?.offset > 1) || notifications.length === 0) setNotifications([...notifications, {
+            offset: (
+                notifications[notifications.length - 1] ? (notifications[notifications.length - 1].offset - 1) : 5
+            )
+        }]);
+    }
+
+    const removeNotification = (id: number) => {
+        setNotifications(p =>
+            p.filter((_, i) => i !== id)
+        );
+    }
 
     return (
         <div className="add-task-modal__overlay">
@@ -205,7 +224,7 @@ export default function AddTaskModal({ categories, priorities, users, onClose }:
                     </div>
                     <div className="add-task-modal__block flex-col --mobile-only">
                         <span className="add-task-modal__label">Ответственный за выполнение:</span>
-                        
+
                         <InteractiveList
                             className="add-task-modal__list task-user-list"
                             value={newTaskData.users}
@@ -227,7 +246,7 @@ export default function AddTaskModal({ categories, priorities, users, onClose }:
                             ]}
                         />
                     </div>
-                    <div className="add-task-modal__block">
+                    <div className="add-task-modal__block complete-before-datetime-block">
                         <span className="add-task-modal__label">Выполнить до:</span>
                         <input
                             type="datetime-local"
@@ -250,7 +269,66 @@ export default function AddTaskModal({ categories, priorities, users, onClose }:
                                 })
                             }}
                         />
+
                         {/* <input type="datetime-local" className="add-task-modal__input" /> */}
+                    </div>
+                    <div className="add-task-modal__block notification-settings">
+                        <h1>Настройки уведомления</h1>
+                        <div className="notification-settings__notification-list">
+                            {notifications.map((n, idx) => (
+                                <div className="notification-settings__notification" key={idx}>
+                                    <span className="notification-settings__number">{idx + 1}-й раз</span>
+                                    <div className="notification-settings__block">
+                                        <span className="notification-settings__label --desktop-only">Напомнить за</span>
+                                        <span className="notification-settings__label --mobile-only">За</span>
+                                        <input
+                                            type="number"
+                                            className="notification-settings__input"
+                                            value={n?.offset}
+                                            onChange={(e) => {
+                                                let value = (Number(e.target.value) < ((notifications[idx - 1]?.offset - 1) || 48)) ?
+                                                    Number(e.target.value) : ((notifications[idx - 1]?.offset - 1) || 0);
+                                                // setNotifications(p => (
+                                                //     p.map((nt, i) => i === idx ? { ...nt, offset: Number(value) } : nt)
+                                                // ));
+
+                                                setNotifications(p => (
+                                                    p.map((nt, i) => i === idx ? (
+                                                        (
+                                                            value - p[idx].offset < 0 && (
+                                                                p[idx].offset - p[idx + 1]?.offset < 2
+                                                            )
+                                                        ) ? { ...nt, offset: (
+                                                            (p[p.length - 1]?.offset > 1) ? Number(value) : nt.offset
+                                                        ) } : {...nt, offset: (value < 1 ? 1 : Number(value)) }
+                                                    ) : (i > idx) ? {
+                                                        ...nt,
+                                                        offset: ((p[i - 1] && (nt.offset + 1) >= ((p[i - 1].offset - 1))) && (
+                                                            value - p[idx].offset < 0 &&
+                                                            p[p.length - 1]?.offset > 1
+                                                        )) ? (p[i - 1].offset - 2) : nt.offset
+                                                    } : nt)
+                                                ));
+                                            }}
+                                        />
+                                        <span className="notification-settings__label">{formatHourTextForNotification(n.offset)} 
+                                            <span className="--desktop-only"> до окончания периода</span>
+                                        </span>
+                                    </div>
+                                    <button
+                                        className="notification-settings__button remove-notification-btn"
+                                        onClick={() => removeNotification(idx)}
+                                    >
+                                        <span className="--desktop-only">Удалить</span>
+                                        <span className="--mobile-only">⨉</span>
+                                    </button>
+                                </div>
+                            ))}
+                            <button
+                                className="notification-settings__button add-button"
+                                onClick={() => addNotification()}
+                            >Добавить напоминание</button>
+                        </div>
                     </div>
                     {/* <select className="add-task-modal__select">
                         {Array(40).fill('', 0, 40).map((_, n) => (

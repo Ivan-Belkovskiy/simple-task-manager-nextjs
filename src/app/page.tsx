@@ -18,13 +18,15 @@ export type Task = Prisma.tasksGetPayload<{
       include: {
         users: true;
       }
-    }
+    },
+    task_notifications: true;
   }
 }>;
 
 export type Category = Prisma.task_categoriesGetPayload<{}>;
 export type Priority = Prisma.task_prioritiesGetPayload<{}>;
 export type User = Prisma.usersGetPayload<{}>;
+export type Notification = Prisma.task_notificationsGetPayload<{}>;
 
 export default async function Home() {
 
@@ -39,6 +41,14 @@ export default async function Home() {
           users: true
         }
       },
+      task_notifications: {
+        include: {
+          tasks: true,
+        },
+        orderBy: [
+          { hour_offset: 'desc' }
+        ]
+      }
     },
     orderBy: [
       { completed: 'asc' },
