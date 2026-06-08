@@ -116,7 +116,8 @@ export default function RealtimeController({
             }
 
             const nextNotification = getNextPendingNotification(currentTasksRef.current || []);
-
+            
+            
             if (nextNotification) {
                 const isAlreadyInQueue = queueRef.current.some(
                     q => q.notification.id === nextNotification.notification.id
@@ -126,16 +127,17 @@ export default function RealtimeController({
                     queueRef.current.push(nextNotification);
                 }
             }
-
+            
             processQueue();
+            
+            // console.log(queueRef.current);
 
-            console.log(queueRef.current);
-
-            if (timerRef.current >= 20 && !isEditMode?.current) {
+            if (timerRef.current >= 20 && !isEditMode?.current && !isNotificationOpenRef?.current) {
 
                 router.refresh();
                 timerRef.current = 0;
             }
+
         }, 1000);
 
         return () => clearInterval(interval);
