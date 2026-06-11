@@ -1,7 +1,19 @@
 export const getLocalDateString = (date: Date) => {
+    if (!date) return "";
     const offset = date.getTimezoneOffset()
     const localDate = new Date(date.getTime() - (offset * 60 * 1000))
     return localDate.toISOString().split('.')[0]
+}
+
+export const getLocalDatetimeString = (date?: Date | null) => {
+    if (!date) return "";
+    // const offset = date.getTimezoneOffset()
+    // const localDate = new Date(date.getTime() - (offset * 60 * 1000));
+    const str = date.toLocaleString().replace(',', '');
+    return str/*.slice(
+        0,
+        str.lastIndexOf(':')
+    )*/;
 }
 
 export const subtractHours = (date: Date, hours: number) => {

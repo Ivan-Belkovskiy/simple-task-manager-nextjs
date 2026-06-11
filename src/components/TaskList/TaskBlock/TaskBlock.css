@@ -19,7 +19,7 @@
 
 .task-block__left {
     /* width: 35%; */
-    width: 76%;
+    width: 75%;
     height: 100%;
     display: flex;
     flex-direction: row;
@@ -30,7 +30,7 @@
 }
 
 .task-block__right {
-    width: 65%;
+    width: 69%;
     height: 100%;
     display: none;
     /* display: flex; */
@@ -536,7 +536,7 @@
         height: auto;
         min-width: 50px;
         min-height: 40px;
-        padding: 0 10px;
+        padding: 0 5px;
         border: 1px solid #0066ff;
         border-radius: 6px;
     }

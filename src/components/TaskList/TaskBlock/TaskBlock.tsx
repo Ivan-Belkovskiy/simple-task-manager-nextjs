@@ -7,6 +7,7 @@ import TaskEditorModal from "@/components/UI/TaskEditorModal/TaskEditorModal";
 import SimpleDropdown from "@/components/UI/SimpleDropdown/SimpleDropdown";
 import TaskInfoModal from "@/components/UI/TaskInfoModal/TaskInfoModal";
 import TextHighlight from "@/components/UI/TextHighlight/TextHighlight";
+import { getLocalDatetimeString } from "@/utils/datetime";
 
 
 export default function TaskBlock({ isEditMode, idx, data, categories, users, priorities, bodyRef, filterString = "" }: { isEditMode?: RefObject<boolean>, idx: number, data: Task, categories: Category[], users: User[], priorities: Priority[], filterString?: string; bodyRef?: RefObject<HTMLElement | null> }) {
@@ -81,18 +82,18 @@ export default function TaskBlock({ isEditMode, idx, data, categories, users, pr
 
                 <div className="task-block__infobox">
                     <div className="task-block__infobox-label">Создана</div>
-                    <div className="task-block__infobox-value">{data.created_at?.toLocaleDateString('ru-RU')}</div>
+                    <div className="task-block__infobox-value">{getLocalDatetimeString(data.created_at)}</div>
                     {(data.completed) ? (
                         <>
                             <hr />
                             <div className="task-block__infobox-label completed-at">Выполнена</div>
-                            <div className="task-block__infobox-value completed-at">{data.completed_at?.toLocaleDateString('ru-RU')}</div>
+                            <div className="task-block__infobox-value completed-at">{getLocalDatetimeString(data.completed_at)}</div>
                         </>
                     ) : (data.complete_before_date) && (
                         <>
                             <hr />
                             <div className="task-block__infobox-label complete-before-date">{(data.rejected) ? "Пропущена" : "Выполнить до"}</div>
-                            <div className="task-block__infobox-value complete-before-date">{data.complete_before_date?.toLocaleDateString('ru-RU')}</div>
+                            <div className="task-block__infobox-value complete-before-date">{getLocalDatetimeString(data.complete_before_date)}</div>
                         </>
                     )}
                 </div>
@@ -242,18 +243,18 @@ export default function TaskBlock({ isEditMode, idx, data, categories, users, pr
                         <div className="task-block__data --mobile-only">
                             <div className="task-block__infobox">
                                 <div className="task-block__infobox-label">Создана</div>
-                                <div className="task-block__infobox-value">{data.created_at?.toLocaleDateString('ru-RU')}</div>
+                                <div className="task-block__infobox-value">{getLocalDatetimeString(data.created_at)}</div>
                             </div>
                             <div className="task-block__infobox">
                                 {(data.completed) ? (
                                     <>
                                         <div className="task-block__infobox-label completed-at">Выполнена</div>
-                                        <div className="task-block__infobox-value completed-at">{data.completed_at?.toLocaleDateString('ru-RU')}</div>
+                                        <div className="task-block__infobox-value completed-at">{getLocalDatetimeString(data.completed_at)}</div>
                                     </>
                                 ) : (data.complete_before_date) && (
                                     <>
                                         <div className="task-block__infobox-label complete-before-date">{(data.rejected) ? "Пропущена" : "Выполнить до"}</div>
-                                        <div className="task-block__infobox-value complete-before-date">{data.complete_before_date?.toLocaleDateString('ru-RU')}</div>
+                                        <div className="task-block__infobox-value complete-before-date">{getLocalDatetimeString(data.complete_before_date)}</div>
                                     </>
                                 )}
                             </div>

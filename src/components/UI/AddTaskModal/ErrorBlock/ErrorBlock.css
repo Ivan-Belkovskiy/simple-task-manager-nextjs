@@ -1,0 +1,33 @@
+.error-block {
+    position: relative;
+    display: block;
+    /* width: 100%; */
+    /* background-color: #ff0000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    color: #fff; */
+}
+
+.error-block.error-display {
+    border: 3px solid #da0000;
+}
+
+.error-block__content {
+    padding: 10px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.error-block__infobox {
+    /* width: 100%; */
+    background-color: #da0000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    color: #fff;
+    padding: 3px 0;
+}

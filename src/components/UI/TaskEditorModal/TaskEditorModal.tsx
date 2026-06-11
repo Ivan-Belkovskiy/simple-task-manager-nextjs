@@ -18,7 +18,11 @@ export interface EditingTaskData {
     category?: number | string;
     users: (string | number)[];
     completeBefore?: string;
-    notifications?: Notification[]
+    notifications?: (Notification & {
+        new?: boolean
+    })[];
+
+    disableCompleteBeforeDate?: boolean;
 }
 
 export default function TaskEditorModal({ taskData, categories, priorities, users, onClose }: {
@@ -52,12 +56,18 @@ export default function TaskEditorModal({ taskData, categories, priorities, user
         if (taskData.completed || taskData.rejected) {
             await createTaskNew({
                 ...editingData,
-                completeBefore: editingData.completeBefore ? new Date(editingData.completeBefore).toISOString() : undefined
+                completeBefore: (
+                    editingData.completeBefore &&
+                    !editingData.disableCompleteBeforeDate
+                ) ? new Date(editingData.completeBefore).toISOString() : undefined
             });
         } else {
             await updateTask(taskData.id, {
                 ...editingData,
-                completeBefore: editingData.completeBefore ? new Date(editingData.completeBefore).toISOString() : undefined
+                completeBefore: (
+                    editingData.completeBefore &&
+                    !editingData.disableCompleteBeforeDate
+                ) ? new Date(editingData.completeBefore).toISOString() : undefined
             });
         }
 
@@ -94,7 +104,12 @@ export default function TaskEditorModal({ taskData, categories, priorities, user
                 )
                 : ""
         ),
-        notifications: data.task_notifications
+        notifications: (taskData.completed) ? data.task_notifications.map(nt => ({
+            ...nt,
+            activated: false
+        })) : data.task_notifications,
+
+        disableCompleteBeforeDate: !taskData.complete_before_date,
         // completeBefore: data.complete_before_date,
     });
 
@@ -116,7 +131,8 @@ export default function TaskEditorModal({ taskData, categories, priorities, user
                 notifications: [...p.notifications, {
                     hour_offset: (
                         (lastNotification?.hour_offset) ? (lastNotification.hour_offset - 1) : 5
-                    )
+                    ),
+                    new: true
                 }]
             }) : editingData;
         });
@@ -342,66 +358,88 @@ export default function TaskEditorModal({ taskData, categories, priorities, user
                     </div>
                     <div className="task-editor-modal__block complete-before-datetime-block">
                         <span className="task-editor-modal__label">Выполнить до:</span>
-                        <input
-                            type="datetime-local"
-                            min={getLocalDateString(new Date())}
-                            className="task-editor-modal__input"
-                            value={editingData.completeBefore || ""}
-                            onChange={(e) => {
-                                const today = getLocalDateString(new Date());
-                                if (
-                                    e.target.value >= today
-                                    // new Date(e.target.value).getTime() > new Date().getTime()
-                                ) {
-                                    setEditingData({
+                        {(!editingData.disableCompleteBeforeDate) && (
+                            <input
+                                type="datetime-local"
+                                min={getLocalDateString(new Date())}
+                                className="task-editor-modal__input"
+                                value={editingData.completeBefore || ""}
+                                onChange={(e) => {
+                                    const today = getLocalDateString(new Date());
+                                    if (
+                                        e.target.value >= today
+                                        // new Date(e.target.value).getTime() > new Date().getTime()
+                                    ) {
+                                        setEditingData({
+                                            ...editingData,
+                                            completeBefore: e.target.value
+                                        });
+                                    } else setEditingData({
                                         ...editingData,
-                                        completeBefore: e.target.value
+                                        completeBefore: today
                                     });
-                                } else setEditingData({
-                                    ...editingData,
-                                    completeBefore: today
-                                });
-                            }}
-                        />
-                    </div>
+                                }}
+                            />
+                        )}
 
-                    <div className="add-task-modal__block notification-settings">
-                        <h1>Настройки уведомления</h1>
-                        <div className="notification-settings__notification-list">
-                            {editingData.notifications?.map((n, idx) => (
-                                <div className="notification-settings__notification" key={idx}>
-                                    <span className="notification-settings__number">{idx + 1}-й раз</span>
-                                    <div className="notification-settings__block">
-                                        <span className="notification-settings__label --desktop-only">Напомнить за</span>
-                                        <span className="notification-settings__label --mobile-only">За</span>
-                                        <input
-                                            type="number"
-                                            className="notification-settings__input"
-                                            value={n?.hour_offset || 0}
-                                            disabled={n.activated}
-                                            onChange={(e) => handleNotificationChange(idx, Number(e.target.value))}
-                                        />
-                                        <span className="notification-settings__label">{formatHourTextForNotification(n.hour_offset || 0)}</span>
-                                    </div>
-                                    <div className={`notification-settings__block ${n.activated ? 'status-activated' : 'status-waiting'}`}>
-                                        <span className="notification-settings__label --desktop-only">{(n.activated ? "Активировано" : "Ожидается...")}</span>
-                                        <span className="notification-settings__label --mobile-only">{(n.activated ? "✔" : "🕑")}</span>
-                                    </div>
-                                    {(!n.activated) && <button
-                                        className="notification-settings__button remove-notification-btn"
-                                        onClick={() => removeNotification(idx)}
-                                    >
-                                        <span className="--desktop-only">Удалить</span>
-                                        <span className="--mobile-only">⨉</span>
-                                    </button>}
-                                </div>
-                            ))}
-                            <button
-                                className="notification-settings__button add-button"
-                                onClick={() => addNotification()}
-                            >Добавить напоминание</button>
+                        <div className="--desktop-only" style={{ gap: 'inherit' }}>
+                            <span className="task-editor-modal__label">Не указывать дату</span>
+                            <input type="checkbox" checked={editingData.disableCompleteBeforeDate} onChange={(e) => setEditingData(p => ({
+                                ...p,
+                                disableCompleteBeforeDate: e.target.checked,
+                            }))} />
                         </div>
                     </div>
+
+                    <div className="task-editor-modal__block --mobile-only">
+                        <span className="task-editor-modal__label">Не указывать дату</span>
+                        <input type="checkbox" checked={editingData.disableCompleteBeforeDate} onChange={(e) => setEditingData(p => ({
+                            ...p,
+                            disableCompleteBeforeDate: e.target.checked,
+                        }))} />
+                    </div>
+
+                    {(!editingData.disableCompleteBeforeDate) && (
+                        <div className="task-editor-modal__block notification-settings">
+                            <h1>Настройки уведомления</h1>
+                            <div className="notification-settings__notification-list">
+                                {editingData.notifications?.map((n, idx) => (
+                                    <div className="notification-settings__notification" key={idx}>
+                                        <span className="notification-settings__number">{idx + 1}-й раз</span>
+                                        <div className="notification-settings__block">
+                                            <span className="notification-settings__label --desktop-only">Напомнить за</span>
+                                            <span className="notification-settings__label --mobile-only">За</span>
+                                            <input
+                                                type="number"
+                                                className="notification-settings__input"
+                                                value={n?.hour_offset || 0}
+                                                disabled={n.activated}
+                                                onChange={(e) => handleNotificationChange(idx, Number(e.target.value))}
+                                            />
+                                            <span className="notification-settings__label">{formatHourTextForNotification(n.hour_offset || 0)}</span>
+                                        </div>
+                                        {!taskData.completed && (
+                                            <div className={`notification-settings__block ${n.new ? 'status-new' : (n.activated ? 'status-activated' : 'status-waiting')}`}>
+                                                <span className="notification-settings__label --desktop-only">{(n.new) ? "Новое" : (n.activated ? "Активировано" : "Ожидается...")}</span>
+                                                <span className="notification-settings__label --mobile-only">{n.new ? "NEW" : (n.activated ? "✔" : "🕑")}</span>
+                                            </div>
+                                        )}
+                                        {(!n.activated) && <button
+                                            className="notification-settings__button remove-notification-btn"
+                                            onClick={() => removeNotification(idx)}
+                                        >
+                                            <span className="--desktop-only">Удалить</span>
+                                            <span className="--mobile-only">⨉</span>
+                                        </button>}
+                                    </div>
+                                ))}
+                                <button
+                                    className="notification-settings__button add-button"
+                                    onClick={() => addNotification()}
+                                >Добавить напоминание</button>
+                            </div>
+                        </div>
+                    )}
 
                     {(taskData.completed || taskData.rejected) && (
                         <div className="task-editor-modal__block">

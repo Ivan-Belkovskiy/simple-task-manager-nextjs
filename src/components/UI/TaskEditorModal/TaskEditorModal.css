@@ -205,75 +205,6 @@
 }
 
 
-
-.task-editor-modal__overlay.reupload-mode {
-
-    .task-editor-modal {
-        border-color: #a500e6;
-    }
-
-    .task-editor-modal__title {
-        font-size: 21px;
-        color: #a500e6;
-    }
-
-    .task-editor-modal__content {
-
-        .task-editor-modal__input,
-        .task-editor-modal__label,
-        .task-editor-modal__select {
-            color: #a500e6;
-            border-color: #a500e6;
-            outline-color: #e600e6;
-        }
-    }
-
-    .task-editor-modal .multi-select__option,
-    .task-editor-modal .custom-select__option {
-        background-color: #8a00e6;
-        color: #fff;
-    }
-
-    .task-editor-modal .multi-select__option:hover,
-    .task-editor-modal .custom-select__option:hover {
-        background-color: #b800e6;
-        color: #fff;
-    }
-
-    .task-editor-modal .multi-select__option.selected,
-    .task-editor-modal .custom-select__option.selected {
-        background-color: #e600c7;
-        color: #ffffff;
-    }
-
-    .task-editor-modal__select .multi-select__dropdown,
-    .task-editor-modal__select .custom-select__dropdown {
-        background-color: #ffffff;
-    }
-
-    .task-editor-modal__notification.reupload-task-notification {
-        width: 90%;
-        background-color: #a500e6;
-        color: #fff;
-        text-align: center;
-        padding: 10px;
-        user-select: none;
-    }
-
-    .task-editor-modal__list.task-user-list {
-        width: 80%;
-        border: 2px solid #a500e6;
-        color: #a500e6;
-    }
-
-    .task-editor-modal__list.task-user-list .interactive-list__option.selected {
-        background-color: #e600c7;
-        color: #fff;
-    }
-
-}
-
-
 .task-editor-modal {
 
     .notification-settings {
@@ -384,7 +315,191 @@
         color: #5f049c;
     }
 
+    .notification-settings__block.status-new {
+        color: #22a800;
+        font-weight: bold;
+    }
+
 }
+
+.task-editor-modal__overlay.reupload-mode {
+
+    .task-editor-modal {
+        border-color: #a500e6;
+    }
+
+    .task-editor-modal__title {
+        font-size: 21px;
+        color: #a500e6;
+    }
+
+    .task-editor-modal__content {
+
+        .task-editor-modal__input,
+        .task-editor-modal__label,
+        .task-editor-modal__select {
+            color: #a500e6;
+            border-color: #a500e6;
+            outline-color: #e600e6;
+        }
+    }
+
+    .task-editor-modal .multi-select__option,
+    .task-editor-modal .custom-select__option {
+        background-color: #8a00e6;
+        color: #fff;
+    }
+
+    .task-editor-modal .multi-select__option:hover,
+    .task-editor-modal .custom-select__option:hover {
+        background-color: #b800e6;
+        color: #fff;
+    }
+
+    .task-editor-modal .multi-select__option.selected,
+    .task-editor-modal .custom-select__option.selected {
+        background-color: #e600c7;
+        color: #ffffff;
+    }
+
+    .task-editor-modal__select .multi-select__dropdown,
+    .task-editor-modal__select .custom-select__dropdown {
+        background-color: #ffffff;
+    }
+
+    .task-editor-modal__notification.reupload-task-notification {
+        width: 90%;
+        background-color: #a500e6;
+        color: #fff;
+        text-align: center;
+        padding: 10px;
+        user-select: none;
+    }
+
+    .task-editor-modal__list.task-user-list {
+        width: 80%;
+        border: 2px solid #a500e6;
+        color: #a500e6;
+    }
+
+    .task-editor-modal__list.task-user-list .interactive-list__option.selected {
+        background-color: #e600c7;
+        color: #fff;
+    }
+
+
+
+    .notification-settings {
+        width: 80%;
+        border: 2px solid #a500e6;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .notification-settings h1 {
+        width: 100%;
+        background-color: #a500e6;
+        color: #fff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 3px 0;
+        user-select: none;
+    }
+
+    .notification-settings__button.add-button {
+        border: 2px solid #a500e6;
+        color: #a500e6;
+        padding: 0 16px;
+        margin: 5px;
+        cursor: pointer;
+    }
+
+    .notification-settings__button.add-button:hover {
+        background-color: #a500e6;
+        color: #fff;
+    }
+
+    .notification-settings__notification-list {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .notification-settings__notification {
+        width: 95%;
+        display: flex;
+        color: #a500e6;
+        border: 2px solid #a500e6;
+        /* padding: 5px; */
+    }
+
+    .notification-settings__number {
+        display: flex;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        /* border-right: 2px solid #0b0bdb; */
+        padding: 5px 5px;
+    }
+
+    .notification-settings__block {
+        padding: 5px;
+        display: flex;
+        align-items: center;
+        border-left: 2px solid #a500e6;
+        /* border-right: 2px solid #a500e6; */
+    }
+
+    .notification-settings__block:last-of-type {
+        border-right: 2px solid #a500e6;
+    }
+
+    .notification-settings__input {
+        border: 2px solid #a500e6;
+        max-width: 60px;
+        outline: none;
+        margin: 0 5px;
+    }
+
+    .notification-settings__input:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+    }
+
+    .notification-settings__input:focus {
+        outline: 2px solid #00eeff;
+    }
+
+    .notification-settings__button.remove-notification-btn {
+        cursor: pointer;
+        background-color: #fff;
+        color: #ff0000;
+        /* border: 1px solid #0b65db; */
+        padding: 0 5px;
+    }
+
+    .notification-settings__button.remove-notification-btn:hover {
+        background-color: #ff0000;
+        color: #fff;
+    }
+
+    .notification-settings__block.status-activated {
+        /* background-color: #288d00; */
+        color: #288d00;
+    }
+
+    .notification-settings__block.status-waiting {
+        color: #5f049c;
+    }
+
+}
+
+
 
 .task-editor-modal .--desktop-only {
     display: none;

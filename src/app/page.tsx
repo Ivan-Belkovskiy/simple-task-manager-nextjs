@@ -53,6 +53,7 @@ export default async function Home() {
     orderBy: [
       { completed: 'asc' },
       { rejected: 'asc' },
+      { completed_at: 'desc' },
       { complete_before_date: 'asc' },
       { priority_id: 'desc' },
     ]

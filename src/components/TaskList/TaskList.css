@@ -164,6 +164,30 @@
     outline: none;
 }
 
+.task-list__input.filter-datetime-input {
+    border: 1px solid #002fff;
+    color: #002fff;
+    /* max-width: 150px; */
+    margin: 0 5px;
+    outline: none;
+}
+
+.task-list__input.filter-datetime-input:focus {
+    outline: 2px solid #00f7ff;
+}
+
+.task-list__filter.task-date-filter {
+    flex-direction: column;
+}
+
+.task-list__block {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 5px;
+}
+
 .task-list .--mobile-only {
     display: flex;
 }
@@ -219,4 +243,14 @@
         display: flex;
         align-items: center;
     }
+
+    .task-list__filter.task-date-filter {
+        flex-direction: row;
+    }
+
+    .task-list__block {
+        display: flex;
+        width: auto;
+    }
+
 }

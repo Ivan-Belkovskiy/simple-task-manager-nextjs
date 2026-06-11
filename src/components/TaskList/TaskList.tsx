@@ -7,6 +7,7 @@ import TaskBlock from "./TaskBlock/TaskBlock";
 import { Dispatch, RefObject, SetStateAction, useEffect, useRef, useState } from "react";
 import MultiSelect from "../UI/MultiSelect/MultiSelect";
 import InteractiveList from "../UI/InteractiveList/InteractiveList";
+import { getLocalDateString } from "@/utils/datetime";
 
 interface StateFilterDefinition {
     disp: string;
@@ -49,6 +50,7 @@ export default function TaskList({ isEditMode, initialTasks, categories, priorit
     const [filterUsers, setFilterUsers] = useState<(string | number)[]>(users.map(u => u.id));
     const [filterString, setFilterString] = useState("");
     const [filterState, setFilterState] = useState("[[ANY]]");
+    const [filterDatetime, setFilterDatetime] = useState<string[]>(["", ""]);
 
     const [isFiltersExpanded, setFiltersExpanded] = useState(false);
     const [isFiltersExpandedMobile, setFiltersExpandedMobile] = useState(false);
@@ -69,7 +71,19 @@ export default function TaskList({ isEditMode, initialTasks, categories, priorit
 
         const matchState = stateFilters[filterState]?.fn(t) ?? true;
 
-        return matchCategory && matchPriority && matchUsers && matchString && matchState;
+        const hasStartDate = filterDatetime[0] !== "";
+        const hasEndDate = filterDatetime[1] !== "";
+
+        const startDate = hasStartDate ? new Date(filterDatetime[0]).getTime() : null;
+        const endDate = hasEndDate ? new Date(filterDatetime[1]).getTime() : null;
+        const taskDate = t.complete_before_date ? new Date(t.complete_before_date).getTime() : null;
+
+        if (!taskDate) return hasStartDate || hasEndDate ? false : true;
+
+        const matchStart = startDate ? taskDate >= startDate : true;
+        const matchEnd = endDate ? taskDate <= endDate : true;
+
+        return matchCategory && matchPriority && matchUsers && matchString && matchState && matchStart && matchEnd;
     });
 
     return (
@@ -157,6 +171,34 @@ export default function TaskList({ isEditMode, initialTasks, categories, priorit
                                         <option value={entry[0]} key={entry[0]}>{entry[1].disp}</option>
                                     ))}
                                 </select>
+                            </div>
+                            <div className="task-list__filter task-date-filter">
+                                <div className="task-list__label">За период:</div>
+                                <div className="task-list__block">
+                                    <span className="--mobile-only">С</span>
+                                    <input
+                                        className="task-list__input filter-datetime-input"
+                                        type="datetime-local"
+                                        value={(filterDatetime[0])}
+                                        max={filterDatetime[1]}
+                                        onChange={(e) => setFilterDatetime(p => (
+                                            p.map((_, i) => (i === 0) ? e.target.value : _)
+                                        ))}
+                                    />
+                                </div>
+                                <span className="--desktop-only">—</span>
+                                <div className="task-list__block">
+                                    <span className="--mobile-only">По</span>
+                                    <input
+                                        className="task-list__input filter-datetime-input"
+                                        type="datetime-local"
+                                        min={filterDatetime[0]}
+                                        value={(filterDatetime[1])}
+                                        onChange={(e) => setFilterDatetime(p => (
+                                            p.map((_, i) => (i === 1) ? e.target.value : _)
+                                        ))}
+                                    />
+                                </div>
                             </div>
                         </div>
                     )}

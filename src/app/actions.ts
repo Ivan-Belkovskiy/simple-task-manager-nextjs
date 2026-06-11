@@ -202,13 +202,12 @@ export async function updateTask(id: number, data: EditingTaskData) {
                     deleteMany: {},
                     create: data.users.map((userId) => ({ user_id: Number(userId) })),
                 },
-                // Обновляем уведомления
                 task_notifications: {
-                    deleteMany: {}, // Удаляем старые
-                    create: data.notifications?.map(n => ({
+                    deleteMany: {}, 
+                    create: (!data.disableCompleteBeforeDate) ? data.notifications?.map(n => ({
                         hour_offset: Number(n.hour_offset),
-                        activated: n.activated || false, // Сохраняем статус активации
-                    }))
+                        activated: n.activated || false, 
+                    })) : []
                 },
             }
         });

@@ -269,7 +269,17 @@
 }
 
 
+
+.add-task-modal__error-block {
+    width: 100%;
+}
+
+
 @media (min-width: 1024px) {
+
+    .add-task-modal__error-block {
+        width: 80%;
+    }
 
     .add-task-modal .--mobile-only {
         display: none;
