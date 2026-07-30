@@ -100,6 +100,30 @@
     user-select: none;
 }
 
+.task-block__complete-data {
+    width: 95%;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.complete-info-label {
+    color: #0c8d00;
+}
+
+.complete-info-input {
+    width: 80%;
+    border: 2px solid #0c8d00;
+    color: #0c8d00;
+    min-height: 140px;
+    padding: 8px;
+    /* font-family: monospace; */
+}
+
+.complete-info-input:focus {
+    outline: 2px solid #15ff00;
+}
+
 .task-block__infobox-label {
     width: 100%;
     height: 50%;

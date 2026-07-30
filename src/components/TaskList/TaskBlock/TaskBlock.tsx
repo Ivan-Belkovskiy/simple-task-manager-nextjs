@@ -16,9 +16,11 @@ export default function TaskBlock({ isEditMode, idx, data, categories, users, pr
 
     const [isExpanded, setExpanded] = useState(false);
 
-    const [openedModal, setOpenedModal] = useState<"confirm-delete" | "confirm-complete" | "edit-task" | null>(null);
+    const [openedModal, setOpenedModal] = useState<"confirm-delete" | "confirm-complete" | "edit-task" | "complete-info" | null>(null);
 
-    const updateOpenedModal = (value: "confirm-delete" | "confirm-complete" | "edit-task" | null) => {
+    const [completeInfo, setCompleteInfo] = useState<string>("");
+
+    const updateOpenedModal = (value: "confirm-delete" | "confirm-complete" | "edit-task" | "complete-info" | null) => {
         setOpenedModal(value);
         if (isEditMode) isEditMode.current = (
             value ? true : false
@@ -39,7 +41,7 @@ export default function TaskBlock({ isEditMode, idx, data, categories, users, pr
         if (!data.id) return;
 
         setLoading(true);
-        await completeTask(data.id);
+        await completeTask(data.id, completeInfo);
         setLoading(false);
 
         updateOpenedModal(null);
@@ -102,7 +104,8 @@ export default function TaskBlock({ isEditMode, idx, data, categories, users, pr
                     <button
                         className={`task-block__button complete-btn ${(data.completed) ? 'completed' : ''} ${(data.rejected) ? 'rejected' : ''}`}
                         onClick={() => {
-                            if (!data.completed && !data.rejected) updateOpenedModal('confirm-complete');
+                            if (data.completed) updateOpenedModal('complete-info');
+                            else if (!data.completed && !data.rejected) updateOpenedModal('confirm-complete');
                         }}
                     >{data.rejected ? 'Пропущена' : (data.completed ? 'Выполнена' : 'Выполнить')}</button>
                     <button
@@ -265,7 +268,8 @@ export default function TaskBlock({ isEditMode, idx, data, categories, users, pr
                         <button
                             className={`task-block__button complete-btn ${(data.completed) ? 'completed' : ''} ${(data.rejected) ? 'rejected' : ''}`}
                             onClick={() => {
-                                if (!data.completed && !data.rejected) updateOpenedModal('confirm-complete');
+                                if (data.completed) updateOpenedModal('complete-info');
+                                else if (!data.completed && !data.rejected) updateOpenedModal('confirm-complete');
                             }}
                         >{(data.rejected) ? 'Пропущена' : (data.completed ? 'Выполнена' : 'Выполнить')}</button>
                         <button
@@ -336,7 +340,51 @@ export default function TaskBlock({ isEditMode, idx, data, categories, users, pr
                         // width: '50%',
                         // height: '30%'
                     }
-                }} />
+                }} >
+                    <div className="task-block__complete-data">
+                        <span className="task-block__label complete-info-label">Примечание:</span>
+                        <textarea
+                            className="task-block__input complete-info-input"
+                            value={completeInfo}
+                            onChange={(e) => setCompleteInfo(e.target.value)}
+                        ></textarea>
+                    </div>
+                </SimpleModal>
+            )}
+
+            {(openedModal === 'complete-info') && (
+                <SimpleModal title={`Информация о выполнении "${data.name}"`} buttons={[
+                    {
+                        text: "ОК",
+                        className: "task-block__button confirm-complete-btn",
+                        onClick: () => updateOpenedModal(null),
+                        disabled: isLoading
+                    },
+                    // {
+                    //     text: "Подтвердить",
+                    //     className: "task-block__button confirm-complete-btn",
+                    //     onClick: () => confirmCompleteTask(),
+                    //     disabled: isLoading
+                    // }
+                ]} styles={{
+                    title: {
+                        color: '#129b00'
+                    },
+                    modal: {
+                        border: '8px solid #17c900',
+                        borderRadius: '15px',
+                        // width: '50%',
+                        // height: '30%'
+                    }
+                }} >
+                    <div className="task-block__complete-data">
+                        <span className="task-block__label complete-info-label">Примечание:</span>
+                        <textarea
+                            disabled
+                            className="task-block__input complete-info-input"
+                        >{data.complete_info}</textarea>
+                    </div>
+                </SimpleModal>
             )}
 
             {(openedModal === 'edit-task') && (

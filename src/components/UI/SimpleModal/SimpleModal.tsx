@@ -1,4 +1,4 @@
-import { CSSProperties } from "react";
+import { CSSProperties, ReactNode } from "react";
 import "./SimpleModal.css";
 
 interface SimpleModalButton {
@@ -12,12 +12,12 @@ interface SimpleModalButton {
 interface SimpleModalStyles {
     modal?: CSSProperties;
     title?: CSSProperties;
-    messagebox?: CSSProperties;
+    content?: CSSProperties;
 }
 
-export default function SimpleModal({ title, message, buttons, styles }: {
+export default function SimpleModal({ title, children, buttons, styles }: {
     title: string;
-    message?: string;
+    children?: ReactNode;
     buttons?: SimpleModalButton[];
     styles?: SimpleModalStyles;
 }) {
@@ -27,7 +27,7 @@ export default function SimpleModal({ title, message, buttons, styles }: {
                 <div className="simple-modal__header">
                     <h1 className="simple-modal__title" style={styles?.title}>{title}</h1>
                 </div>
-                <div className="simple-modal__messagebox" style={styles?.messagebox}>{message}</div>
+                <div className="simple-modal__content" style={styles?.content}>{children}</div>
                 <div className="simple-modal__buttons">
                     {buttons?.map((btn, idx) => (
                         <button

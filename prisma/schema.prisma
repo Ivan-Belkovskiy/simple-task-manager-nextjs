@@ -41,6 +41,7 @@ model tasks {
   completed_at         DateTime?            @db.Timestamptz(6)
   complete_before_date DateTime?            @db.Timestamptz(6)
   rejected             Boolean              @default(false)
+  complete_info        String?
   task_notifications   task_notifications[]
   task_users           task_users[]
   task_categories      task_categories?     @relation(fields: [category_id], references: [id], onUpdate: NoAction)

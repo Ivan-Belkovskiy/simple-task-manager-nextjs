@@ -126,12 +126,13 @@ export async function deleteTask(id: number) {
     }
 }
 
-export async function completeTask(id: number) {
+export async function completeTask(id: number, info?: string) {
     try {
         await prisma.tasks.update({
             data: {
                 completed: true,
-                completed_at: new Date()
+                completed_at: new Date(),
+                complete_info: info,
             },
             where: {
                 id: id,
