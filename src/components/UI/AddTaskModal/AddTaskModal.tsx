@@ -47,7 +47,8 @@ export default function AddTaskModal({ categories, priorities, users, onClose }:
         //     !newTaskData.completeBefore
         // ) return;
 
-        const completeBeforeDate = new Date(newTaskData.completeBefore!).toISOString();
+        const completeBeforeDate = (!newTaskData.isCompleted && newTaskData.completeBefore) ? new Date(newTaskData.completeBefore).toISOString() : null;
+
 
         const formData = new FormData();
         formData.append("name", newTaskData.name);
@@ -55,7 +56,16 @@ export default function AddTaskModal({ categories, priorities, users, onClose }:
         formData.append("priorityId", String(newTaskData.priority));
         formData.append("categoryId", String(newTaskData.category));
 
-        if (!newTaskData.disableCompleteBeforeDate) formData.append("completeBeforeDate", completeBeforeDate);
+        if (newTaskData.isCompleted && newTaskData.completedAt) {
+            const completedAtDate = new Date(newTaskData.completedAt!).toISOString();
+            formData.append("completedAtDate", completedAtDate);
+            if (newTaskData.completeInfo) formData.append("completeInfo", newTaskData.completeInfo);
+        } else if (!newTaskData.disableCompleteBeforeDate && completeBeforeDate) formData.append("completeBeforeDate", completeBeforeDate);
+
+        if (newTaskData.allowEnterCreationDate && newTaskData.createdAt) {
+            const createdAtDate = new Date(newTaskData.createdAt).toISOString();
+            formData.append("createdAtDate", createdAtDate);
+        }
 
         setValidationErrors(p => ({
             ...p,
@@ -104,6 +114,11 @@ export default function AddTaskModal({ categories, priorities, users, onClose }:
         users: (string | number)[],
         completeBefore?: string,
         disableCompleteBeforeDate?: boolean,
+        isCompleted?: boolean,
+        completedAt?: string,
+        completeInfo?: string,
+        allowEnterCreationDate?: boolean,
+        createdAt?: string,
         // complete_before_date: 
     }>({
         ...initialTaskData,
@@ -335,9 +350,46 @@ export default function AddTaskModal({ categories, priorities, users, onClose }:
                             ]}
                         />
                     </div> */}
+
+                    <div className="add-task-modal__block --mobile-only">
+                        <span className="add-task-modal__label">Ввести дату создания</span>
+                        <input type="checkbox" checked={newTaskData.allowEnterCreationDate} onChange={(e) => setNewTaskData(p => ({
+                            ...p,
+                            allowEnterCreationDate: e.target.checked,
+                        }))} />
+                    </div>
+
+                    <div className="add-task-modal__block complete-before-datetime-block">
+                        <div className="--desktop-only" style={{ gap: 'inherit' }}>
+                            <span className="add-task-modal__label">Ввести дату создания</span>
+                            <input type="checkbox" checked={newTaskData.allowEnterCreationDate} onChange={(e) => setNewTaskData(p => ({
+                                ...p,
+                                allowEnterCreationDate: e.target.checked,
+                            }))} />
+                        </div>
+
+                        {(newTaskData.allowEnterCreationDate) && (
+                            <>
+                                <span className="add-task-modal__label">Дата создания:</span>
+                                <input
+                                    type="datetime-local"
+                                    className="add-task-modal__input"
+                                    // min={getLocalDateString(new Date())}
+                                    value={newTaskData.createdAt || ""}
+                                    onChange={(e) => {
+                                        setNewTaskData({
+                                            ...newTaskData,
+                                            createdAt: e.target.value,
+                                        })
+                                    }}
+                                />
+                            </>
+                        )}
+                    </div>
+
                     <div className="add-task-modal__block complete-before-datetime-block">
                         <span className="add-task-modal__label">Выполнить до:</span>
-                        {(!newTaskData.disableCompleteBeforeDate) && (
+                        {(!newTaskData.disableCompleteBeforeDate && !newTaskData.isCompleted) && (
                             <input
                                 type="datetime-local"
                                 className="add-task-modal__input"
@@ -361,24 +413,39 @@ export default function AddTaskModal({ categories, priorities, users, onClose }:
                             />
                         )}
 
-                        <div className="--desktop-only" style={{ gap: 'inherit' }}>
+                        {(!newTaskData.isCompleted) && <div className="--desktop-only" style={{ gap: 'inherit' }}>
                             <span className="add-task-modal__label">Не указывать дату</span>
                             <input type="checkbox" checked={newTaskData.disableCompleteBeforeDate} onChange={(e) => setNewTaskData(p => ({
                                 ...p,
                                 disableCompleteBeforeDate: e.target.checked,
                             }))} />
-                        </div>
+                        </div>}
+
+                        {(!newTaskData.disableCompleteBeforeDate) && <div className="--desktop-only" style={{ gap: 'inherit' }}>
+                            <span className="add-task-modal__label">Уже выполнена</span>
+                            <input type="checkbox" checked={newTaskData.isCompleted} onChange={(e) => setNewTaskData(p => ({
+                                ...p,
+                                isCompleted: e.target.checked,
+                            }))} />
+                        </div>}
 
                         {/* <input type="datetime-local" className="add-task-modal__input" /> */}
                     </div>
-                    <div className="add-task-modal__block --mobile-only">
+                    {(!newTaskData.isCompleted) && <div className="add-task-modal__block --mobile-only">
                         <span className="add-task-modal__label">Не указывать дату</span>
                         <input type="checkbox" checked={newTaskData.disableCompleteBeforeDate} onChange={(e) => setNewTaskData(p => ({
                             ...p,
                             disableCompleteBeforeDate: e.target.checked,
                         }))} />
-                    </div>
-                    {!newTaskData.disableCompleteBeforeDate && (
+                    </div>}
+                    {(!newTaskData.disableCompleteBeforeDate) && <div className="add-task-modal__block --mobile-only">
+                        <span className="add-task-modal__label">Уже выполнена</span>
+                        <input type="checkbox" checked={newTaskData.isCompleted} onChange={(e) => setNewTaskData(p => ({
+                            ...p,
+                            isCompleted: e.target.checked,
+                        }))} />
+                    </div>}
+                    {(!newTaskData.disableCompleteBeforeDate && !newTaskData.isCompleted) && (
                         <div className="add-task-modal__block notification-settings">
                             <h1>Настройки уведомления</h1>
                             <div className="notification-settings__notification-list">
@@ -439,6 +506,63 @@ export default function AddTaskModal({ categories, priorities, users, onClose }:
                                 >Добавить напоминание</button>
                             </div>
                         </div>
+                    )}
+                    {(newTaskData.isCompleted) && <div className="add-task-modal__block complete-before-datetime-block">
+                        <span className="add-task-modal__label">Дата выполнения:</span>
+                        <input
+                            type="datetime-local"
+                            className="add-task-modal__input"
+                            // min={getLocalDateString(new Date())}
+                            value={newTaskData.completedAt || getLocalDateString(new Date())}
+                            onChange={(e) => {
+                                setNewTaskData(p => ({
+                                    ...p,
+                                    completedAt: e.target.value
+                                }));
+                                // const today = getLocalDateString(new Date());
+                                // if (
+                                //     e.target.value >= today
+                                //     // new Date(e.target.value).getTime() > new Date().getTime()
+                                // ) {
+                                //     setNewTaskData({
+                                //         ...newTaskData,
+                                //         completeBefore: e.target.value
+                                //     });
+                                // } else setNewTaskData({
+                                //     ...newTaskData,
+                                //     completeBefore: today,
+                                // })
+                            }}
+                        />
+
+                        {/* <input type="datetime-local" className="add-task-modal__input" /> */}
+                    </div>}
+
+                    {(newTaskData.isCompleted) && (
+                        <>
+                            <div className="add-task-modal__block --desktop-only">
+                                <span className="add-task-modal__label">Примечание к выполнению:</span>
+                                <textarea
+                                    className="add-task-modal__input task-name-input"
+                                    value={newTaskData.completeInfo}
+                                    onChange={(e) => setNewTaskData({
+                                        ...newTaskData,
+                                        completeInfo: e.target.value
+                                    })}
+                                />
+                            </div>
+                            <div className="add-task-modal__block flex-col">
+                                <span className="add-task-modal__label">Примечание к выполнению:</span>
+                                <textarea
+                                    className="add-task-modal__input task-name-input"
+                                    value={newTaskData.completeInfo}
+                                    onChange={(e) => setNewTaskData({
+                                        ...newTaskData,
+                                        completeInfo: e.target.value
+                                    })}
+                                />
+                            </div>
+                        </>
                     )}
                     {/* <select className="add-task-modal__select">
                         {Array(40).fill('', 0, 40).map((_, n) => (

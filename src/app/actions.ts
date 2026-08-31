@@ -76,16 +76,22 @@ export async function createTask(formData: FormData, selectedUserIds: number[], 
     const categoryId = formData.get("categoryId");
     const priorityId = formData.get("priorityId");
     const completeBefore = formData.get("completeBeforeDate");
+    const completedAt = formData.get("completedAtDate");
+    const completeInfo = formData.get("completeInfo") as string;
+    const createdAt = formData.get("createdAtDate") as string;
 
     try {
         await prisma.tasks.create({
             data: {
                 name,
                 description,
-                completed: false,
+                completed: (completedAt) ? true : false,
                 category_id: (categoryId && categoryId !== '[[NONE]]') ? Number(categoryId) : null,
                 priority_id: priorityId ? Number(priorityId) : null,
                 complete_before_date: completeBefore ? new Date(completeBefore as string) : null,
+                completed_at: completedAt ? new Date(completedAt as string) : null,
+                complete_info: completedAt ? (completeInfo || undefined) : undefined,
+                created_at: createdAt ? new Date(createdAt as string) : null,
 
                 task_users: {
                     create: selectedUserIds.map((userId) => ({
@@ -199,15 +205,16 @@ export async function updateTask(id: number, data: EditingTaskData) {
                 category_id: (data.category && data.category !== '[[NONE]]') ? Number(data.category) : null,
                 priority_id: data.priority,
                 complete_before_date: data.completeBefore ? new Date(data.completeBefore) : null,
+                created_at: data.createdAt ? new Date(data.createdAt) : undefined,
                 task_users: {
                     deleteMany: {},
                     create: data.users.map((userId) => ({ user_id: Number(userId) })),
                 },
                 task_notifications: {
-                    deleteMany: {}, 
+                    deleteMany: {},
                     create: (!data.disableCompleteBeforeDate) ? data.notifications?.map(n => ({
                         hour_offset: Number(n.hour_offset),
-                        activated: n.activated || false, 
+                        activated: n.activated || false,
                     })) : []
                 },
             }
@@ -237,6 +244,7 @@ export async function createTaskNew(data: EditingTaskData) {
                 category_id: (data.category && data.category !== '[[NONE]]') ? Number(data.category) : null,
                 priority_id: data.priority,
                 complete_before_date: data.completeBefore ? new Date(data.completeBefore) : null,
+                created_at: data.createdAt ? new Date(data.createdAt) : undefined,
 
                 task_users: {
                     create: data.users.map((userId) => ({

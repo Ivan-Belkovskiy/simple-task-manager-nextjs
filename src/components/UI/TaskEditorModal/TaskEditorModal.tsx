@@ -21,6 +21,12 @@ export interface EditingTaskData {
     notifications?: (Notification & {
         new?: boolean
     })[];
+    isCompleted?: boolean;
+
+    allowEnterCreationDate?: boolean;
+
+    createdAt?: string;
+
 
     disableCompleteBeforeDate?: boolean;
 }
@@ -41,10 +47,10 @@ export default function TaskEditorModal({ taskData, categories, priorities, user
     const confirmChanges = async () => {
         setLoading(true);
         // if (
-        //     !newTaskData.name ||
-        //     !newTaskData.priority ||
-        //     !newTaskData.users ||
-        //     !newTaskData.completeBefore
+        //     !editingData.name ||
+        //     !editingData.priority ||
+        //     !editingData.users ||
+        //     !editingData.completeBefore
         // ) return;
         // const formData = new FormData();
         // formData.append("name", editingData.name);
@@ -356,9 +362,47 @@ export default function TaskEditorModal({ taskData, categories, priorities, user
                             ]}
                         />
                     </div>
+
+                    <div className="task-editor-modal__block --mobile-only">
+                        <span className="task-editor-modal__label">Ввести дату создания</span>
+                        <input type="checkbox" checked={editingData.allowEnterCreationDate} onChange={(e) => setEditingData(p => ({
+                            ...p,
+                            allowEnterCreationDate: e.target.checked,
+                        }))} />
+                    </div>
+
+                    <div className="task-editor-modal__block complete-before-datetime-block">
+                        <div className="--desktop-only" style={{ gap: 'inherit' }}>
+                            <span className="task-editor-modal__label">Ввести дату создания</span>
+                            <input type="checkbox" checked={editingData.allowEnterCreationDate} onChange={(e) => setEditingData(p => ({
+                                ...p,
+                                allowEnterCreationDate: e.target.checked,
+                            }))} />
+                        </div>
+
+                        {(editingData.allowEnterCreationDate) && (
+                            <>
+                                <span className="task-editor-modal__label">Дата создания:</span>
+                                <input
+                                    type="datetime-local"
+                                    className="task-editor-modal__input"
+                                    // min={getLocalDateString(new Date())}
+                                    value={editingData.createdAt || ""}
+                                    onChange={(e) => {
+                                        setEditingData({
+                                            ...editingData,
+                                            createdAt: e.target.value,
+                                        })
+                                    }}
+                                />
+                            </>
+                        )}
+                    </div>
+
+
                     <div className="task-editor-modal__block complete-before-datetime-block">
                         <span className="task-editor-modal__label">Выполнить до:</span>
-                        {(!editingData.disableCompleteBeforeDate) && (
+                        {(!editingData.disableCompleteBeforeDate && !editingData.isCompleted) && (
                             <input
                                 type="datetime-local"
                                 min={getLocalDateString(new Date())}
@@ -382,22 +426,22 @@ export default function TaskEditorModal({ taskData, categories, priorities, user
                             />
                         )}
 
-                        <div className="--desktop-only" style={{ gap: 'inherit' }}>
+                       {(!editingData.isCompleted) && <div className="--desktop-only" style={{ gap: 'inherit' }}>
                             <span className="task-editor-modal__label">Не указывать дату</span>
                             <input type="checkbox" checked={editingData.disableCompleteBeforeDate} onChange={(e) => setEditingData(p => ({
                                 ...p,
                                 disableCompleteBeforeDate: e.target.checked,
                             }))} />
-                        </div>
+                        </div>}
                     </div>
 
-                    <div className="task-editor-modal__block --mobile-only">
+                    {(!editingData.isCompleted) && <div className="task-editor-modal__block --mobile-only">
                         <span className="task-editor-modal__label">Не указывать дату</span>
                         <input type="checkbox" checked={editingData.disableCompleteBeforeDate} onChange={(e) => setEditingData(p => ({
                             ...p,
                             disableCompleteBeforeDate: e.target.checked,
                         }))} />
-                    </div>
+                    </div>}
 
                     {(!editingData.disableCompleteBeforeDate) && (
                         <div className="task-editor-modal__block notification-settings">
