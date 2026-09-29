@@ -22,6 +22,7 @@ export interface EditingTaskData {
         new?: boolean
     })[];
     isCompleted?: boolean;
+    completedAt?: string;
 
     allowEnterCreationDate?: boolean;
 
@@ -46,18 +47,6 @@ export default function TaskEditorModal({ taskData, categories, priorities, user
 
     const confirmChanges = async () => {
         setLoading(true);
-        // if (
-        //     !editingData.name ||
-        //     !editingData.priority ||
-        //     !editingData.users ||
-        //     !editingData.completeBefore
-        // ) return;
-        // const formData = new FormData();
-        // formData.append("name", editingData.name);
-        // formData.append("description", (editingData.description));
-        // formData.append("priorityId", String(editingData.priority));
-        // formData.append("categoryId", String(editingData.category));
-        // formData.append("completeBeforeDate", String(editingData.completeBefore));
 
         if (taskData.completed || taskData.rejected) {
             await createTaskNew({
@@ -77,13 +66,6 @@ export default function TaskEditorModal({ taskData, categories, priorities, user
             });
         }
 
-        // await createTask(formData, editingData.users.map(v => Number(v)));
-
-        // setEditingData({
-        //     name: '',
-        //     description: '',
-        //     users: [],
-        // });
         setLoading(false);
 
         onClose?.();

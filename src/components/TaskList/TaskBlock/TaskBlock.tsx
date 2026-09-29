@@ -77,9 +77,12 @@ export default function TaskBlock({ isEditMode, idx, data, categories, users, pr
                 </div>
 
                 <div className="task-block__infobox users-infobox">
-                    {data.task_users.map((user, i) => (
+                    {data.task_users.slice(0, 3).map((user, i) => (
                         <div className="task-block__user" key={i}>{user.users.name}</div>
                     ))}
+                    {data.task_users.length >= 4 && (
+                        <div className="task-block__user">...</div>
+                    )}
                 </div>
 
                 <div className="task-block__infobox">

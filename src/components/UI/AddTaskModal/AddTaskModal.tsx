@@ -12,6 +12,7 @@ import CustomSelect from "../CustomSelect/CustomSelect";
 import CategoryListModal from "../CategoryListModal/CategoryListModal";
 import InteractiveList from "../InteractiveList/InteractiveList";
 import ErrorBlock from "./ErrorBlock/ErrorBlock";
+import SubTaskEditor from "../SubTaskEditor/SubTaskEditor";
 
 // interface ValidationError {
 //     errorText: string;
@@ -551,7 +552,7 @@ export default function AddTaskModal({ categories, priorities, users, onClose }:
                                     })}
                                 />
                             </div>
-                            <div className="add-task-modal__block flex-col">
+                            <div className="add-task-modal__block flex-col --mobile-only">
                                 <span className="add-task-modal__label">Примечание к выполнению:</span>
                                 <textarea
                                     className="add-task-modal__input task-name-input"
@@ -564,6 +565,8 @@ export default function AddTaskModal({ categories, priorities, users, onClose }:
                             </div>
                         </>
                     )}
+
+                    {/* <SubTaskEditor subTasks={[]} /> */}
                     {/* <select className="add-task-modal__select">
                         {Array(40).fill('', 0, 40).map((_, n) => (
                             <option value={n} key={n}>Option #{n + 1}</option>
