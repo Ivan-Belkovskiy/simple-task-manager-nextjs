@@ -2,8 +2,127 @@
 
 import { prisma } from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
-import { EditingTaskData } from "@/components/UI/TaskEditorModal/TaskEditorModal";
 import { Notification } from "./page";
+import type { TaskSubmitPayload } from '@/components/UI/TaskManagementModal/types';
+
+export async function createTask(data: TaskSubmitPayload) {
+    try {
+        const isCompleted = !!data.isCompleted;
+
+        await prisma.tasks.create({
+            data: {
+                name: data.name,
+                description: data.description,
+                completed: isCompleted,
+                completed_at: isCompleted
+                    ? new Date(data.completedAt ?? new Date().toISOString())
+                    : null,
+                complete_info: isCompleted ? (data.completeInfo || undefined) : undefined,
+                category_id: (data.category && data.category !== '[[NONE]]')
+                    ? Number(data.category) : null,
+                priority_id: data.priority,
+                complete_before_date: (!isCompleted && !data.disableCompleteBeforeDate && data.completeBefore)
+                    ? new Date(data.completeBefore) : null,
+                created_at: (data.allowEnterCreationDate && data.createdAt)
+                    ? new Date(data.createdAt) : undefined,
+
+                task_users: {
+                    create: data.users.map(userId => ({ user_id: Number(userId) })),
+                },
+                task_notifications: {
+                    create: (!isCompleted && !data.disableCompleteBeforeDate)
+                        ? data.notifications?.map(n => ({
+                            hour_offset: Number(n.hour_offset),
+                            activated: false,
+                        }))
+                        : [],
+                },
+            },
+        });
+
+        revalidatePath('/');
+        return { success: true };
+    } catch (error) {
+        console.error('Ошибка создания задачи:', error);
+        return { success: false };
+    }
+}
+
+export async function updateTask(id: number, data: TaskSubmitPayload) {
+    try {
+        await prisma.tasks.update({
+            where: { id },
+            data: {
+                name: data.name,
+                description: data.description,
+                category_id: (data.category && data.category !== '[[NONE]]')
+                    ? Number(data.category) : null,
+                priority_id: data.priority,
+                complete_before_date: (!data.disableCompleteBeforeDate && data.completeBefore)
+                    ? new Date(data.completeBefore) : null,
+                created_at: (data.allowEnterCreationDate && data.createdAt)
+                    ? new Date(data.createdAt) : undefined,
+
+                task_users: {
+                    deleteMany: {},
+                    create: data.users.map(userId => ({ user_id: Number(userId) })),
+                },
+                task_notifications: {
+                    deleteMany: {},
+                    create: (!data.disableCompleteBeforeDate)
+                        ? data.notifications?.map(n => ({
+                            hour_offset: Number(n.hour_offset),
+                            activated: n.activated || false,
+                        }))
+                        : [],
+                },
+            },
+        });
+
+        revalidatePath('/');
+        return { success: true };
+    } catch (error) {
+        console.error('Ошибка обновления задачи:', error);
+        return { success: false };
+    }
+}
+
+export async function createTaskNew(data: TaskSubmitPayload) {
+    try {
+        await prisma.tasks.create({
+            data: {
+                name: data.name,
+                description: data.description,
+                completed: false,
+                category_id: (data.category && data.category !== '[[NONE]]')
+                    ? Number(data.category) : null,
+                priority_id: data.priority,
+                complete_before_date: (!data.disableCompleteBeforeDate && data.completeBefore)
+                    ? new Date(data.completeBefore) : null,
+                created_at: (data.allowEnterCreationDate && data.createdAt)
+                    ? new Date(data.createdAt) : undefined,
+
+                task_users: {
+                    create: data.users.map(userId => ({ user_id: Number(userId) })),
+                },
+                task_notifications: {
+                    create: (!data.disableCompleteBeforeDate)
+                        ? data.notifications?.map(n => ({
+                            hour_offset: Number(n.hour_offset),
+                            activated: false,
+                        }))
+                        : [],
+                },
+            },
+        });
+
+        revalidatePath('/');
+        return { success: true };
+    } catch (error) {
+        console.error('Ошибка повторного создания задачи:', error);
+        return { success: false };
+    }
+}
 
 export async function createUser(name: string) {
     try {
@@ -69,53 +188,6 @@ export async function deleteCategory(id: number) {
     }
 }
 
-
-export async function createTask(formData: FormData, selectedUserIds: number[], notifications?: { offset: number }[]) {
-    const name = formData.get("name") as string;
-    const description = formData.get("description") as string;
-    const categoryId = formData.get("categoryId");
-    const priorityId = formData.get("priorityId");
-    const completeBefore = formData.get("completeBeforeDate");
-    const completedAt = formData.get("completedAtDate");
-    const completeInfo = formData.get("completeInfo") as string;
-    const createdAt = formData.get("createdAtDate") as string;
-
-    try {
-        await prisma.tasks.create({
-            data: {
-                name,
-                description,
-                completed: (completedAt) ? true : false,
-                category_id: (categoryId && categoryId !== '[[NONE]]') ? Number(categoryId) : null,
-                priority_id: priorityId ? Number(priorityId) : null,
-                complete_before_date: completeBefore ? new Date(completeBefore as string) : null,
-                completed_at: completedAt ? new Date(completedAt as string) : null,
-                complete_info: completedAt ? (completeInfo || undefined) : undefined,
-                created_at: createdAt ? new Date(createdAt as string) : null,
-
-                task_users: {
-                    create: selectedUserIds.map((userId) => ({
-                        user_id: userId,
-                    })),
-                },
-
-                task_notifications: {
-                    create: notifications?.map(n => ({
-                        hour_offset: n.offset,
-                        activated: false,
-                    }))
-                }
-            },
-        });
-
-        revalidatePath("/");
-        return { success: true };
-    } catch (error) {
-        console.error("Ошибка создания задачи:", error);
-        return { success: false };
-    }
-}
-
 export async function deleteTask(id: number) {
     try {
         await prisma.tasks.delete({
@@ -153,122 +225,7 @@ export async function completeTask(id: number, info?: string) {
     }
 }
 
-// export async function updateTask(id: number, data: EditingTaskData) {
-//     try {
-//         // const data = JSON.parse(d) as EditingTaskData;
-//         // console.log('NAME ::: ' + (data.name))
-//         await prisma.tasks.update({
-//             data: {
-//                 name: data.name,
-//                 description: data.description,
-//                 category_id: (data.category && data.category !== '[[NONE]]') ? Number(data.category) : null,
-//                 priority_id: data.priority,
-//                 complete_before_date: data.completeBefore ? new Date(data.completeBefore) : null,
 
-//                 task_users: {
-
-//                     deleteMany: {},
-
-//                     create: data.users.map((userId) => ({
-//                         user_id: Number(userId),
-//                     })),
-//                 },
-
-//                 // task_notifications: {
-
-//                 //     deleteMany: {},
-
-//                 //     create: data.notifications
-//                 // }
-//             },
-//             where: {
-//                 id: id,
-//             }
-//         });
-//         // console.log(data);
-
-//         revalidatePath('/');
-//         return { success: true };
-//     } catch (error) {
-//         console.error(error);
-//         return { success: false };
-//     }
-// }
-
-export async function updateTask(id: number, data: EditingTaskData) {
-    try {
-        await prisma.tasks.update({
-            where: { id: id },
-            data: {
-                name: data.name,
-                description: data.description,
-                category_id: (data.category && data.category !== '[[NONE]]') ? Number(data.category) : null,
-                priority_id: data.priority,
-                complete_before_date: data.completeBefore ? new Date(data.completeBefore) : null,
-                created_at: data.createdAt ? new Date(data.createdAt) : undefined,
-                task_users: {
-                    deleteMany: {},
-                    create: data.users.map((userId) => ({ user_id: Number(userId) })),
-                },
-                task_notifications: {
-                    deleteMany: {},
-                    create: (!data.disableCompleteBeforeDate) ? data.notifications?.map(n => ({
-                        hour_offset: Number(n.hour_offset),
-                        activated: n.activated || false,
-                    })) : []
-                },
-            }
-        });
-
-        revalidatePath('/');
-        return { success: true };
-    } catch (error) {
-        console.error(error);
-        return { success: false };
-    }
-}
-
-export async function createTaskNew(data: EditingTaskData) {
-    // const name = formData.get("name") as string;
-    // const description = formData.get("description") as string;
-    // const categoryId = formData.get("categoryId");
-    // const priorityId = formData.get("priorityId");
-    // const completeBefore = formData.get("completeBeforeDate");
-
-    try {
-        await prisma.tasks.create({
-            data: {
-                name: data.name,
-                description: data.description,
-                completed: false,
-                category_id: (data.category && data.category !== '[[NONE]]') ? Number(data.category) : null,
-                priority_id: data.priority,
-                complete_before_date: data.completeBefore ? new Date(data.completeBefore) : null,
-                created_at: data.createdAt ? new Date(data.createdAt) : undefined,
-
-                task_users: {
-                    create: data.users.map((userId) => ({
-                        user_id: Number(userId),
-                    })),
-                },
-
-                task_notifications: {
-                    create: data.notifications?.map(n => ({
-                        hour_offset: n.hour_offset,
-                        activated: false,
-                    }))
-                }
-
-            },
-        });
-
-        revalidatePath("/");
-        return { success: true };
-    } catch (error) {
-        console.error("Ошибка создания задачи:", error);
-        return { success: false };
-    }
-}
 
 export async function validateTasks() {
     try {

@@ -3,11 +3,11 @@ import "./TaskBlock.css";
 import { Category, Priority, Task, User } from "@/app/page";
 import { Dispatch, RefObject, SetStateAction, useRef, useState } from "react";
 import SimpleModal from "@/components/UI/SimpleModal/SimpleModal";
-import TaskEditorModal from "@/components/UI/TaskEditorModal/TaskEditorModal";
 import SimpleDropdown from "@/components/UI/SimpleDropdown/SimpleDropdown";
 import TaskInfoModal from "@/components/UI/TaskInfoModal/TaskInfoModal";
 import TextHighlight from "@/components/UI/TextHighlight/TextHighlight";
 import { getLocalDatetimeString } from "@/utils/datetime";
+import TaskManagementModal from "@/components/UI/TaskManagementModal/TaskManagementModal";
 
 
 export default function TaskBlock({ isEditMode, idx, data, categories, users, priorities, bodyRef, filterString = "" }: { isEditMode?: RefObject<boolean>, idx: number, data: Task, categories: Category[], users: User[], priorities: Priority[], filterString?: string; bodyRef?: RefObject<HTMLElement | null> }) {
@@ -17,6 +17,11 @@ export default function TaskBlock({ isEditMode, idx, data, categories, users, pr
     const [isExpanded, setExpanded] = useState(false);
 
     const [openedModal, setOpenedModal] = useState<"confirm-delete" | "confirm-complete" | "edit-task" | "complete-info" | null>(null);
+
+    const [managementModal, setManagementModal] = useState<
+        | { mode: 'edit' | 'reupload'; task: Task }
+        | null
+    >(null);
 
     const [completeInfo, setCompleteInfo] = useState<string>("");
 
@@ -113,7 +118,13 @@ export default function TaskBlock({ isEditMode, idx, data, categories, users, pr
                     >{data.rejected ? 'Пропущена' : (data.completed ? 'Выполнена' : 'Выполнить')}</button>
                     <button
                         className={`task-block__button ${(data.completed || data.rejected) ? 'reupload-btn' : 'edit-btn'}`}
-                        onClick={() => updateOpenedModal('edit-task')}
+                        onClick={() => (data.completed || data.rejected) ? setManagementModal({
+                            mode: 'reupload',
+                            task: data,
+                        }) : setManagementModal({
+                            mode: 'edit',
+                            task: data,
+                        })}
                     >{(data.completed || data.rejected) ? "Повторить" : "Редактировать"}</button>
                     <button
                         className={`task-block__button delete-btn`}
@@ -139,77 +150,6 @@ export default function TaskBlock({ isEditMode, idx, data, categories, users, pr
                         </>
                     )}
                 </div>
-                {/* <SimpleDropdown
-                    className="task-block__dropdown more-data-dropdown"
-                    buttonLabel="Ещё ▽"
-                    position={{
-                        // top: 0,
-                        right: 0,
-                        automatic: {
-                            vertical: {
-                                container: bodyRef
-                            },
-                        }
-                        // bottom: undefined,
-                    }}
-                >
-
-                    <div className="task-block__infobox">
-                        <span className="task-block__infobox-label">Приоритет</span>
-                        <span className="task-block__infobox-value" style={{
-                            color: (data.task_priorities?.display_color || '')
-                        }}>{data.task_priorities?.name}</span>
-                    </div>
-
-                    <div className="task-block__infobox">
-                        <span className="task-block__infobox-label">Категория</span>
-                        <span className="task-block__infobox-value">{data.task_categories?.name || " — "}</span>
-                    </div>
-
-                    <div className="task-block__infobox users-infobox">
-                        {data.task_users.map((user, i) => (
-                            <div className="task-block__user" key={i}>{user.users.name}</div>
-                        ))}
-                    </div>
-
-                    <div className="task-block__infobox date-infobox">
-                        <div className="task-block__infobox-mobile-item">
-                            <div className="task-block__infobox-label">Создана</div>
-                            <div className="task-block__infobox-value">{data.created_at?.toLocaleDateString('ru-RU')}</div>
-                        </div>
-                        <div className="task-block__infobox-mobile-item">
-                            {(data.completed) ? (
-                                <>
-                                    <div className="task-block__infobox-label completed-at">Выполнена</div>
-                                    <div className="task-block__infobox-value completed-at">{data.completed_at?.toLocaleDateString('ru-RU')}</div>
-                                </>
-                            ) : (data.complete_before_date) && (
-                                <>
-                                    <div className="task-block__infobox-label complete-before-date">Выполнить до</div>
-                                    <div className="task-block__infobox-value complete-before-date">{data.complete_before_date?.toLocaleDateString('ru-RU')}</div>
-                                </>
-                            )}
-                        </div>
-                    </div>
-
-                    <div className="task-block__buttons">
-                        <button
-                            className={`task-block__button complete-btn ${(data.completed) ? 'completed' : ''}`}
-                            onClick={() => {
-                                if (!data.completed) updateOpenedModal('confirm-complete');
-                            }}
-                        >{data.completed ? 'Выполнена' : 'Выполнить'}</button>
-                        <button
-                            className={`task-block__button ${(data.completed) ? 'reupload-btn' : 'edit-btn'}`}
-                            onClick={() => updateOpenedModal('edit-task')}
-                        >{(data.completed) ? "Повторить" : "Редактировать"}</button>
-                        <button
-                            className={`task-block__button delete-btn`}
-                            onClick={() => updateOpenedModal('confirm-delete')}
-                        >Удалить</button>
-                    </div>
-
-                </SimpleDropdown> */}
                 <button
                     className="task-block__button more-data-button"
                     onClick={() => setExpanded(true)}
@@ -277,7 +217,13 @@ export default function TaskBlock({ isEditMode, idx, data, categories, users, pr
                         >{(data.rejected) ? 'Пропущена' : (data.completed ? 'Выполнена' : 'Выполнить')}</button>
                         <button
                             className={`task-block__button ${(data.completed || data.rejected) ? 'reupload-btn' : 'edit-btn'}`}
-                            onClick={() => updateOpenedModal('edit-task')}
+                            onClick={() => (data.completed || data.rejected) ? setManagementModal({
+                                mode: 'reupload',
+                                task: data,
+                            }) : setManagementModal({
+                                mode: 'edit',
+                                task: data,
+                            })}
                         >{(data.completed || data.rejected) ? "Повторить" : "Редактировать"}</button>
                         <button
                             className={`task-block__button delete-btn`}
@@ -390,13 +336,14 @@ export default function TaskBlock({ isEditMode, idx, data, categories, users, pr
                 </SimpleModal>
             )}
 
-            {(openedModal === 'edit-task') && (
-                <TaskEditorModal
-                    taskData={data}
+            {(managementModal?.mode === 'edit' || managementModal?.mode === 'reupload') && (
+                <TaskManagementModal
+                    mode={managementModal.mode}
+                    taskData={managementModal.task}
                     categories={categories}
-                    users={users}
                     priorities={priorities}
-                    onClose={() => updateOpenedModal(null)}
+                    users={users}
+                    onClose={() => setManagementModal(null)}
                 />
             )}
         </div>

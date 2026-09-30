@@ -1,0 +1,414 @@
+.task-management-modal__overlay {
+    --tm-color: #0b0bdb;
+    --tm-accent: #00eeff;
+    --tm-dropdown-bg: #0b0bdb;
+    --tm-dropdown-text: #fff;
+    --tm-highlight: #00eeff;
+    --tm-confirm-bg: #0b0bdb;
+    --tm-confirm-text: #00eeff;
+    --tm-confirm-hover: #0606a3;
+
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    background-color: #0000008e;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.task-management-modal__overlay.task-modal--edit {
+    --tm-color: #d1ab00;
+    --tm-accent: #fbff00;
+    --tm-dropdown-bg: #d1ab00;
+    --tm-dropdown-text: #fff;
+    --tm-highlight: #fffb00;
+    --tm-confirm-bg: #3bd100;
+    --tm-confirm-text: #fff;
+    --tm-confirm-hover: #288d00;
+}
+
+.task-management-modal__overlay.task-modal--reupload {
+    --tm-color: #a500e6;
+    --tm-accent: #e600e6;
+    --tm-dropdown-bg: #ffffff;
+    --tm-dropdown-text: initial;
+    --tm-highlight: #e600c7;
+    --tm-confirm-bg: #e600c7;
+    --tm-confirm-text: #fff;
+    --tm-confirm-hover: #a100a1;
+}
+
+.task-management-modal {
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+    border: 8px solid var(--tm-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.task-management-modal__header {
+    width: 100%;
+    height: 7%;
+    font-size: 26px;
+    color: var(--tm-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.task-management-modal__title {
+    width: 70%;
+    height: 10%;
+    font-size: 22px;
+    color: var(--tm-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.task-management-modal__button.close-modal-btn {
+    width: 40px;
+    height: 40px;
+    background-color: #b40000;
+    color: #fff;
+}
+
+.task-management-modal__button.close-modal-btn:hover {
+    cursor: pointer;
+    outline: 3px solid #ff0000;
+    color: #ff0000;
+}
+
+.task-management-modal__content {
+    width: 100%;
+    height: 85%;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+    overflow-y: auto;
+    gap: 10px;
+    padding: 10px 0;
+}
+
+.task-management-modal__block {
+    width: 100%;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+}
+
+.task-management-modal__label {
+    color: var(--tm-color);
+}
+
+.task-management-modal__input,
+.task-management-modal__select {
+    outline: none;
+    border: 2px solid var(--tm-color);
+    padding: 0 1px;
+    color: var(--tm-color);
+}
+
+.task-management-modal__select {
+    cursor: pointer;
+}
+
+.task-management-modal__input:focus {
+    outline: 2px solid var(--tm-accent);
+}
+
+.task-management-modal__select .multi-select__dropdown,
+.task-management-modal__select .custom-select__dropdown {
+    background-color: var(--tm-dropdown-bg);
+    color: var(--tm-dropdown-text);
+}
+
+.task-management-modal .multi-select__option:hover,
+.task-management-modal .custom-select__option:hover {
+    background-color: var(--tm-highlight) !important;
+    color: var(--tm-color) !important;
+}
+
+.task-management-modal .multi-select__option.selected,
+.task-management-modal .custom-select__option.selected {
+    background-color: var(--tm-highlight);
+    color: var(--tm-color);
+}
+
+.task-name-input {
+    width: 70%;
+}
+
+.task-management-modal__select.task-category-select {
+    width: 55%;
+}
+
+.task-management-modal__select.task-user-select {
+    width: 32%;
+}
+
+.task-management-modal__list.task-user-list {
+    width: 80%;
+    border: 2px solid var(--tm-color);
+    color: var(--tm-color);
+}
+
+.task-management-modal__list.task-user-list .interactive-list__option.selected {
+    background-color: var(--tm-highlight);
+}
+
+.task-management-modal__buttons {
+    width: 100%;
+    height: 10%;
+    display: flex;
+    justify-content: center;
+    align-items: end;
+    gap: 0;
+}
+
+.task-management-modal__button.confirm-btn {
+    flex: 1;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--tm-confirm-bg);
+    color: var(--tm-confirm-text);
+    font-size: 24px;
+    cursor: pointer;
+    transition: all .25s ease 0s;
+}
+
+.task-management-modal__button.confirm-btn:hover {
+    background-color: var(--tm-confirm-hover);
+}
+
+.task-modal--create .task-management-modal__button.confirm-btn:hover {
+    background-color: var(--tm-confirm-hover);
+    /* outline: 3px solid var(--tm-accent); */
+}
+
+.task-management-modal__button.cancel-btn {
+    flex: 1;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #ff0000;
+    color: #fff;
+    font-size: 24px;
+    cursor: pointer;
+    transition: all .25s ease 0s;
+}
+
+.task-management-modal__button.cancel-btn:hover {
+    background-color: #920000;
+}
+
+.task-management-modal__button:disabled {
+    opacity: .6;
+    cursor: not-allowed;
+}
+
+.task-management-modal .notification-settings {
+    width: 80%;
+    border: 2px solid var(--tm-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.task-management-modal .notification-settings h1 {
+    width: 100%;
+    background-color: var(--tm-color);
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 3px 0;
+    user-select: none;
+}
+
+.notification-settings__button.add-button {
+    border: 2px solid var(--tm-color);
+    color: var(--tm-color);
+    padding: 0 16px;
+    margin: 5px;
+    cursor: pointer;
+}
+
+.notification-settings__button.add-button:hover {
+    background-color: var(--tm-color);
+    color: #fff;
+}
+
+.notification-settings__notification-list {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.notification-settings__notification {
+    width: 95%;
+    display: flex;
+    color: var(--tm-color);
+    border: 2px solid var(--tm-color);
+}
+
+.notification-settings__number {
+    display: flex;
+    justify-content: center;
+    padding: 5px;
+}
+
+.notification-settings__block {
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    border-left: 2px solid var(--tm-color);
+}
+
+.notification-settings__block:last-of-type {
+    border-right: 2px solid var(--tm-color);
+}
+
+.notification-settings__label {
+    display: flex;
+    white-space: pre;
+}
+
+.notification-settings__input {
+    border: 2px solid var(--tm-color);
+    max-width: 60px;
+    outline: none;
+    margin: 0 5px;
+}
+
+.notification-settings__input:disabled {
+    opacity: .4;
+    cursor: not-allowed;
+}
+
+.notification-settings__input:focus {
+    outline: 2px solid var(--tm-accent);
+}
+
+.notification-settings__button.remove-notification-btn {
+    cursor: pointer;
+    background-color: #fff;
+    color: #ff0000;
+    padding: 0 5px;
+}
+
+.notification-settings__button.remove-notification-btn:hover {
+    background-color: #ff0000;
+    color: #fff;
+}
+
+.notification-settings__block.status-activated {
+    color: #288d00;
+}
+
+.notification-settings__block.status-waiting {
+    color: #5f049c;
+}
+
+.notification-settings__block.status-new {
+    color: #22a800;
+    font-weight: bold;
+}
+
+.reupload-task-notification {
+    width: 90%;
+    background-color: var(--tm-color);
+    color: #fff;
+    text-align: center;
+    padding: 10px;
+    user-select: none;
+}
+
+.task-management-modal .--desktop-only {
+    display: none;
+}
+
+.task-management-modal .--mobile-only {
+    display: inherit;
+}
+
+.task-management-modal__block.complete-before-datetime-block {
+    flex-direction: column;
+    gap: 5px;
+    margin-bottom: 10px;
+}
+
+.task-management-modal__error-block {
+    width: 100%;
+}
+
+@media (min-width: 1024px) {
+    .task-management-modal .--mobile-only {
+        display: none;
+    }
+
+    .task-management-modal .--desktop-only {
+        display: flex;
+    }
+
+    .task-management-modal__block.complete-before-datetime-block {
+        flex-direction: row;
+        gap: 10px;
+        margin-bottom: 0;
+    }
+
+    .task-management-modal {
+        width: 70%;
+        height: 70%;
+        border-radius: 25px;
+    }
+
+    /* 
+    .task-modal--edit .task-management-modal {
+        width: 50%;
+    } */
+
+    .task-management-modal__header {
+        height: 10%;
+    }
+
+    .task-management-modal__title {
+        width: 90%;
+        font-size: 26px;
+    }
+
+    .task-name-input {
+        width: 70%;
+    }
+
+    .task-modal--edit .task-name-input {
+        width: 50%;
+    }
+
+    .task-category-select {
+        width: 50%;
+    }
+
+    .task-user-select {
+        width: 50%;
+    }
+
+    .task-management-modal__buttons {
+        align-items: center;
+    }
+
+    .task-management-modal__error-block {
+        width: 80%;
+    }
+}

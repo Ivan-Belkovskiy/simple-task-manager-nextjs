@@ -3,8 +3,8 @@
 import { Dispatch, RefObject, SetStateAction, useState } from "react";
 import FloatingActionButton from "../UI/FloatingActionButton/FloatingActionButton";
 import "./MainUI.css";
-import AddTaskModal from "../UI/AddTaskModal/AddTaskModal";
 import { Category, Priority, User } from "@/app/page";
+import TaskManagementModal from "../UI/TaskManagementModal/TaskManagementModal";
 
 
 export default function MainUI({ isEditMode, categories, priorities, users }: {
@@ -42,7 +42,13 @@ export default function MainUI({ isEditMode, categories, priorities, users }: {
             />
 
             {isModalOpened && (
-                <AddTaskModal categories={categories} priorities={priorities} users={users} onClose={() => closeModal()} />
+                <TaskManagementModal
+                    mode="create"
+                    categories={categories}
+                    priorities={priorities}
+                    users={users}
+                    onClose={() => setModalOpened(false)}
+                />
             )}
         </div>
     );

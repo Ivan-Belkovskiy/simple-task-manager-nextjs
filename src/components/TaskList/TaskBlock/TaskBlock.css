@@ -423,6 +423,7 @@
     cursor: pointer;
     font-size: 14px;
     color: #006eb8;
+    white-space: pre-wrap;
 
 
     .task-block__infobox {
