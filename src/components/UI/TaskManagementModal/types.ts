@@ -1,4 +1,4 @@
-import { Category, Notification, Priority, Task, User } from "@/app/page";
+import { Category, Notification, Priority, Task, User } from "@/app/(protected)/page";
 
 export type ModalMode = 'create' | 'edit' | 'reupload';
 

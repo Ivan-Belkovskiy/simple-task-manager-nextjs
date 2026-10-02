@@ -3,7 +3,7 @@
 import { Dispatch, RefObject, SetStateAction, useState } from "react";
 import FloatingActionButton from "../UI/FloatingActionButton/FloatingActionButton";
 import "./MainUI.css";
-import { Category, Priority, User } from "@/app/page";
+import { Category, Priority, User } from "@/app/(protected)/page";
 import TaskManagementModal from "../UI/TaskManagementModal/TaskManagementModal";
 
 

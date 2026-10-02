@@ -1,7 +1,7 @@
 'use client';
 
 import "./TaskNotificationModal.css";
-import { Task } from "@/app/page";
+import { Task } from "@/app/(protected)/page";
 import { formatHourTextForNotification } from "@/utils/datetime";
 import { RefObject, useEffect, useState } from "react";
 

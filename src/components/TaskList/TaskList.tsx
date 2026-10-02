@@ -1,7 +1,7 @@
 'use client';
 
 import "./TaskList.css";
-import { Task, Category, Priority, User } from "@/app/page";
+import { Task, Category, Priority, User } from "@/app/(protected)/page";
 import { Prisma } from "@prisma/client"
 import TaskBlock from "./TaskBlock/TaskBlock";
 import { Dispatch, RefObject, SetStateAction, useEffect, useRef, useState } from "react";
@@ -65,7 +65,7 @@ export default function TaskList({ isEditMode, initialTasks, categories, priorit
 
         const matchPriority = filterPriority === '[[ANY]]' || t.priority_id === Number(filterPriority);
 
-        const matchUsers = t.task_users.some(u => filterUsers.includes(u.users.id));
+        const matchUsers = t.task_users.length > 0 ? t.task_users.some(u => filterUsers.includes(u.users.id)) : true;
 
         const matchString = t.name.toLowerCase().includes(filterString.toLowerCase());
 
@@ -267,19 +267,23 @@ export default function TaskList({ isEditMode, initialTasks, categories, priorit
                 <button className="task-list__button filters-expand-button --mobile-only" onClick={() => setFiltersExpandedMobile(p => !p)}>{isFiltersExpandedMobile ? '↑ Закрыть ↑' : '↓ Открыть ↓'}</button>
             </div>
             <div className="task-list__content">
-                {filteredTasks.map((task, idx) => (
-                    <TaskBlock
-                        idx={idx}
-                        data={task}
-                        key={task.id}
-                        categories={categories}
-                        users={users}
-                        priorities={priorities}
-                        bodyRef={bodyRef}
-                        filterString={filterString}
-                        isEditMode={isEditMode}
-                    />
-                ))}
+                {initialTasks.length === 0 ? (
+                    <div className="task-list__message">Задачи пока отсутствуют! Создайте задачу, нажав кнопку "Добавить задачу"</div>
+                ) : (
+                    filteredTasks.map((task, idx) => (
+                        <TaskBlock
+                            idx={idx}
+                            data={task}
+                            key={task.id}
+                            categories={categories}
+                            users={users}
+                            priorities={priorities}
+                            bodyRef={bodyRef}
+                            filterString={filterString}
+                            isEditMode={isEditMode}
+                        />
+                    ))
+                )}
             </div>
         </div>
     )

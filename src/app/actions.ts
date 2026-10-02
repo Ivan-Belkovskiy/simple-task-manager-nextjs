@@ -2,11 +2,17 @@
 
 import { prisma } from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
-import { Notification } from "./page";
+import { Notification } from "./(protected)/page";
 import type { TaskSubmitPayload } from '@/components/UI/TaskManagementModal/types';
+import { getCurrentUser, getSession } from "./actions/users/session";
 
 export async function createTask(data: TaskSubmitPayload) {
     try {
+
+        const user = await getCurrentUser();
+
+        if (!user) return { success: false, error: "Не авторизован!" };
+
         const isCompleted = !!data.isCompleted;
 
         await prisma.tasks.create({
@@ -37,6 +43,7 @@ export async function createTask(data: TaskSubmitPayload) {
                         }))
                         : [],
                 },
+                account_id: user.id,
             },
         });
 
@@ -50,6 +57,11 @@ export async function createTask(data: TaskSubmitPayload) {
 
 export async function updateTask(id: number, data: TaskSubmitPayload) {
     try {
+
+        const user = await getCurrentUser();
+
+        if (!user) return { success: false, error: "Не авторизован!" };
+
         await prisma.tasks.update({
             where: { id },
             data: {
@@ -89,6 +101,11 @@ export async function updateTask(id: number, data: TaskSubmitPayload) {
 
 export async function createTaskNew(data: TaskSubmitPayload) {
     try {
+
+        const user = await getCurrentUser();
+
+        if (!user) return { success: false, error: "Не авторизован!" };
+
         await prisma.tasks.create({
             data: {
                 name: data.name,
@@ -113,6 +130,7 @@ export async function createTaskNew(data: TaskSubmitPayload) {
                         }))
                         : [],
                 },
+                account_id: user.id,
             },
         });
 
@@ -126,9 +144,15 @@ export async function createTaskNew(data: TaskSubmitPayload) {
 
 export async function createUser(name: string) {
     try {
+
+        const user = await getCurrentUser();
+
+        if (!user) return { success: false, error: "Не авторизован!" };
+
         await prisma.users.create({
             data: {
                 name,
+                account_id: user.id,
             }
         });
 
@@ -142,9 +166,15 @@ export async function createUser(name: string) {
 
 export async function deleteUser(id: number) {
     try {
+
+        const user = await getCurrentUser();
+
+        if (!user) return { success: false, error: "Не авторизован!" };
+
         await prisma.users.delete({
             where: {
                 id: id,
+                account_id: user.id,
             }
         });
 
@@ -159,9 +189,15 @@ export async function deleteUser(id: number) {
 
 export async function createCategory(name: string) {
     try {
+
+        const user = await getCurrentUser();
+
+        if (!user) return { success: false, error: "Не авторизован!" };
+
         await prisma.task_categories.create({
             data: {
                 name,
+                account_id: user.id,
             }
         });
 
@@ -174,9 +210,15 @@ export async function createCategory(name: string) {
 
 export async function deleteCategory(id: number) {
     try {
+
+        const user = await getCurrentUser();
+
+        if (!user) return { success: false, error: "Не авторизован!" };
+
         await prisma.task_categories.delete({
             where: {
                 id: id,
+                account_id: user.id,
             }
         });
 
@@ -190,9 +232,15 @@ export async function deleteCategory(id: number) {
 
 export async function deleteTask(id: number) {
     try {
+
+        const user = await getCurrentUser();
+
+        if (!user) return { success: false, error: "Не авторизован!" };
+
         await prisma.tasks.delete({
             where: {
                 id: id,
+                account_id: user.id,
             }
         });
 
@@ -206,6 +254,11 @@ export async function deleteTask(id: number) {
 
 export async function completeTask(id: number, info?: string) {
     try {
+
+        const user = await getCurrentUser();
+
+        if (!user) return { success: false, error: "Не авторизован!" };
+
         await prisma.tasks.update({
             data: {
                 completed: true,
@@ -214,6 +267,7 @@ export async function completeTask(id: number, info?: string) {
             },
             where: {
                 id: id,
+                account_id: user.id,
             }
         });
 
@@ -229,11 +283,17 @@ export async function completeTask(id: number, info?: string) {
 
 export async function validateTasks() {
     try {
+
+        const user = await getCurrentUser();
+
+        if (!user) return { success: false, error: "Не авторизован!" };
+
         const updated = await prisma.tasks.updateMany({
             where: {
                 complete_before_date: { lt: new Date() },
                 completed: false,
-                rejected: false
+                rejected: false,
+                account_id: user.id,
             },
             data: {
                 rejected: true
@@ -249,6 +309,11 @@ export async function validateTasks() {
 
 export async function activateNotification(notificationId: number) {
     try {
+
+        const user = await getCurrentUser();
+
+        if (!user) return { success: false, error: "Не авторизован!" };
+
         await prisma.task_notifications.update({
             where: {
                 id: notificationId,

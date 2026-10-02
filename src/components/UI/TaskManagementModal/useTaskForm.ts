@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { createTask, createTaskNew, updateTask } from '@/app/actions';
 import { getLocalDateString } from '@/utils/datetime';
-import { Priority, Task } from '@/app/page';
+import { Priority, Task } from '@/app/(protected)/page';
 import { FormNotification, ModalMode, TaskFormData, ValidationErrors } from './types';
 
 function emptyForm(priorities: Priority[]): TaskFormData {
@@ -63,7 +63,8 @@ export function useTaskForm(mode: ModalMode, priorities: Priority[], taskData?: 
     const validate = (): boolean => {
         const next = {
             name: data.name.trim().length === 0,
-            users: data.users.length === 0,
+            users: false
+            // users: data.users.length === 0,
         };
         setErrors(next);
         return !next.name && !next.users;

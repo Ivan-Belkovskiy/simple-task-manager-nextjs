@@ -1,4 +1,4 @@
-import { Category, Priority, User } from '@/app/page';
+import { Category, Priority, User } from '@/app/(protected)/page';
 import { getLocalDateString } from '@/utils/datetime';
 import CustomSelect from '../CustomSelect/CustomSelect';
 import InteractiveList from '../InteractiveList/InteractiveList';

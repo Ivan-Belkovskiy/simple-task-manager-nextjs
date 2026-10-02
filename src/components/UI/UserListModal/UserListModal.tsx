@@ -1,6 +1,6 @@
 'use client';
 
-import { User } from "@/app/page";
+import { User } from "@/app/(protected)/page";
 import "./UserListModal.css";
 import { useState } from "react";
 import { createUser, deleteUser } from "@/app/actions";

@@ -1,7 +1,7 @@
 'use client';
 
 import "./AppContainer.css";
-import { Category, Priority, Task, User } from "@/app/page";
+import { Category, Priority, Task, User } from "@/app/(protected)/page";
 import MainUI from "../MainUI/MainUI";
 import TaskList from "../TaskList/TaskList";
 import { useRef, useState } from "react";

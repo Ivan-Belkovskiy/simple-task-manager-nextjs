@@ -1,0 +1,136 @@
+.login-register-form {
+    width: 95%;
+    border: 2px solid var(--primary-color);
+    border-radius: 7px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px 0;
+}
+
+.login-register-form__title {
+    font-size: 25px;
+    color: var(--primary-color);
+    font-weight: bold;
+}
+
+.login-register-form__input {
+    flex-grow: 1;
+    padding: 4px 2px;
+    border: 2px solid var(--primary-color);
+    color: var(--primary-color);
+    border-radius: 5px;
+    font-size: 17px;
+
+    &:focus {
+        outline: 2px solid var(--secondary-color);
+    }
+}
+
+.login-register-form__button {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    /* flex-grow: 1; */
+
+    &.inline-btn {
+        width: auto;
+        padding: 4px 12px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    cursor: pointer;
+    padding: 4px 2px;
+    border: 2px solid var(--primary-color);
+    background-color: var(--primary-color);
+    color: var(--text-color);
+    border-radius: 5px;
+    font-size: 17px;
+    transition: all 0.3s ease 0s;
+
+    /* .full-width {
+        width: 100%;
+    } */
+
+    &:hover {
+        border-color: var(--button-hover-color);
+        background-color: var(--button-hover-color);
+    }
+
+    &:disabled {
+        cursor: not-allowed;
+        opacity: 0.5;
+    }
+
+}
+
+.login-register-form__block {
+    width: 100%;
+    padding: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    color: var(--primary-color);
+}
+
+.login-register-form__content {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    gap: 5px;
+}
+
+.login-register-form__error {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background-color: #ffe3e3;
+    color: #ff0000;
+    border-radius: 7px;
+    padding: 4px 10px;
+}
+
+@media (min-width: 1024px) {
+
+    .login-register-form {
+        width: auto;
+        position: relative;
+        min-width: 50%;
+        padding: 20px;
+    }
+
+    .login-register-form__title {
+        font-size: 25px;
+    }
+
+    .login-register-form__content {
+        width: 80%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 10px;
+        gap: 5px;
+    }
+
+    .login-register-form__block {
+        width: 100%;
+        padding: 5px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        color: var(--primary-color);
+    }
+
+
+
+}

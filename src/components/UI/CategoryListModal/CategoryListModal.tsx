@@ -1,6 +1,6 @@
 'use client';
 
-import { Category } from "@/app/page";
+import { Category } from "@/app/(protected)/page";
 import "./CategoryListModal.css";
 import { useState } from "react";
 import { createCategory, createUser, deleteCategory, deleteUser } from "@/app/actions";

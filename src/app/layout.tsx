@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import AppLayout from "@/components/AppLayout/AppLayout";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,13 +34,7 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        {/* <nav className="navigation-panel --mobile-only">
-          <div className="navigation-panel__left">
-            <span className="app-logo">Менеджер Задач 2.0</span>
-          </div>
-          <div className="navigation-panel__right"></div>
-        </nav> */}
-        <main>{children}</main>
+        <AppLayout>{children}</AppLayout>
       </body>
     </html>
   );

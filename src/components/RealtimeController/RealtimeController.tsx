@@ -1,7 +1,7 @@
 'use client';
 
 import { activateNotification, validateTasks } from "@/app/actions";
-import { Task } from "@/app/page";
+import { Task } from "@/app/(protected)/page";
 import { getLocalDateString, subtractHours } from "@/utils/datetime";
 import { useRouter } from "next/navigation";
 import { Dispatch, RefObject, SetStateAction, useEffect, useRef } from "react";

@@ -1,6 +1,6 @@
 import { completeTask, deleteTask } from "@/app/actions";
 import "./TaskBlock.css";
-import { Category, Priority, Task, User } from "@/app/page";
+import { Category, Priority, Task, User } from "@/app/(protected)/page";
 import { Dispatch, RefObject, SetStateAction, useRef, useState } from "react";
 import SimpleModal from "@/components/UI/SimpleModal/SimpleModal";
 import SimpleDropdown from "@/components/UI/SimpleDropdown/SimpleDropdown";

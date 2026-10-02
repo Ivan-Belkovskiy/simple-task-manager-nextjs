@@ -8,7 +8,9 @@ import Image from "next/image";
 import FloatingActionButton from "@/components/UI/FloatingActionButton/FloatingActionButton";
 import MainUI from "@/components/MainUI/MainUI";
 import AppContainer from "@/components/AppContainer/AppContainer";
-import { validateTasks } from "./actions";
+import { validateTasks } from "../actions";
+import { getSession } from "../actions/users/session";
+import { redirect } from "next/navigation";
 
 export type Task = Prisma.tasksGetPayload<{
   include: {
@@ -30,9 +32,20 @@ export type Notification = Prisma.task_notificationsGetPayload<{}>;
 
 export default async function Home() {
 
+  const session = await getSession();
+
+  if (!session) return redirect('/login');
+
+  const user = await prisma.app_accounts.findUnique({ where: { id: session.userId } });
+
+  if (!user) return redirect('/login');
+
   await validateTasks();
 
   const tasks: Task[] = await prisma.tasks.findMany({
+    where: {
+      account_id: user.id,
+    },
     include: {
       task_categories: true,
       task_priorities: true,
@@ -59,9 +72,17 @@ export default async function Home() {
     ]
   });
 
-  const categories = await prisma.task_categories.findMany();
+  const categories = await prisma.task_categories.findMany({
+    where: {
+      account_id: user.id,
+    }
+  });
   const priorities = await prisma.task_priorities.findMany();
-  const users = await prisma.users.findMany();
+  const users = await prisma.users.findMany({
+    where: {
+      account_id: user.id,
+    }
+  });
 
 
 
