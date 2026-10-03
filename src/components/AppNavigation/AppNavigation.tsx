@@ -3,10 +3,11 @@
 import { usePathname, useRouter } from "next/navigation";
 import "./AppNavigation.css";
 import { AUTH_URLS } from "@/lib/constants";
-import { app_accounts, Prisma } from "@prisma/client";
+// import { app_accounts, Prisma } from "@prisma/client";
 import { useState } from "react";
 import SimpleModal from "../UI/NEW/SimpleModal/SimpleModal";
 import { logoutUser } from "@/app/actions/users/users";
+import type { AppAccount } from "@/types/data";
 
 type AppNavigationElement = {
     type: "app-logo";
@@ -107,7 +108,7 @@ const NAVIGATION_ELEMENTS: AppNavigationMain = {
     ]
 }
 
-export default function AppNavigation({ currentUrl, setCurrentUrl, userData }: { currentUrl: string; setCurrentUrl?: (data: string) => void; userData?: Prisma.app_accountsGetPayload<{ omit: { password_hash: true } }> }) {
+export default function AppNavigation({ currentUrl, setCurrentUrl, userData }: { currentUrl: string; setCurrentUrl?: (data: string) => void; userData?: AppAccount }) {
 
     // const { currentUrl, setCurrentUrl } = useAppContext();
 
@@ -143,7 +144,7 @@ export default function AppNavigation({ currentUrl, setCurrentUrl, userData }: {
                 <>
                     <button
                         key={idx}
-                        className={`app-navigation-element app-navigation__button profile-button`}
+                        className={`app-navigation-element app-navigation__button profile-button ${pageUrl.startsWith('/settings') ? 'current-url' : ''}`}
                         onClick={() => {
                             router.push('/settings');
                         }}
@@ -153,7 +154,7 @@ export default function AppNavigation({ currentUrl, setCurrentUrl, userData }: {
                         {/* <div className="profile-button__preview"></div> */}
                     </button>
                     <button
-                        key={idx}
+                        key={(idx + 1)}
                         className={`app-navigation-element app-navigation__button profile-button`}
                         onClick={() => setLogoutModal(true)}
                     >

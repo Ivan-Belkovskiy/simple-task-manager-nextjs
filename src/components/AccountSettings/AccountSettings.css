@@ -1,0 +1,13 @@
+.account-settings {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* height: 100%; */
+}
+
+.account-settings__title {
+    font-size: 32px;
+    color: var(--primary-color);
+    font-weight: bold;
+}
