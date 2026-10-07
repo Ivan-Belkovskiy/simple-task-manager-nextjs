@@ -11,8 +11,8 @@ interface RealtimeControllerProps {
 
     isEditMode?: RefObject<boolean>;
 
-    currentDate?: Date;
-    setCurrentDate?: Dispatch<SetStateAction<Date | undefined>>;
+    // currentDate?: Date;
+    // setCurrentDate?: Dispatch<SetStateAction<Date | undefined>>;
 
     activateNotificationRef?: RefObject<((data: Task, offset: number) => void) | null>;
     isNotificationOpenRef?: RefObject<boolean>;
@@ -21,8 +21,6 @@ interface RealtimeControllerProps {
 export default function RealtimeController({
     tasks,
     isEditMode,
-    currentDate,
-    setCurrentDate,
     activateNotificationRef,
     isNotificationOpenRef
 }: RealtimeControllerProps) {
@@ -81,7 +79,7 @@ export default function RealtimeController({
 
             const now = new Date();
 
-            if (setCurrentDate) setCurrentDate(now);
+            // if (setCurrentDate) setCurrentDate(now);
 
 
 

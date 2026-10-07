@@ -111,3 +111,19 @@ model app_accounts {
 
   user_records users[]
 }
+
+
+model sessions {
+    id            String   @id @default(uuid())
+    user_id       Int
+    refresh_hash  String  
+    user_agent    String?  
+    ip            String?  
+    last_active   DateTime @default(now()) 
+    expires_at    DateTime
+    created_at    DateTime @default(now())
+
+    user app_accounts @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+    @@index([user_id])
+}

@@ -63,7 +63,7 @@ export async function updateTask(id: number, data: TaskSubmitPayload) {
         if (!user) return { success: false, error: "Не авторизован!" };
 
         await prisma.tasks.update({
-            where: { id },
+            where: { id, account_id: user.id },
             data: {
                 name: data.name,
                 description: data.description,

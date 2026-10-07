@@ -8,8 +8,9 @@ import { useState } from "react";
 import SimpleModal from "../UI/NEW/SimpleModal/SimpleModal";
 import { logoutUser } from "@/app/actions/users/users";
 import type { AppAccount } from "@/types/data";
+import ExpandableSidePanel from "../ExpandableSidePanel/ExpandableSidePanel";
 
-type AppNavigationElement = {
+export type AppNavigationElement = ({
     type: "app-logo";
 } | {
     type: "button";
@@ -30,13 +31,15 @@ type AppNavigationElement = {
     textContent: string;
     onClick?: () => void;
 } | {
-    type: "profile-button";
+    type: "profile-button" | "mobile-menu-button";
     // isLink?: false;
     // textContent: string;
     onClick?: () => void;
-}
+}) & {
+    displayOnDevice?: "mobile" | "desktop";
+};
 
-interface AppNavigationMain {
+export interface AppNavigationMain {
     left?: AppNavigationElement[];
     middle?: AppNavigationElement[];
     right?: AppNavigationElement[];
@@ -56,6 +59,8 @@ const LOGIN_PAGE_ELEMENTS: AppNavigationMain = {
             linkUrl: "/login",
 
             urlType: "page-path",
+
+            displayOnDevice: "desktop",
         },
         {
             type: "button",
@@ -64,6 +69,14 @@ const LOGIN_PAGE_ELEMENTS: AppNavigationMain = {
             linkUrl: "/register",
 
             urlType: "page-path",
+
+            displayOnDevice: "desktop",
+        },
+
+        {
+            type: "mobile-menu-button",
+
+            displayOnDevice: "mobile"
         }
     ]
 }
@@ -95,16 +108,14 @@ const NAVIGATION_ELEMENTS: AppNavigationMain = {
     right: [
         {
             type: "profile-button",
-            // isLink: true,
-            // linkUrl: '/settings',
 
-            // onClick: () => {}
-
-
-            // textContent: 'Настройки аккаунта',
-
-            // urlType: 'page-path',
+            displayOnDevice: "desktop"
         },
+        {
+            type: "mobile-menu-button",
+
+            displayOnDevice: "mobile"
+        }
     ]
 }
 
@@ -117,19 +128,21 @@ export default function AppNavigation({ currentUrl, setCurrentUrl, userData }: {
 
     const router = useRouter();
 
+    const [isMobileMenuExpanded, setMobileMenu] = useState(false);
+
     const [logoutModal, setLogoutModal] = useState(false);
     const [isLoading, setLoading] = useState(false);
-    
+
     const renderElements = (section: "left" | "middle" | "right", elements?: AppNavigationMain) => {
         return (elements || NAVIGATION_ELEMENTS)[section]?.map((el, idx) => {
             if (el.type === 'app-logo') return (
-                <h1 className="app-navigation-element app-logo" key={idx}>Менеджер Задач 2.0</h1>
+                <h1 className={`app-navigation-element app-logo ${el.displayOnDevice ? `--${el.displayOnDevice}-only` : ''}`} key={idx}>Менеджер Задач 2.0</h1>
             );
 
             if (el.type === 'button') return (
                 <button
                     key={idx}
-                    className={(el.isLink) ? `app-navigation-element app-navigation__button ${(el.urlType === 'in-app' ? (el.linkUrl === currentUrl) : (pageUrl === el.linkUrl)) ? 'current-url' : ''}` : "app-navigation-element app-navigation__button"}
+                    className={`${(el.isLink) ? `app-navigation-element app-navigation__button ${(el.urlType === 'in-app' ? (el.linkUrl === currentUrl) : (pageUrl === el.linkUrl)) ? 'current-url' : ''}` : "app-navigation-element app-navigation__button"}  ${el.displayOnDevice ? `--${el.displayOnDevice}-only` : ''}`}
                     onClick={() => {
                         if (el.isLink && el.linkUrl) {
                             if (el.urlType === 'page-path') {
@@ -144,7 +157,7 @@ export default function AppNavigation({ currentUrl, setCurrentUrl, userData }: {
                 <>
                     <button
                         key={idx}
-                        className={`app-navigation-element app-navigation__button profile-button ${pageUrl.startsWith('/settings') ? 'current-url' : ''}`}
+                        className={`app-navigation-element app-navigation__button profile-button ${pageUrl.startsWith('/settings') ? 'current-url' : ''} ${el.displayOnDevice ? `--${el.displayOnDevice}-only` : ''}`}
                         onClick={() => {
                             router.push('/settings');
                         }}
@@ -155,7 +168,7 @@ export default function AppNavigation({ currentUrl, setCurrentUrl, userData }: {
                     </button>
                     <button
                         key={(idx + 1)}
-                        className={`app-navigation-element app-navigation__button profile-button`}
+                        className={`app-navigation-element app-navigation__button profile-button ${el.displayOnDevice ? `--${el.displayOnDevice}-only` : ''}`}
                         onClick={() => setLogoutModal(true)}
                     >
                         Выйти
@@ -163,6 +176,15 @@ export default function AppNavigation({ currentUrl, setCurrentUrl, userData }: {
                         {/* <div className="profile-button__preview"></div> */}
                     </button>
                 </>
+            );
+
+            if (el.type === 'mobile-menu-button') return (
+                <div className={`app-navigation-element mobile-button__container ${el.displayOnDevice ? `--${el.displayOnDevice}-only` : ''}`}>
+                    <button
+                        className={`app-navigation-element app-navigation__button mobile-menu-button ${el.displayOnDevice ? `--${el.displayOnDevice}-only` : ''} ${isMobileMenuExpanded ? 'active' : ''}`}
+                        onClick={() => setMobileMenu(p => !p)}
+                    ></button>
+                </div>
             )
         })
     }
@@ -177,9 +199,10 @@ export default function AppNavigation({ currentUrl, setCurrentUrl, userData }: {
             setLoading(false);
 
         } catch (error) {
-            
+
         } finally {
             setLogoutModal(false);
+            setMobileMenu(false);
         }
     };
 
@@ -199,16 +222,16 @@ export default function AppNavigation({ currentUrl, setCurrentUrl, userData }: {
                 </>
             ) : (
                 <>
-                    <div className="app-navigation__left --desktop-only">
+                    <div className="app-navigation__left">
                         {renderElements('left')}
                         {/* <h1 className="app-navigation-element app-logo">Interactive Info Manager</h1> */}
                     </div>
-                    <div className="app-navigation__center">
+                    <div className="app-navigation__center --desktop-only">
                         {renderElements('middle')}
                         {/* <button className="app-navigation-element app-navigation__button">Мои записи</button>
                 <button className="app-navigation-element app-navigation__button">Настройки аккаунта</button> */}
                     </div>
-                    <div className="app-navigation__right --desktop-only">
+                    <div className="app-navigation__right">
                         {renderElements('right')}
                         {/* <button className="app-navigation-element app-navigation__button">Настройки аккаунта</button> */}
                     </div>
@@ -227,6 +250,20 @@ export default function AppNavigation({ currentUrl, setCurrentUrl, userData }: {
                     disableButtons={isLoading}
                 />
             )}
+
+            <ExpandableSidePanel
+                isOpened={isMobileMenuExpanded}
+                elements={(AUTH_URLS.some(url => pageUrl.startsWith(url))) ? LOGIN_PAGE_ELEMENTS : NAVIGATION_ELEMENTS}
+
+                setLogoutModal={setLogoutModal}
+
+                currentUrl={currentUrl}
+                setCurrentUrl={setCurrentUrl}
+                
+                userData={userData}
+
+                onClose={() => setMobileMenu(false)}
+            />
         </div >
     )
 }

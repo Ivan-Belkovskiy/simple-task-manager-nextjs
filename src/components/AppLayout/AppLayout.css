@@ -6,4 +6,5 @@ main.app-layout-main {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    padding-top: 60px;
 }

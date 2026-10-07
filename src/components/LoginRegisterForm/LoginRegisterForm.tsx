@@ -135,7 +135,7 @@ export default function LoginRegisterForm({ type = 'login' }: { type?: FormType 
                         onClick={() => setShowPassword(p => !p)}
                         aria-label={showPassword ? 'Скрыть пароль' : 'Показать пароль'}
                     >
-                        {showPassword ? 'Скрыть' : 'Показать'}
+                        {showPassword ? '^' : '_'}
                     </button>
                     {/* </div> */}
                 </div>
