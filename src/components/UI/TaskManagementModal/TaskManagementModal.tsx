@@ -55,6 +55,9 @@ export default function TaskManagementModal({
                         users={users}
                         onOpenUserModal={() => setUserModalOpened(true)}
                         onOpenCategoryModal={() => setCategoryModalOpened(true)}
+
+                        subtasks={form.data.subtasks}
+                        onSubtasksChange={(subtasks) => form.setData(p => ({ ...p, subtasks }))}
                     />
 
                     {!form.data.disableCompleteBeforeDate && !form.data.isCompleted && (

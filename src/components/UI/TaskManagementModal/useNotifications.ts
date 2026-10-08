@@ -8,7 +8,12 @@ export function useNotifications(
         setNotifications(prev => {
             const last = prev[prev.length - 1];
             if (prev.length > 0 && (!last?.hour_offset || last.hour_offset <= 1)) return prev;
-            return [...prev, { hour_offset: last ? last.hour_offset - 1 : 5, isNew: true }];
+            return [...prev, {
+                hour_offset: last ? last.hour_offset - 1 : 5,
+                isNew: true,
+                target_platforms: ['WEB'],        
+                display_format: 'POPUP',  
+            }];
         });
     }, [setNotifications]);
 

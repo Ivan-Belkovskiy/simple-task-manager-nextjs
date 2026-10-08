@@ -12,22 +12,13 @@ function emptyForm(priorities: Priority[]): TaskFormData {
         priority: priorities[0]?.id,
         category: '[[NONE]]',
         completeBefore: getLocalDateString(new Date()),
+        subtasks: [],
     };
 }
 
 export function useTaskForm(mode: ModalMode, priorities: Priority[], taskData?: Task) {
-    const [data, setData] = useState<TaskFormData>(() => emptyForm(priorities));
-    const [notifications, setNotifications] = useState<FormNotification[]>([]);
-    const [errors, setErrors] = useState<ValidationErrors>({ name: null, users: null });
-    const [isLoading, setLoading] = useState(false);
-
-    useEffect(() => {
-        if (mode === 'create' || !taskData) {
-            setData(emptyForm(priorities));
-            setNotifications([]);
-            setErrors({ name: null, users: null });
-            return;
-        }
+    const [data, setData] = useState<TaskFormData>(() => {
+        if (mode === 'create' || !taskData) return emptyForm(priorities);
 
         const isRework = mode === 'reupload';
         const completeBefore = isRework
@@ -36,7 +27,7 @@ export function useTaskForm(mode: ModalMode, priorities: Priority[], taskData?: 
                 ? getLocalDateString(new Date(taskData.complete_before_date))
                 : '';
 
-        setData({
+        return {
             name: taskData.name,
             description: taskData.description ?? '',
             priority: taskData.priority_id ?? priorities[0]?.id,
@@ -44,15 +35,32 @@ export function useTaskForm(mode: ModalMode, priorities: Priority[], taskData?: 
             users: taskData.task_users.map(u => u.users.id),
             completeBefore,
             disableCompleteBeforeDate: !taskData.complete_before_date && !isRework,
-        });
+            subtasks: (taskData.subtasks ?? []).map(st => ({
+                id: st.id,
+                name: st.name,
+                description: st.description,
+                order: st.order ?? 0,
+                completed: !!st.completed,
+            })),
+        };
+    });
 
-        setNotifications(taskData.task_notifications.map(n => ({
+    const [notifications, setNotifications] = useState<FormNotification[]>(() => {
+        if (mode === 'create' || !taskData) return [];
+        const isRework = mode === 'reupload';
+        return taskData.task_notifications.map(n => ({
             id: n.id,
             hour_offset: n.hour_offset || 0,
             activated: isRework ? false : n.activated,
             isNew: false,
-        })));
-    }, [mode, taskData, priorities]);
+            display_format: n.display_format,
+            target_platforms: n.target_platforms,
+            ringtone: n.ringtone ?? undefined,
+        }));
+    });
+
+    const [errors, setErrors] = useState<ValidationErrors>({ name: null, users: null });
+    const [isLoading, setLoading] = useState(false);
 
     const reset = () => {
         setData(emptyForm(priorities));

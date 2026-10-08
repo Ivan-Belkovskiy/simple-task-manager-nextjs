@@ -56,6 +56,8 @@ export default function TaskList({ isEditMode, initialTasks, categories, priorit
     const [isFiltersExpandedMobile, setFiltersExpandedMobile] = useState(false);
 
     useEffect(() => {
+        // alert(JSON.stringify(categories));
+        // alert(JSON.stringify(priorities));
         if (document) bodyRef.current = document.body;
     }, []);
 

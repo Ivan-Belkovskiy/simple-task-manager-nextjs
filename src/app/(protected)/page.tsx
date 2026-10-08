@@ -12,16 +12,18 @@ import { validateTasks } from "../actions";
 import { getSession } from "../actions/users/session";
 import { redirect } from "next/navigation";
 
+
 export type Task = Prisma.tasksGetPayload<{
   include: {
-    task_categories: true;
-    task_priorities: true;
+    category: true;
+    priority: true;
     task_users: {
-      include: {
-        users: true;
-      }
-    },
-    task_notifications: true;
+      include: { users: true };
+    };
+    task_notifications: {
+      include: { task: true };
+    };
+    subtasks: true;
   }
 }>;
 
@@ -43,25 +45,20 @@ export default async function Home() {
   await validateTasks();
 
   const tasks: Task[] = await prisma.tasks.findMany({
-    where: {
-      account_id: user.id,
-    },
+    where: { account_id: user.id },
     include: {
-      task_categories: true,
-      task_priorities: true,
+      category: true,                
+      priority: true,                  
       task_users: {
-        include: {
-          users: true
-        }
+        include: { users: true },
       },
       task_notifications: {
-        include: {
-          tasks: true,
-        },
-        orderBy: [
-          { hour_offset: 'desc' }
-        ]
-      }
+        include: { task: true },
+        orderBy: [{ hour_offset: 'desc' }],
+      },
+      subtasks: {
+        orderBy: { order: 'asc' },
+      },
     },
     orderBy: [
       { completed: 'asc' },
@@ -69,7 +66,7 @@ export default async function Home() {
       { completed_at: 'desc' },
       { complete_before_date: 'asc' },
       { priority_id: 'desc' },
-    ]
+    ],
   });
 
   const categories = await prisma.task_categories.findMany({
@@ -77,7 +74,7 @@ export default async function Home() {
       account_id: user.id,
     }
   });
-  const priorities = await prisma.task_priorities.findMany();
+  const priorities = await prisma.task_priorities.findMany({});
   const users = await prisma.users.findMany({
     where: {
       account_id: user.id,

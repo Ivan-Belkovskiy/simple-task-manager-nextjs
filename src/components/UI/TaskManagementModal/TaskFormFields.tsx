@@ -4,7 +4,8 @@ import CustomSelect from '../CustomSelect/CustomSelect';
 import InteractiveList from '../InteractiveList/InteractiveList';
 import MultiSelect from '../MultiSelect/MultiSelect';
 import ErrorBlock from './ErrorBlock/ErrorBlock';
-import { ModalMode, TaskFormData, ValidationErrors } from './types';
+import { ModalMode, SubTaskData, TaskFormData, ValidationErrors } from './types';
+import SubTaskEditor from '../SubTaskEditor/SubTaskEditor';
 
 interface Props {
     mode: ModalMode;
@@ -18,12 +19,15 @@ interface Props {
     users: User[];
     onOpenUserModal: () => void;
     onOpenCategoryModal: () => void;
+
+    subtasks: SubTaskData[];
+    onSubtasksChange: (subtasks: SubTaskData[]) => void;
 }
 
 export default function TaskFormFields({
     mode, data, setData, errors, setErrors, showIsCompleted,
     categories, priorities, users,
-    onOpenUserModal, onOpenCategoryModal,
+    onOpenUserModal, onOpenCategoryModal, subtasks, onSubtasksChange
 }: Props) {
     const update = <K extends keyof TaskFormData>(key: K, value: TaskFormData[K]) =>
         setData(p => ({ ...p, [key]: value }));
@@ -281,6 +285,11 @@ export default function TaskFormFields({
                     </div>
                 </>
             )}
+
+            <SubTaskEditor
+                subtasks={subtasks}
+                onChange={onSubtasksChange}
+            />
         </>
     );
 }

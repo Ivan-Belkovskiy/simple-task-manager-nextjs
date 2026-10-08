@@ -40,10 +40,23 @@ export async function createTask(data: TaskSubmitPayload) {
                         ? data.notifications?.map(n => ({
                             hour_offset: Number(n.hour_offset),
                             activated: false,
+                            target_platforms: n.target_platforms,
+                            display_format: n.display_format,
+                            ringtone: n.ringtone ?? null,
                         }))
                         : [],
                 },
                 account_id: user.id,
+
+                subtasks: {
+                    create: data.subtasks?.map((st, i) => ({
+                        name: st.name,
+                        description: st.description ?? null,
+                        order: i,
+                        completed: st.completed,
+                        completed_at: st.completed ? new Date() : null,
+                    })) ?? [],
+                },
             },
         });
 
@@ -56,39 +69,84 @@ export async function createTask(data: TaskSubmitPayload) {
 }
 
 export async function updateTask(id: number, data: TaskSubmitPayload) {
+    const user = await getCurrentUser();
+    if (!user) return { success: false, error: 'Не авторизован!' };
+
     try {
+        await prisma.$transaction(async (tx) => {
+            const task = await tx.tasks.findFirst({
+                where: { id, account_id: user.id },
+                select: { id: true },
+            });
+            if (!task) throw new Error('FORBIDDEN');
 
-        const user = await getCurrentUser();
-
-        if (!user) return { success: false, error: "Не авторизован!" };
-
-        await prisma.tasks.update({
-            where: { id, account_id: user.id },
-            data: {
-                name: data.name,
-                description: data.description,
-                category_id: (data.category && data.category !== '[[NONE]]')
-                    ? Number(data.category) : null,
-                priority_id: data.priority,
-                complete_before_date: (!data.disableCompleteBeforeDate && data.completeBefore)
-                    ? new Date(data.completeBefore) : null,
-                created_at: (data.allowEnterCreationDate && data.createdAt)
-                    ? new Date(data.createdAt) : undefined,
-
-                task_users: {
-                    deleteMany: {},
-                    create: data.users.map(userId => ({ user_id: Number(userId) })),
+            await tx.tasks.update({
+                where: { id },
+                data: {
+                    name: data.name,
+                    description: data.description,
+                    category_id: (data.category && data.category !== '[[NONE]]')
+                        ? Number(data.category) : null,
+                    priority_id: data.priority,
+                    complete_before_date: (!data.disableCompleteBeforeDate && data.completeBefore)
+                        ? new Date(data.completeBefore) : null,
+                    created_at: (data.allowEnterCreationDate && data.createdAt)
+                        ? new Date(data.createdAt) : undefined,
+                    task_users: {
+                        deleteMany: {},
+                        create: data.users.map(userId => ({ user_id: Number(userId) })),
+                    },
+                    task_notifications: {
+                        deleteMany: {},
+                        create: (!data.disableCompleteBeforeDate)
+                            ? data.notifications?.map(n => ({
+                                hour_offset: Number(n.hour_offset),
+                                activated: n.activated || false,
+                                target_platforms: n.target_platforms,
+                                display_format: n.display_format,
+                                ringtone: n.ringtone,
+                            }))
+                            : [],
+                    },
                 },
-                task_notifications: {
-                    deleteMany: {},
-                    create: (!data.disableCompleteBeforeDate)
-                        ? data.notifications?.map(n => ({
-                            hour_offset: Number(n.hour_offset),
-                            activated: n.activated || false,
-                        }))
-                        : [],
+            });
+
+            const incomingIds = (data.subtasks ?? [])
+                .map(s => s.id)
+                .filter((x): x is number => typeof x === 'number');
+
+            await tx.subtasks.deleteMany({
+                where: {
+                    task_id: id,
+                    id: { notIn: incomingIds.length ? incomingIds : [0] },
                 },
-            },
+            });
+
+            for (const [i, st] of (data.subtasks ?? []).entries()) {
+                if (st.id) {
+                    await tx.subtasks.update({
+                        where: { id: st.id },
+                        data: {
+                            name: st.name,
+                            description: st.description ?? null,
+                            order: i,
+                            completed: st.completed,
+                            completed_at: st.completed ? new Date() : null,
+                        },
+                    });
+                } else {
+                    await tx.subtasks.create({
+                        data: {
+                            task_id: id,
+                            name: st.name,
+                            description: st.description ?? null,
+                            order: i,
+                            completed: st.completed,
+                            completed_at: st.completed ? new Date() : null,
+                        },
+                    });
+                }
+            }
         });
 
         revalidatePath('/');
@@ -127,10 +185,23 @@ export async function createTaskNew(data: TaskSubmitPayload) {
                         ? data.notifications?.map(n => ({
                             hour_offset: Number(n.hour_offset),
                             activated: false,
+                            target_platforms: n.target_platforms,
+                            display_format: n.display_format,
+                            ringtone: n.ringtone ?? null,
                         }))
                         : [],
                 },
                 account_id: user.id,
+
+                subtasks: {
+                    create: data.subtasks?.map((st, i) => ({
+                        name: st.name,
+                        description: st.description ?? null,
+                        order: i,
+                        completed: st.completed,
+                        completed_at: st.completed ? new Date() : null,
+                    })) ?? [],
+                },
             },
         });
 
@@ -309,23 +380,25 @@ export async function validateTasks() {
 
 export async function activateNotification(notificationId: number) {
     try {
-
         const user = await getCurrentUser();
+        if (!user) return { success: false, error: 'Не авторизован!' };
 
-        if (!user) return { success: false, error: "Не авторизован!" };
-
-        await prisma.task_notifications.update({
+        const result = await prisma.task_notifications.updateMany({
             where: {
                 id: notificationId,
+                task: { account_id: user.id },
             },
-            data: {
-                activated: true,
-            }
+            data: { activated: true },
         });
+
+        if (result.count === 0) {
+            return { success: false, error: 'Напоминание не найдено' };
+        }
 
         revalidatePath('/');
         return { success: true };
     } catch (error) {
+        console.error('Ошибка активации напоминания:', error);
         return { success: false };
     }
 }

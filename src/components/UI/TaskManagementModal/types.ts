@@ -1,12 +1,25 @@
-import { Category, Notification, Priority, Task, User } from "@/app/(protected)/page";
+import { Category, Priority, Task, User } from "@/app/(protected)/page";
+import { NotificationFormat, NotificationPlatform } from "@prisma/client";
 
 export type ModalMode = 'create' | 'edit' | 'reupload';
 
 export interface FormNotification {
-    id?: number;         
+    id?: number;
     hour_offset: number;
     activated?: boolean;
     isNew?: boolean;
+
+    target_platforms: NotificationPlatform[];
+    display_format: NotificationFormat;
+    ringtone?: string;
+}
+
+export interface SubTaskData {
+    id?: number;
+    name: string;
+    description?: string | null;
+    order: number;
+    completed: boolean;
 }
 
 export interface TaskFormData {
@@ -22,9 +35,11 @@ export interface TaskFormData {
     completeInfo?: string;
     allowEnterCreationDate?: boolean;
     createdAt?: string;
+
+    subtasks: SubTaskData[];
 }
 
-export interface TaskSubmitPayload extends TaskFormData {
+export interface TaskSubmitPayload extends Omit<TaskFormData, 'completeBefore' | 'completedAt' | 'createdAt'> {
     completeBefore?: string;
     completedAt?: string;
     createdAt?: string;
@@ -38,7 +53,7 @@ export interface ValidationErrors {
 
 export interface TaskManagementModalProps {
     mode: ModalMode;
-    taskData?: Task;  
+    taskData?: Task;
     categories: Category[];
     priorities: Priority[];
     users: User[];

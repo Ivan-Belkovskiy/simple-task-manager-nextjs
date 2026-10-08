@@ -43,6 +43,29 @@ export default function MainUI({ isEditMode, categories, priorities, users }: {
 
             {isModalOpened && (
                 <TaskManagementModal
+                    key="create-modal"
+                    mode="create"
+                    categories={categories}
+                    priorities={priorities}
+                    users={users}
+                    onClose={() => setModalOpened(false)}
+                />
+            )}
+
+            {/* {(modal?.mode === 'edit' || modal?.mode === 'reupload') && (
+    <TaskManagementModal
+        key={`${modal.mode}-${modal.task.id}`}
+        mode={modal.mode}
+        taskData={modal.task}
+        categories={categories}
+        priorities={priorities}
+        users={users}
+        onClose={() => setModal(null)}
+    />
+)} */}
+
+            {isModalOpened && (
+                <TaskManagementModal
                     mode="create"
                     categories={categories}
                     priorities={priorities}

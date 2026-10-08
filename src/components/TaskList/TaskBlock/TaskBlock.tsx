@@ -9,6 +9,8 @@ import TextHighlight from "@/components/UI/TextHighlight/TextHighlight";
 import { getLocalDatetimeString } from "@/utils/datetime";
 import TaskManagementModal from "@/components/UI/TaskManagementModal/TaskManagementModal";
 
+type ManagementModalState = { mode: 'edit' | 'reupload'; task: Task } | null;
+
 
 export default function TaskBlock({ isEditMode, idx, data, categories, users, priorities, bodyRef, filterString = "" }: { isEditMode?: RefObject<boolean>, idx: number, data: Task, categories: Category[], users: User[], priorities: Priority[], filterString?: string; bodyRef?: RefObject<HTMLElement | null> }) {
 
@@ -18,18 +20,22 @@ export default function TaskBlock({ isEditMode, idx, data, categories, users, pr
 
     const [openedModal, setOpenedModal] = useState<"confirm-delete" | "confirm-complete" | "edit-task" | "complete-info" | null>(null);
 
-    const [managementModal, setManagementModal] = useState<
-        | { mode: 'edit' | 'reupload'; task: Task }
-        | null
-    >(null);
+    const [managementModal, setManagementModal] = useState<ManagementModalState>(null);
 
     const [completeInfo, setCompleteInfo] = useState<string>("");
 
     const updateOpenedModal = (value: "confirm-delete" | "confirm-complete" | "edit-task" | "complete-info" | null) => {
         setOpenedModal(value);
         if (isEditMode) isEditMode.current = (
-            value ? true : false
+            (value) ? true : false
         );
+    }
+
+    const updateManagementModal = (value: ManagementModalState) => {
+        if (isEditMode) isEditMode.current = (
+            (value) ? true : false
+        );
+        setManagementModal(value);
     }
 
     const confirmDeleteTask = async () => {
@@ -72,13 +78,13 @@ export default function TaskBlock({ isEditMode, idx, data, categories, users, pr
                 <div className="task-block__infobox">
                     <span className="task-block__infobox-label">Приоритет</span>
                     <span className="task-block__infobox-value" style={{
-                        color: (data.task_priorities?.display_color || '')
-                    }}>{data.task_priorities?.name}</span>
+                        color: (data.priority?.display_color || '')
+                    }}>{data.priority?.name}</span>
                 </div>
 
                 <div className="task-block__infobox category-infobox">
                     <span className="task-block__infobox-label">Категория</span>
-                    <span className="task-block__infobox-value">{data.task_categories?.name || " — "}</span>
+                    <span className="task-block__infobox-value">{data.priority?.name || " — "}</span>
                 </div>
 
                 <div className="task-block__infobox users-infobox">
@@ -118,10 +124,10 @@ export default function TaskBlock({ isEditMode, idx, data, categories, users, pr
                     >{data.rejected ? 'Пропущена' : (data.completed ? 'Выполнена' : 'Выполнить')}</button>
                     <button
                         className={`task-block__button ${(data.completed || data.rejected) ? 'reupload-btn' : 'edit-btn'}`}
-                        onClick={() => (data.completed || data.rejected) ? setManagementModal({
+                        onClick={() => (data.completed || data.rejected) ? updateManagementModal({
                             mode: 'reupload',
                             task: data,
-                        }) : setManagementModal({
+                        }) : updateManagementModal({
                             mode: 'edit',
                             task: data,
                         })}
@@ -168,13 +174,13 @@ export default function TaskBlock({ isEditMode, idx, data, categories, users, pr
                             <div className="task-block__infobox">
                                 <span className="task-block__infobox-label">Приоритет</span>
                                 <span className="task-block__infobox-value" style={{
-                                    color: (data.task_priorities?.display_color || '')
-                                }}>{data.task_priorities?.name}</span>
+                                    color: (data.priority?.display_color || '')
+                                }}>{data.priority?.name}</span>
                             </div>
 
                             <div className="task-block__infobox category-infobox">
                                 <span className="task-block__infobox-label">Категория</span>
-                                <span className="task-block__infobox-value">{data.task_categories?.name || " — "}</span>
+                                <span className="task-block__infobox-value">{data.priority?.name || " — "}</span>
                             </div>
                         </div>
 
@@ -217,10 +223,10 @@ export default function TaskBlock({ isEditMode, idx, data, categories, users, pr
                         >{(data.rejected) ? 'Пропущена' : (data.completed ? 'Выполнена' : 'Выполнить')}</button>
                         <button
                             className={`task-block__button ${(data.completed || data.rejected) ? 'reupload-btn' : 'edit-btn'}`}
-                            onClick={() => (data.completed || data.rejected) ? setManagementModal({
+                            onClick={() => (data.completed || data.rejected) ? updateManagementModal({
                                 mode: 'reupload',
                                 task: data,
-                            }) : setManagementModal({
+                            }) : updateManagementModal({
                                 mode: 'edit',
                                 task: data,
                             })}
@@ -338,14 +344,25 @@ export default function TaskBlock({ isEditMode, idx, data, categories, users, pr
 
             {(managementModal?.mode === 'edit' || managementModal?.mode === 'reupload') && (
                 <TaskManagementModal
+                    key={`${managementModal.mode}-${managementModal.task.id}`}
                     mode={managementModal.mode}
                     taskData={managementModal.task}
                     categories={categories}
                     priorities={priorities}
                     users={users}
-                    onClose={() => setManagementModal(null)}
+                    onClose={() => updateManagementModal(null)}
                 />
             )}
+            {/* {(managementModal?.mode === 'edit' || managementModal?.mode === 'reupload') && (
+                <TaskManagementModal
+                    mode={managementModal.mode}
+                    taskData={managementModal.task}
+                    categories={categories}
+                    priorities={priorities}
+                    users={users}
+                    onClose={() => updateManagementModal(null)}
+                />
+            )} */}
         </div>
     );
 }
