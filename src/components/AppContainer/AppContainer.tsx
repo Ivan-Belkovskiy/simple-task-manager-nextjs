@@ -4,7 +4,7 @@ import "./AppContainer.css";
 import { Category, Priority, Task, User } from "@/app/(protected)/page";
 import MainUI from "../MainUI/MainUI";
 import TaskList from "../TaskList/TaskList";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import RealtimeController from "../RealtimeController/RealtimeController";
 import TaskNotificationModal from "../UI/TaskNotificationModal/TaskNotificationModal";
 import ClockDisplay from "../UI/ClockDisplay/ClockDisplay";
