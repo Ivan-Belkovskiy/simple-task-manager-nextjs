@@ -17,25 +17,25 @@ const SECTIONS: {
     addLabel: string;
     placeholder: string;
 }[] = [
-    {
-        kind: 'ITEM',
-        title: 'Необходимые предметы',
-        addLabel: '+ Добавить предмет',
-        placeholder: 'Название предмета',
-    },
-    {
-        kind: 'ACTION',
-        title: 'Необходимые действия',
-        addLabel: '+ Добавить действие',
-        placeholder: 'Что нужно сделать',
-    },
-    {
-        kind: 'REQUIREMENT',
-        title: 'Условия и требования',
-        addLabel: '+ Добавить условие',
-        placeholder: 'Условие / требование',
-    },
-];
+        {
+            kind: 'ITEM',
+            title: 'Необходимые предметы',
+            addLabel: '+ Добавить предмет',
+            placeholder: 'Название предмета',
+        },
+        {
+            kind: 'ACTION',
+            title: 'Необходимые действия',
+            addLabel: '+ Добавить действие',
+            placeholder: 'Что нужно сделать',
+        },
+        {
+            kind: 'REQUIREMENT',
+            title: 'Условия и требования',
+            addLabel: '+ Добавить условие',
+            placeholder: 'Условие / требование',
+        },
+    ];
 
 export default function TaskItemsEditor({ items, onChange, disabled }: Props) {
     const [expanded, setExpanded] = useState<Record<string, number | null>>({});
@@ -135,7 +135,7 @@ export default function TaskItemsEditor({ items, onChange, disabled }: Props) {
 
                                         <input
                                             type="text"
-                                            className="task-items-editor__quantity"
+                                            className="task-items-editor__quantity task-items-editor__quantity--inline"
                                             placeholder="Кол-во"
                                             value={it.quantity ?? ''}
                                             onChange={e => updateItem(section.kind, i, { quantity: e.target.value })}
@@ -150,9 +150,10 @@ export default function TaskItemsEditor({ items, onChange, disabled }: Props) {
                                                 ...p,
                                                 [section.kind]: p[section.kind] === i ? null : i,
                                             }))}
-                                            title="Описание"
+                                            title="Описание и количество"
                                         >
-                                            {it.description ? '📝' : '＋'}
+                                            {(expanded[section.kind] === i) ? '-' : '＋'}
+                                            {/* {(it.description || it.quantity) ? '📝' : '＋'} */}
                                         </button>
 
                                         <button
@@ -187,14 +188,28 @@ export default function TaskItemsEditor({ items, onChange, disabled }: Props) {
                                     </div>
 
                                     {expanded[section.kind] === i && (
-                                        <textarea
-                                            className="task-items-editor__description"
-                                            placeholder="Описание (опционально)"
-                                            value={it.description ?? ''}
-                                            onChange={e => updateItem(section.kind, i, { description: e.target.value })}
-                                            disabled={disabled}
-                                            rows={2}
-                                        />
+                                        <div className="task-items-editor__expanded">
+                                            <div className="task-items-editor__expanded-field">
+                                                <label className="task-items-editor__expanded-label">Количество / характеристика:</label>
+                                                <input
+                                                    type="text"
+                                                    className="task-items-editor__quantity task-items-editor__quantity--expanded"
+                                                    placeholder="Например: 2 шт, 5 л, до конца дня"
+                                                    value={it.quantity ?? ''}
+                                                    onChange={e => updateItem(section.kind, i, { quantity: e.target.value })}
+                                                    disabled={disabled}
+                                                />
+                                            </div>
+
+                                            <textarea
+                                                className="task-items-editor__description"
+                                                placeholder="Описание (опционально)"
+                                                value={it.description ?? ''}
+                                                onChange={e => updateItem(section.kind, i, { description: e.target.value })}
+                                                disabled={disabled}
+                                                rows={2}
+                                            />
+                                        </div>
                                     )}
                                 </div>
                             ))}

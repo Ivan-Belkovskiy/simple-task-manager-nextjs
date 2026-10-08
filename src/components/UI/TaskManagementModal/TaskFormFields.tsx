@@ -1,3 +1,4 @@
+import VoiceInput from '../VoiceInput/VoiceInput';
 import { Category, Priority, User } from '@/app/(protected)/page';
 import { getLocalDateString } from '@/utils/datetime';
 import CustomSelect from '../CustomSelect/CustomSelect';
@@ -7,6 +8,7 @@ import ErrorBlock from './ErrorBlock/ErrorBlock';
 import { ModalMode, SubTaskData, TaskFormData, TaskItemData, ValidationErrors } from './types';
 import SubTaskEditor from '../SubTaskEditor/SubTaskEditor';
 import TaskItemsEditor from '../TaskItemsEditor/TaskItemsEditor';
+import { useState } from 'react';
 
 interface Props {
     mode: ModalMode;
@@ -50,25 +52,44 @@ export default function TaskFormFields({
             >
                 <div className="task-management-modal__block">
                     <span className="task-management-modal__label">Название:</span>
-                    <input
-                        type="text"
-                        className="task-management-modal__input task-name-input"
-                        value={data.name}
-                        onChange={(e) => {
-                            clearError('name');
-                            update('name', e.target.value);
-                        }}
-                    />
+                    <div className="task-management-modal__voice-field task-name-input">
+                        <input
+                            type="text"
+                            className="task-management-modal__input"
+                            value={data.name}
+                            onChange={(e) => {
+                                clearError('name');
+                                update('name', e.target.value);
+                            }}
+                        />
+                        <VoiceInput
+                            currentValue={data.name}
+                            onResult={(text) => {
+                                clearError('name');
+                                update('name', text);
+                            }}
+                            title="Голосовой ввод"
+                        />
+                    </div>
                 </div>
             </ErrorBlock>
 
             <div className="task-management-modal__block">
                 <span className="task-management-modal__label">Описание:</span>
-                <textarea
-                    className="task-management-modal__input task-name-input"
-                    value={data.description}
-                    onChange={(e) => update('description', e.target.value)}
-                />
+                <div className="task-management-modal__voice-field task-name-input">
+                    <textarea
+                        className="task-management-modal__input"
+                        value={data.description}
+                        onChange={(e) => update('description', e.target.value)}
+                        rows={3}
+                    />
+                    <VoiceInput
+                        mode="append"
+                        currentValue={data.description}
+                        onResult={(text) => update('description', text)}
+                        title="Голосовой ввод"
+                    />
+                </div>
             </div>
 
             <div className="task-management-modal__block">
@@ -300,6 +321,9 @@ export default function TaskFormFields({
                 items={items}
                 onChange={onItemsChange}
             />
+
+
+            
         </>
     );
 }

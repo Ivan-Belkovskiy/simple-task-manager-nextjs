@@ -10,6 +10,7 @@ import TaskFormFields from './TaskFormFields';
 import NotificationSettings from './NotificationSettings';
 import UserListModal from '../UserListModal/UserListModal';
 import CategoryListModal from '../CategoryListModal/CategoryListModal';
+import SimpleModal from '../NEW/SimpleModal/SimpleModal';
 
 export default function TaskManagementModal({
     mode, taskData, categories, priorities, users, onClose,
@@ -101,6 +102,8 @@ export default function TaskManagementModal({
 
             {userModalOpened && <UserListModal users={users} onClose={() => setUserModalOpened(false)} />}
             {categoryModalOpened && <CategoryListModal categories={categories} onClose={() => setCategoryModalOpened(false)} />}
+
+            
         </div>
     );
 }

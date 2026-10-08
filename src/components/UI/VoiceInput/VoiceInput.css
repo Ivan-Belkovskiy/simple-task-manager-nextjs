@@ -1,0 +1,99 @@
+.voice-input {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.voice-input__btn {
+    width: 34px;
+    height: 34px;
+    border: 2px solid var(--tm-color, #0b0bdb);
+    background: #fff;
+    color: var(--tm-color, #0b0bdb);
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 15px;
+    border-radius: 4px;
+    transition: all 0.15s ease;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.voice-input__btn:hover:not(:disabled) {
+    background: var(--tm-color, #0b0bdb);
+    color: #fff;
+}
+
+.voice-input__btn:focus-visible {
+    outline: 2px solid var(--tm-accent, #00eeff);
+    outline-offset: 1px;
+}
+
+.voice-input__btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.voice-input__btn--listening {
+    background: #ff0000;
+    border-color: #ff0000;
+    color: #fff;
+    animation: voice-pulse 1.5s infinite;
+}
+
+.voice-input__btn--listening:hover {
+    background: #cc0000;
+    border-color: #cc0000;
+    color: #fff;
+}
+
+.voice-input__icon {
+    line-height: 1;
+    pointer-events: none;
+}
+
+.voice-input__dot {
+    width: 12px;
+    height: 12px;
+    background: #fff;
+    border-radius: 50%;
+    animation: voice-blink 0.8s infinite alternate;
+    pointer-events: none;
+}
+
+@keyframes voice-pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.55); }
+    70%  { box-shadow: 0 0 0 8px rgba(255, 0, 0, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 0, 0, 0); }
+}
+
+@keyframes voice-blink {
+    from { opacity: 1; }
+    to   { opacity: 0.3; }
+}
+
+.voice-input__error {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    background: #b40000;
+    color: #fff;
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 4px;
+    white-space: nowrap;
+    z-index: 20;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    pointer-events: none;
+}
+
+@media (max-width: 1023px) {
+    .voice-input__btn {
+        width: 40px;
+        height: 40px;
+        font-size: 17px;
+    }
+}

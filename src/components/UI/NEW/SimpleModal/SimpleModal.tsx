@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import "./SimpleModal.css";
 import AnimatedLoader from "../../AnimatedLoader/AnimatedLoader";
+import { createPortal } from "react-dom";
 
 export type SimpleModalType = "info" | "confirm" | "prompt" | "progress";
 
@@ -59,7 +60,8 @@ export default function SimpleModal(props: SimpleModalProps) {
 
     const [inputValue, setInputValue] = useState('');
 
-    return (
+
+    return createPortal((
         <div className="simple-modal-new__overlay">
             <div className="simple-modal-new">
                 <div className="simple-modal-new__main">
@@ -78,7 +80,7 @@ export default function SimpleModal(props: SimpleModalProps) {
                                     </div>
                                     <span className="simple-modal-new__progress-text">{props.current} / {props.all} ({Math.floor(props.current / (props.all / 100))}%) </span>
                                 </div>
-                                
+
                             </div>
                         </div>
                     </>
@@ -123,5 +125,6 @@ export default function SimpleModal(props: SimpleModalProps) {
                     )}
             </div>
         </div>
-    )
+    ), document.body);
+
 }
