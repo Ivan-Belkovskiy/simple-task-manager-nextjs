@@ -13,6 +13,8 @@ function emptyForm(priorities: Priority[]): TaskFormData {
         category: '[[NONE]]',
         completeBefore: getLocalDateString(new Date()),
         subtasks: [],
+
+        items: [],
     };
 }
 
@@ -41,6 +43,16 @@ export function useTaskForm(mode: ModalMode, priorities: Priority[], taskData?: 
                 description: st.description,
                 order: st.order ?? 0,
                 completed: !!st.completed,
+            })),
+
+            items: (taskData.items ?? []).map(it => ({
+                id: it.id,
+                kind: it.kind,
+                name: it.name,
+                description: it.description,
+                quantity: it.quantity,
+                order: it.order ?? 0,
+                completed: !!it.completed,
             })),
         };
     });

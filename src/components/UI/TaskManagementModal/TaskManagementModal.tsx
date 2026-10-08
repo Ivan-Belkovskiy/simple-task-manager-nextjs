@@ -58,6 +58,9 @@ export default function TaskManagementModal({
 
                         subtasks={form.data.subtasks}
                         onSubtasksChange={(subtasks) => form.setData(p => ({ ...p, subtasks }))}
+
+                        items={form.data.items}                                           
+                        onItemsChange={(items) => form.setData(p => ({ ...p, items }))}   
                     />
 
                     {!form.data.disableCompleteBeforeDate && !form.data.isCompleted && (

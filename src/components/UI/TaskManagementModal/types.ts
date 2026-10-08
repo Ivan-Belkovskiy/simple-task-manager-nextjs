@@ -1,5 +1,5 @@
 import { Category, Priority, Task, User } from "@/app/(protected)/page";
-import { NotificationFormat, NotificationPlatform } from "@prisma/client";
+import { NotificationFormat, NotificationPlatform, TaskItemKind } from "@prisma/client";
 
 export type ModalMode = 'create' | 'edit' | 'reupload';
 
@@ -8,7 +8,6 @@ export interface FormNotification {
     hour_offset: number;
     activated?: boolean;
     isNew?: boolean;
-
     target_platforms: NotificationPlatform[];
     display_format: NotificationFormat;
     ringtone?: string;
@@ -18,6 +17,16 @@ export interface SubTaskData {
     id?: number;
     name: string;
     description?: string | null;
+    order: number;
+    completed: boolean;
+}
+
+export interface TaskItemData {
+    id?: number;
+    kind: TaskItemKind;
+    name: string;
+    description?: string | null;
+    quantity?: string | null;
     order: number;
     completed: boolean;
 }
@@ -37,6 +46,7 @@ export interface TaskFormData {
     createdAt?: string;
 
     subtasks: SubTaskData[];
+    items: TaskItemData[]; 
 }
 
 export interface TaskSubmitPayload extends Omit<TaskFormData, 'completeBefore' | 'completedAt' | 'createdAt'> {

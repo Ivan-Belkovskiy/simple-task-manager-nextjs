@@ -17,13 +17,10 @@ export type Task = Prisma.tasksGetPayload<{
   include: {
     category: true;
     priority: true;
-    task_users: {
-      include: { users: true };
-    };
-    task_notifications: {
-      include: { task: true };
-    };
+    task_users: { include: { users: true } };
+    task_notifications: { include: { task: true } };
     subtasks: true;
+    items: true;
   }
 }>;
 
@@ -59,6 +56,7 @@ export default async function Home() {
       subtasks: {
         orderBy: { order: 'asc' },
       },
+      items: { orderBy: [{ kind: 'asc' }, { order: 'asc' }] },
     },
     orderBy: [
       { completed: 'asc' },

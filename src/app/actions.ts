@@ -2,9 +2,8 @@
 
 import { prisma } from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
-import { Notification } from "./(protected)/page";
 import type { TaskSubmitPayload } from '@/components/UI/TaskManagementModal/types';
-import { getCurrentUser, getSession } from "./actions/users/session";
+import { getCurrentUser } from "./actions/users/session";
 
 export async function createTask(data: TaskSubmitPayload) {
     try {
@@ -55,6 +54,18 @@ export async function createTask(data: TaskSubmitPayload) {
                         order: i,
                         completed: st.completed,
                         completed_at: st.completed ? new Date() : null,
+                    })) ?? [],
+                },
+
+                items: {
+                    create: data.items?.map((it, i) => ({
+                        kind: it.kind,
+                        name: it.name,
+                        description: it.description ?? null,
+                        quantity: it.quantity ?? null,
+                        order: i,
+                        completed: it.completed,
+                        completed_at: it.completed ? new Date() : null,
                     })) ?? [],
                 },
             },
@@ -147,6 +158,48 @@ export async function updateTask(id: number, data: TaskSubmitPayload) {
                     });
                 }
             }
+
+
+            const incomingItemIds = (data.items ?? [])
+                .map(it => it.id)
+                .filter((x): x is number => typeof x === 'number');
+
+            await tx.task_items.deleteMany({
+                where: {
+                    task_id: id,
+                    id: { notIn: incomingItemIds.length ? incomingItemIds : [0] },
+                },
+            });
+
+            for (const it of (data.items ?? [])) {
+                if (it.id) {
+                    await tx.task_items.update({
+                        where: { id: it.id },
+                        data: {
+                            kind: it.kind,
+                            name: it.name,
+                            description: it.description ?? null,
+                            quantity: it.quantity ?? null,
+                            order: it.order,
+                            completed: it.completed,
+                            completed_at: it.completed ? new Date() : null,
+                        },
+                    });
+                } else {
+                    await tx.task_items.create({
+                        data: {
+                            task_id: id,
+                            kind: it.kind,
+                            name: it.name,
+                            description: it.description ?? null,
+                            quantity: it.quantity ?? null,
+                            order: it.order,
+                            completed: it.completed,
+                            completed_at: it.completed ? new Date() : null,
+                        },
+                    });
+                }
+            }
         });
 
         revalidatePath('/');
@@ -200,6 +253,18 @@ export async function createTaskNew(data: TaskSubmitPayload) {
                         order: i,
                         completed: st.completed,
                         completed_at: st.completed ? new Date() : null,
+                    })) ?? [],
+                },
+
+                items: {
+                    create: data.items?.map((it, i) => ({
+                        kind: it.kind,
+                        name: it.name,
+                        description: it.description ?? null,
+                        quantity: it.quantity ?? null,
+                        order: i,
+                        completed: it.completed,
+                        completed_at: it.completed ? new Date() : null,
                     })) ?? [],
                 },
             },

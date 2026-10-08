@@ -6,12 +6,15 @@ import { redirect } from 'next/navigation';
 import { COOKIE_NAME } from '@/lib/constants';
 import { verifyJWT, type SessionPayload } from '@/lib/jwt';
 import { prisma } from '@/lib/prisma';
+import { app_accounts } from '@prisma/client';
 
-export type PublicUser = {
-    id: string;
-    username: string;
-    login: string;
-};
+// export type PublicUser = {
+//     id: string;
+//     username: string;
+//     login: string;
+// };
+
+export type PublicUser = Omit<app_accounts, 'password_hash'>;
 
 export const getSession = cache(async (): Promise<SessionPayload | null> => {
     const cookieStore = await cookies();
@@ -29,13 +32,16 @@ export const getCurrentUser = cache(async (): Promise<PublicUser | null> => {
 
     const user = await prisma.app_accounts.findUnique({
         where: { id: session.userId },
-        select: {
-            id: true,
-            username: true,
-            login: true,
-            // email: true,
-            // access_level: true,
-        },
+        omit: {
+            password_hash: true
+        }
+        // select: {
+        //     id: true,
+        //     username: true,
+        //     login: true,
+        //     // email: true,
+        //     // access_level: true,
+        // },
     });
 
     return user;
