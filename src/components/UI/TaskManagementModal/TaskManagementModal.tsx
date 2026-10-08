@@ -1,5 +1,6 @@
 'use client';
 
+import GenerateButton from './GenerateButton';
 import { useState } from 'react';
 import './TaskManagementModal.css';
 import { MODE_CONFIG } from './modes';
@@ -56,12 +57,16 @@ export default function TaskManagementModal({
                         users={users}
                         onOpenUserModal={() => setUserModalOpened(true)}
                         onOpenCategoryModal={() => setCategoryModalOpened(true)}
-
                         subtasks={form.data.subtasks}
                         onSubtasksChange={(subtasks) => form.setData(p => ({ ...p, subtasks }))}
+                        items={form.data.items}
+                        onItemsChange={(items) => form.setData(p => ({ ...p, items }))}
+                    />
 
-                        items={form.data.items}                                           
-                        onItemsChange={(items) => form.setData(p => ({ ...p, items }))}   
+                    <GenerateButton
+                        data={form.data}
+                        onApply={(patch) => form.setData(p => ({ ...p, ...patch }))}
+                        disabled={form.isLoading}
                     />
 
                     {!form.data.disableCompleteBeforeDate && !form.data.isCompleted && (
@@ -103,7 +108,7 @@ export default function TaskManagementModal({
             {userModalOpened && <UserListModal users={users} onClose={() => setUserModalOpened(false)} />}
             {categoryModalOpened && <CategoryListModal categories={categories} onClose={() => setCategoryModalOpened(false)} />}
 
-            
+
         </div>
     );
 }
