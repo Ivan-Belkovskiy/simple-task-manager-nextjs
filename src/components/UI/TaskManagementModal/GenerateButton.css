@@ -51,3 +51,7 @@
         width: 95%;
     }
 }
+
+.generate-button--cached {
+    background: linear-gradient(135deg, #f39c12 0%, #f1c40f 100%);
+}
