@@ -90,7 +90,7 @@ export default function GenerateButton({ data, onApply, disabled }: Props) {
                         <AnimatedLoader color='#fff' styles={{ display: 'inline-flex' }} />
                         <span>Генерация...</span>
                     </>
-                ) : cachedHit ?  '⚡ Из кэша' : '✨ Сгенерировать данные'}
+                ) : cachedHit ?  'Данные загружены из кэша' : '✨ Сгенерировать данные'}
             </button>
             {error && (
                 <span className="generate-button__error" role="alert">
