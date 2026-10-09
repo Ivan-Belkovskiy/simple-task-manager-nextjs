@@ -1,6 +1,8 @@
 'use server';
 
+import { createHash } from 'crypto';
 import { getCurrentUser } from '@/app/actions/users/session';
+import { prisma } from '@/lib/prisma';
 import { getNextApiKey, createClient, getKeysCount } from '@/lib/gemini/client';
 import { GeneratedTaskSchema, type GeneratedTask } from '@/lib/gemini/schemas';
 import { SYSTEM_PROMPT, buildUserPrompt } from '@/lib/gemini/prompts';
@@ -9,9 +11,14 @@ export interface GenerateResult {
     success: boolean;
     data?: GeneratedTask;
     error?: string;
+    cached?: boolean; 
 }
 
-const cache = new Map<string, GeneratedTask>();
+function hashKey(name: string, description: string): string {
+    return createHash('sha256')
+        .update(`${name.trim()}::${description.trim()}`)
+        .digest('hex');
+}
 
 export async function generateTaskDetails(
     name: string,
@@ -24,10 +31,32 @@ export async function generateTaskDetails(
         return { success: false, error: 'Введите название задачи' };
     }
 
-    const cacheKey = `${name.trim()}::${description.trim()}`;
-    const cached = cache.get(cacheKey);
-    if (cached) {
-        return { success: true, data: cached };
+    const cacheKey = hashKey(name, description);
+
+    try {
+        const cached = await prisma.ai_generation_cache.findUnique({
+            where: { cache_key: cacheKey },
+        });
+
+        if (cached) {
+            prisma.ai_generation_cache
+                .update({
+                    where: { cache_key: cacheKey },
+                    data: {
+                        hit_count: { increment: 1 },
+                        last_used_at: new Date(),
+                    },
+                })
+                .catch(err => console.error('Ошибка обновления статистики кэша:', err));
+
+            return {
+                success: true,
+                data: cached.payload as GeneratedTask,
+                cached: true,
+            };
+        }
+    } catch (error) {
+        console.error('Ошибка чтения кэша:', error);
     }
 
     const attempts = getKeysCount();
@@ -94,8 +123,23 @@ export async function generateTaskDetails(
                 continue;
             }
 
-            cache.set(cacheKey, parsed.data);
-            return { success: true, data: parsed.data };
+            try {
+                await prisma.ai_generation_cache.upsert({
+                    where: { cache_key: cacheKey },
+                    create: {
+                        cache_key: cacheKey,
+                        payload: parsed.data,
+                    },
+                    update: {
+                        payload: parsed.data,
+                        last_used_at: new Date(),
+                    },
+                });
+            } catch (error) {
+                console.error('Ошибка записи в кэш:', error);
+            }
+
+            return { success: true, data: parsed.data, cached: false };
         } catch (error: unknown) {
             const msg = error instanceof Error ? error.message : String(error);
 

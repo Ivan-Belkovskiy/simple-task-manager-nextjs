@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { generateTaskDetails } from '@/app/actions/ai/generateTaskDetails';
 import type { TaskFormData, SubTaskData, TaskItemData } from './types';
 import './GenerateButton.css';
+import AnimatedLoader from '../AnimatedLoader/AnimatedLoader';
 
 interface Props {
     data: TaskFormData;
@@ -14,6 +15,9 @@ interface Props {
 export default function GenerateButton({ data, onApply, disabled }: Props) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+
+    const [cachedHit, setCachedHit] = useState(false);
+
 
     const handleClick = async () => {
         if (!data.name.trim()) {
@@ -29,6 +33,11 @@ export default function GenerateButton({ data, onApply, disabled }: Props) {
             if (!result.success || !result.data) {
                 setError(result.error ?? 'Ошибка генерации');
                 return;
+            }
+
+            if (result.cached) {
+                setCachedHit(true);
+                setTimeout(() => setCachedHit(false), 2000);
             }
 
             const { subtasks, items } = result.data;
@@ -72,11 +81,16 @@ export default function GenerateButton({ data, onApply, disabled }: Props) {
         <div className="generate-button-wrapper">
             <button
                 type="button"
-                className="generate-button"
+                className={`generate-button ${cachedHit ? 'generate-button--cached' : ''}`}
                 onClick={handleClick}
                 disabled={disabled || loading}
             >
-                {loading ? '⏳ Генерация...' : '✨ Сгенерировать данные'}
+                {loading ? (
+                    <>
+                        <AnimatedLoader color='#fff' styles={{ display: 'inline-flex' }} />
+                        <span>Генерация...</span>
+                    </>
+                ) : cachedHit ?  '⚡ Из кэша' : '✨ Сгенерировать данные'}
             </button>
             {error && (
                 <span className="generate-button__error" role="alert">

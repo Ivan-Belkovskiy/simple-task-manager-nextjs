@@ -136,7 +136,7 @@ export default function TaskItemsEditor({ items, onChange, disabled }: Props) {
                                         <input
                                             type="text"
                                             className="task-items-editor__quantity task-items-editor__quantity--inline"
-                                            placeholder="Кол-во"
+                                            placeholder=""
                                             value={it.quantity ?? ''}
                                             onChange={e => updateItem(section.kind, i, { quantity: e.target.value })}
                                             disabled={disabled}
