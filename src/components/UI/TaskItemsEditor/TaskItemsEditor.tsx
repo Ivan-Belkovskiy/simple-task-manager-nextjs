@@ -9,35 +9,40 @@ interface Props {
     items: TaskItemData[];
     onChange: (items: TaskItemData[]) => void;
     disabled?: boolean;
+    mode?: "editor" | "completion";
 }
 
 const SECTIONS: {
     kind: TaskItemKind;
     title: string;
+    completionTitle?: string;
     addLabel: string;
     placeholder: string;
 }[] = [
         {
             kind: 'ITEM',
             title: 'Необходимые предметы',
+            completionTitle: 'Имеются необходимые предметы',
             addLabel: '+ Добавить предмет',
             placeholder: 'Название предмета',
         },
         {
             kind: 'ACTION',
             title: 'Необходимые действия',
+            completionTitle: 'Выполнены необходимые действия',
             addLabel: '+ Добавить действие',
             placeholder: 'Что нужно сделать',
         },
         {
             kind: 'REQUIREMENT',
             title: 'Условия и требования',
+            completionTitle: 'Выполнены условия и требования',
             addLabel: '+ Добавить условие',
             placeholder: 'Условие / требование',
         },
     ];
 
-export default function TaskItemsEditor({ items, onChange, disabled }: Props) {
+export default function TaskItemsEditor({ items, onChange, disabled, mode = "editor" }: Props) {
     const [expanded, setExpanded] = useState<Record<string, number | null>>({});
 
     const itemsOfKind = (kind: TaskItemKind) =>
@@ -93,7 +98,7 @@ export default function TaskItemsEditor({ items, onChange, disabled }: Props) {
     };
 
     return (
-        <div className="task-items-editor">
+        <div className={`task-items-editor mode-${mode}`}>
             {SECTIONS.map(section => {
                 const kindItems = itemsOfKind(section.kind);
                 const completedCount = kindItems.filter(it => it.completed).length;
@@ -101,7 +106,7 @@ export default function TaskItemsEditor({ items, onChange, disabled }: Props) {
                 return (
                     <div key={section.kind} className="task-items-editor__section">
                         <div className="task-items-editor__section-header">
-                            <span className="task-items-editor__section-title">{section.title}</span>
+                            <span className="task-items-editor__section-title">{(mode === 'completion') ? (section.completionTitle || section.title) : section.title}</span>
                             {kindItems.length > 0 && (
                                 <span className="task-items-editor__section-count">
                                     {completedCount} / {kindItems.length}
@@ -130,7 +135,7 @@ export default function TaskItemsEditor({ items, onChange, disabled }: Props) {
                                             placeholder={section.placeholder}
                                             value={it.name}
                                             onChange={e => updateItem(section.kind, i, { name: e.target.value })}
-                                            disabled={disabled}
+                                            disabled={disabled || mode === 'completion'}
                                         />
 
                                         <input
@@ -139,7 +144,7 @@ export default function TaskItemsEditor({ items, onChange, disabled }: Props) {
                                             placeholder=""
                                             value={it.quantity ?? ''}
                                             onChange={e => updateItem(section.kind, i, { quantity: e.target.value })}
-                                            disabled={disabled}
+                                            disabled={disabled || mode === 'completion'}
                                             title="Количество / характеристика"
                                         />
 
@@ -153,38 +158,41 @@ export default function TaskItemsEditor({ items, onChange, disabled }: Props) {
                                             title="Описание и количество"
                                         >
                                             {(expanded[section.kind] === i) ? '-' : '＋'}
-                                            {/* {(it.description || it.quantity) ? '📝' : '＋'} */}
                                         </button>
 
-                                        <button
-                                            type="button"
-                                            className="task-items-editor__btn"
-                                            onClick={() => moveItem(section.kind, i, -1)}
-                                            disabled={i === 0 || disabled}
-                                            title="Вверх"
-                                        >
-                                            ↑
-                                        </button>
+                                        {(mode === 'editor') && (
+                                            <>
+                                                <button
+                                                    type="button"
+                                                    className="task-items-editor__btn"
+                                                    onClick={() => moveItem(section.kind, i, -1)}
+                                                    disabled={i === 0 || disabled}
+                                                    title="Вверх"
+                                                >
+                                                    ↑
+                                                </button>
 
-                                        <button
-                                            type="button"
-                                            className="task-items-editor__btn"
-                                            onClick={() => moveItem(section.kind, i, 1)}
-                                            disabled={i === kindItems.length - 1 || disabled}
-                                            title="Вниз"
-                                        >
-                                            ↓
-                                        </button>
+                                                <button
+                                                    type="button"
+                                                    className="task-items-editor__btn"
+                                                    onClick={() => moveItem(section.kind, i, 1)}
+                                                    disabled={i === kindItems.length - 1 || disabled}
+                                                    title="Вниз"
+                                                >
+                                                    ↓
+                                                </button>
 
-                                        <button
-                                            type="button"
-                                            className="task-items-editor__btn task-items-editor__btn--danger"
-                                            onClick={() => removeItem(section.kind, i)}
-                                            disabled={disabled}
-                                            title="Удалить"
-                                        >
-                                            ✕
-                                        </button>
+                                                <button
+                                                    type="button"
+                                                    className="task-items-editor__btn task-items-editor__btn--danger"
+                                                    onClick={() => removeItem(section.kind, i)}
+                                                    disabled={disabled}
+                                                    title="Удалить"
+                                                >
+                                                    ✕
+                                                </button>
+                                            </>
+                                        )}
                                     </div>
 
                                     {expanded[section.kind] === i && (
@@ -197,16 +205,16 @@ export default function TaskItemsEditor({ items, onChange, disabled }: Props) {
                                                     placeholder="Например: 2 шт, 5 л, до конца дня"
                                                     value={it.quantity ?? ''}
                                                     onChange={e => updateItem(section.kind, i, { quantity: e.target.value })}
-                                                    disabled={disabled}
+                                                    disabled={disabled || mode === 'completion'}
                                                 />
                                             </div>
 
                                             <textarea
                                                 className="task-items-editor__description"
-                                                placeholder="Описание (опционально)"
+                                                placeholder={(mode === 'editor') ? "Описание (опционально)" : ""}
                                                 value={it.description ?? ''}
                                                 onChange={e => updateItem(section.kind, i, { description: e.target.value })}
-                                                disabled={disabled}
+                                                disabled={disabled || mode === 'completion'}
                                                 rows={2}
                                             />
                                         </div>
@@ -215,14 +223,14 @@ export default function TaskItemsEditor({ items, onChange, disabled }: Props) {
                             ))}
                         </div>
 
-                        <button
+                        {(mode === 'editor') && <button
                             type="button"
                             className="task-items-editor__add"
                             onClick={() => addItem(section.kind)}
                             disabled={disabled}
                         >
                             {section.addLabel}
-                        </button>
+                        </button>}
                     </div>
                 );
             })}

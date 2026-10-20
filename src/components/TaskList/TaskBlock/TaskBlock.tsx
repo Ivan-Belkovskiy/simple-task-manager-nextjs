@@ -1,13 +1,16 @@
 import { completeTask, deleteTask } from "@/app/actions";
 import "./TaskBlock.css";
 import { Category, Priority, Task, User } from "@/app/(protected)/page";
-import { Dispatch, RefObject, SetStateAction, useRef, useState } from "react";
+import { Dispatch, RefObject, SetStateAction, useEffect, useRef, useState } from "react";
 import SimpleModal from "@/components/UI/SimpleModal/SimpleModal";
 import SimpleDropdown from "@/components/UI/SimpleDropdown/SimpleDropdown";
 import TaskInfoModal from "@/components/UI/TaskInfoModal/TaskInfoModal";
 import TextHighlight from "@/components/UI/TextHighlight/TextHighlight";
 import { getLocalDatetimeString } from "@/utils/datetime";
 import TaskManagementModal from "@/components/UI/TaskManagementModal/TaskManagementModal";
+import SubTaskEditor from "@/components/UI/SubTaskEditor/SubTaskEditor";
+import { SubTaskData, TaskItemData } from "@/components/UI/TaskManagementModal/types";
+import TaskItemsEditor from "@/components/UI/TaskItemsEditor/TaskItemsEditor";
 
 type ManagementModalState = { mode: 'edit' | 'reupload'; task: Task } | null;
 
@@ -23,6 +26,14 @@ export default function TaskBlock({ isEditMode, idx, data, categories, users, pr
     const [managementModal, setManagementModal] = useState<ManagementModalState>(null);
 
     const [completeInfo, setCompleteInfo] = useState<string>("");
+
+    const [editingCompleteData, setEditingCompleteData] = useState<{
+        subtasks: SubTaskData[];
+        items: TaskItemData[];
+    }>({
+        subtasks: data.subtasks || [],
+        items: data.items || [],
+    });
 
     const updateOpenedModal = (value: "confirm-delete" | "confirm-complete" | "edit-task" | "complete-info" | null) => {
         setOpenedModal(value);
@@ -52,7 +63,10 @@ export default function TaskBlock({ isEditMode, idx, data, categories, users, pr
         if (!data.id) return;
 
         setLoading(true);
-        await completeTask(data.id, completeInfo);
+        await completeTask(data.id, {
+            completeInfo,
+            ...editingCompleteData,
+        });
         setLoading(false);
 
         updateOpenedModal(null);
@@ -119,7 +133,13 @@ export default function TaskBlock({ isEditMode, idx, data, categories, users, pr
                         className={`task-block__button complete-btn ${(data.completed) ? 'completed' : ''} ${(data.rejected) ? 'rejected' : ''}`}
                         onClick={() => {
                             if (data.completed) updateOpenedModal('complete-info');
-                            else if (!data.completed && !data.rejected) updateOpenedModal('confirm-complete');
+                            else if (!data.completed && !data.rejected) {
+                                setEditingCompleteData({
+                                    subtasks: data.subtasks || [],
+                                    items: data.items || [],
+                                });
+                                updateOpenedModal('confirm-complete');
+                            }
                         }}
                     >{data.rejected ? 'Пропущена' : (data.completed ? 'Выполнена' : 'Выполнить')}</button>
                     <button
@@ -283,7 +303,7 @@ export default function TaskBlock({ isEditMode, idx, data, categories, users, pr
                         text: "Подтвердить",
                         className: "task-block__button confirm-complete-btn",
                         onClick: () => confirmCompleteTask(),
-                        disabled: isLoading
+                        disabled: (isLoading || (editingCompleteData.subtasks.filter(s => !s.completed).length > 0 || editingCompleteData.items.filter(t => !t.completed).length > 0))
                     }
                 ]} styles={{
                     title: {
@@ -296,13 +316,39 @@ export default function TaskBlock({ isEditMode, idx, data, categories, users, pr
                         // height: '30%'
                     }
                 }} >
-                    <div className="task-block__complete-data">
-                        <span className="task-block__label complete-info-label">Примечание:</span>
-                        <textarea
-                            className="task-block__input complete-info-input"
-                            value={completeInfo}
-                            onChange={(e) => setCompleteInfo(e.target.value)}
-                        ></textarea>
+                    <div className="task-completion-data">
+
+                        <div className="task-completion-data__content">
+                            <SubTaskEditor
+                                subtasks={editingCompleteData.subtasks}
+                                onChange={(updated) => setEditingCompleteData(p => ({
+                                    ...p,
+                                    subtasks: updated,
+                                }))}
+
+                                mode="completion"
+                            />
+
+                            <TaskItemsEditor
+                                items={editingCompleteData.items}
+                                onChange={(updated) => setEditingCompleteData(p => ({
+                                    ...p,
+                                    items: updated,
+                                }))}
+
+                                mode="completion"
+                            />
+
+                            <div className="task-completion-data__block">
+                                <span className="task-block__label complete-info-label">Примечание:</span>
+                                <textarea
+                                    className="task-block__input complete-info-input"
+                                    value={completeInfo}
+                                    onChange={(e) => setCompleteInfo(e.target.value)}
+                                ></textarea>
+                            </div>
+                        </div>
+
                     </div>
                 </SimpleModal>
             )}
@@ -332,12 +378,39 @@ export default function TaskBlock({ isEditMode, idx, data, categories, users, pr
                         // height: '30%'
                     }
                 }} >
-                    <div className="task-block__complete-data">
-                        <span className="task-block__label complete-info-label">Примечание:</span>
-                        <textarea
-                            disabled
-                            className="task-block__input complete-info-input"
-                        >{data.complete_info}</textarea>
+                    <div className="task-completion-data">
+
+                        <div className="task-completion-data__content">
+                            <SubTaskEditor
+                                subtasks={data.subtasks}
+                                onChange={() => 1}
+
+                                disabled
+
+                                mode="completion"
+                            />
+
+                            <TaskItemsEditor
+                                items={data.items}
+                                onChange={() => 1}
+
+                                disabled
+
+                                mode="completion"
+                            />
+
+                            <div className="task-completion-data__block">
+                                <span className="task-block__label complete-info-label">Примечание:</span>
+                                <textarea
+                                    className="task-block__input complete-info-input"
+                                    value={completeInfo}
+                                    // onChange={(e) => setCompleteInfo(e.target.value)}
+
+                                    disabled
+                                ></textarea>
+                            </div>
+                        </div>
+
                     </div>
                 </SimpleModal>
             )}

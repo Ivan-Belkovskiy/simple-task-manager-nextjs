@@ -2,7 +2,7 @@
 
 import { prisma } from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
-import type { TaskSubmitPayload } from '@/components/UI/TaskManagementModal/types';
+import type { SubTaskData, TaskItemData, TaskSubmitPayload } from '@/components/UI/TaskManagementModal/types';
 import { getCurrentUser } from "./actions/users/session";
 
 export async function createTask(data: TaskSubmitPayload) {
@@ -119,6 +119,8 @@ export async function updateTask(id: number, data: TaskSubmitPayload) {
                             }))
                             : [],
                     },
+
+                    completed: data.isCompleted,
                 },
             });
 
@@ -388,22 +390,54 @@ export async function deleteTask(id: number) {
     }
 }
 
-export async function completeTask(id: number, info?: string) {
+export async function completeTask(id: number, data: {
+    completeInfo?: string;
+    subtasks?: SubTaskData[];
+    items?: TaskItemData[];
+}) {
     try {
 
         const user = await getCurrentUser();
 
         if (!user) return { success: false, error: "Не авторизован!" };
 
-        await prisma.tasks.update({
-            data: {
-                completed: true,
-                completed_at: new Date(),
-                complete_info: info,
-            },
-            where: {
-                id: id,
-                account_id: user.id,
+        const res = await prisma.$transaction(async (tx) => {
+            const task = await tx.tasks.findFirst({
+                where: { id, account_id: user.id },
+                select: { id: true },
+            });
+            if (!task) throw new Error('Доступ запрещен');
+
+            await prisma.tasks.update({
+                data: {
+                    completed: true,
+                    completed_at: new Date(),
+                    complete_info: data.completeInfo,
+                },
+                where: {
+                    id: id,
+                    account_id: user.id,
+                }
+            });
+
+            for (const s of (data.subtasks || [])) {
+                await prisma.subtasks.update({
+                    where: { id: s.id },
+                    data: {
+                        completed: true,
+                        completed_at: new Date(),
+                    },
+                })
+            }
+
+            for (const it of (data.items || [])) {
+                await prisma.task_items.update({
+                    where: { id: it.id },
+                    data: {
+                        completed: true,
+                        completed_at: new Date(),
+                    },
+                })
             }
         });
 

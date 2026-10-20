@@ -12,6 +12,7 @@
 }
 
 .simple-modal {
+    position: relative;
     width: 100%;
     min-height: 20%;
     background-color: #fff;
@@ -32,6 +33,7 @@
 }
 
 .simple-modal__content {
+    position: relative;
     width: 100%;
     /* min-height: 40%; */
     margin: 20px 0;

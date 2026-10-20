@@ -42,11 +42,11 @@
     overflow: hidden;
 }
 
-.subtask-editor__item--completed {
+.subtask-editor.mode-editor .subtask-editor__item--completed {
     opacity: 0.6;
 }
 
-.subtask-editor__item--completed .subtask-editor__name {
+.subtask-editor.mode-editor .subtask-editor__item--completed .subtask-editor__name {
     text-decoration: line-through;
 }
 
@@ -104,6 +104,23 @@
 .subtask-editor__btn--danger:hover:not(:disabled) {
     background: #b40000;
     border-color: #b40000;
+}
+
+.subtask-editor.mode-completion .subtask-editor__item--completed {
+    background: var(--tm-color, #0b0bdb);
+    
+    .subtask-editor__name {
+        color: #fff;
+    }
+
+    .subtask-editor__description {
+        border-top-color: #fff;
+        color: #fff;
+    }
+
+    .subtask-editor__btn {
+        border-color: #fff;
+    }
 }
 
 .subtask-editor__description {

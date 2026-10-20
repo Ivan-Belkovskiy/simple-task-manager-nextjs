@@ -8,9 +8,10 @@ interface Props {
     subtasks: SubTaskData[];
     onChange: (subtasks: SubTaskData[]) => void;
     disabled?: boolean;
+    mode?: "editor" | "completion";
 }
 
-export default function SubTaskEditor({ subtasks, onChange, disabled }: Props) {
+export default function SubTaskEditor({ subtasks, onChange, disabled, mode = "editor" }: Props) {
     const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
 
     const add = () => {
@@ -45,9 +46,9 @@ export default function SubTaskEditor({ subtasks, onChange, disabled }: Props) {
     };
 
     return (
-        <div className="subtask-editor">
+        <div className={`subtask-editor mode-${mode}`}>
             <div className="subtask-editor__header">
-                <span className="subtask-editor__title">Подзадачи</span>
+                <span className="subtask-editor__title">{(mode === 'completion') ? "Выполните подзадачи" : "Подзадачи"}</span>
                 {subtasks.length > 0 && (
                     <span className="subtask-editor__count">
                         {subtasks.filter(s => s.completed).length} / {subtasks.length}
@@ -76,7 +77,7 @@ export default function SubTaskEditor({ subtasks, onChange, disabled }: Props) {
                                 placeholder={`Подзадача ${i + 1}`}
                                 value={st.name}
                                 onChange={e => update(i, { name: e.target.value })}
-                                disabled={disabled}
+                                disabled={disabled || mode === 'completion'}
                             />
 
                             <button
@@ -89,35 +90,39 @@ export default function SubTaskEditor({ subtasks, onChange, disabled }: Props) {
                                 {/* {st.description ? '📝' : '＋'} */}
                             </button>
 
-                            <button
-                                type="button"
-                                className="subtask-editor__btn"
-                                onClick={() => move(i, -1)}
-                                disabled={i === 0 || disabled}
-                                title="Вверх"
-                            >
-                                ↑
-                            </button>
+                            {(mode === 'editor') && (
+                                <>
+                                    <button
+                                        type="button"
+                                        className="subtask-editor__btn"
+                                        onClick={() => move(i, -1)}
+                                        disabled={i === 0 || disabled}
+                                        title="Вверх"
+                                    >
+                                        ↑
+                                    </button>
 
-                            <button
-                                type="button"
-                                className="subtask-editor__btn"
-                                onClick={() => move(i, 1)}
-                                disabled={i === subtasks.length - 1 || disabled}
-                                title="Вниз"
-                            >
-                                ↓
-                            </button>
+                                    <button
+                                        type="button"
+                                        className="subtask-editor__btn"
+                                        onClick={() => move(i, 1)}
+                                        disabled={i === subtasks.length - 1 || disabled}
+                                        title="Вниз"
+                                    >
+                                        ↓
+                                    </button>
 
-                            <button
-                                type="button"
-                                className="subtask-editor__btn subtask-editor__btn--danger"
-                                onClick={() => remove(i)}
-                                disabled={disabled}
-                                title="Удалить"
-                            >
-                                ✕
-                            </button>
+                                    <button
+                                        type="button"
+                                        className="subtask-editor__btn subtask-editor__btn--danger"
+                                        onClick={() => remove(i)}
+                                        disabled={disabled}
+                                        title="Удалить"
+                                    >
+                                        ✕
+                                    </button>
+                                </>
+                            )}
                         </div>
 
                         {expandedIndex === i && (
@@ -126,7 +131,7 @@ export default function SubTaskEditor({ subtasks, onChange, disabled }: Props) {
                                 placeholder="Описание подзадачи (опционально)"
                                 value={st.description ?? ''}
                                 onChange={e => update(i, { description: e.target.value })}
-                                disabled={disabled}
+                                disabled={disabled || mode === 'completion'}
                                 rows={2}
                             />
                         )}
@@ -134,14 +139,14 @@ export default function SubTaskEditor({ subtasks, onChange, disabled }: Props) {
                 ))}
             </div>
 
-            <button
+            {(mode === 'editor') && <button
                 type="button"
                 className="subtask-editor__add"
                 onClick={add}
                 disabled={disabled}
             >
                 + Добавить подзадачу
-            </button>
+            </button>}
         </div>
     );
 }
