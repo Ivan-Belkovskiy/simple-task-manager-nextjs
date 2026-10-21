@@ -9,6 +9,7 @@ import { ModalMode, SubTaskData, TaskFormData, TaskItemData, ValidationErrors } 
 import SubTaskEditor from '../SubTaskEditor/SubTaskEditor';
 import TaskItemsEditor from '../TaskItemsEditor/TaskItemsEditor';
 import { useState } from 'react';
+import { CategoryOutput, formatCategoryOptions, generateCategoryTree } from '@/utils/utils';
 
 interface Props {
     mode: ModalMode;
@@ -42,6 +43,8 @@ export default function TaskFormFields({
     const clearError = (field: keyof ValidationErrors) => {
         if (errors[field]) setErrors(p => ({ ...p, [field]: false }));
     };
+
+    const formattedCategories = formatCategoryOptions(categories);
 
     return (
         <>
@@ -116,10 +119,10 @@ export default function TaskFormFields({
                     onSelect={(v) => update('category', v)}
                     options={[
                         { label: '—', value: '[[NONE]]' },
-                        ...categories.map(c => ({ label: c.name, value: c.id })),
+                        ...formattedCategories,
                         {
-                            label: 'Добавить категорию...',
-                            value: 'addCategory',
+                            label: 'Управление категориями...',
+                            value: 'categoryManagement',
                             type: 'button',
                             btnCallback: onOpenCategoryModal,
                         },

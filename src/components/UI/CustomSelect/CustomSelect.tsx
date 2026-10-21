@@ -1,12 +1,14 @@
 'use client';
 import "./CustomSelect.css";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { ReactNode, useCallback, useEffect, useRef, useState } from "react";
 
 interface CustomSelectOption {
     label: string | number;
     value: string | number;
     type?: 'option' | 'button';
     btnCallback?: () => void;
+
+    innerOptions?: CustomSelectOption[];
 }
 
 export default function CustomSelect({
@@ -42,14 +44,11 @@ export default function CustomSelect({
 
     }, []);
 
+    const renderOptions = (options?: CustomSelectOption[], level: number = 0): ReactNode => {
+        if (level > 30 || !options) return null;
 
-    return (
-        <div className={`custom-select ${isExpanded ? 'expanded' : ''} ${className}`} ref={containerRef}>
-            <div className="custom-select__display" ref={displayRef} onClick={() => setIsExpanded(p => !p)}>
-                <div className="custom-select__display-left">{options?.find(o => o.value === value)?.label}</div>
-                <div className="custom-select__display-right">▽</div>
-            </div>
-            <div className="custom-select__dropdown">{options?.map(opt => (
+        return options?.map(opt => (
+            <>
                 <div
                     className={`custom-select__option ${(opt.value === value) ? 'selected' : ''} ${opt.type === 'button' ? 'button' : ''}`}
                     key={opt?.value}
@@ -61,6 +60,7 @@ export default function CustomSelect({
                         }
                         setIsExpanded(false);
                     }}
+                    style={{ paddingLeft: `${7 + (level * 10)}px` }}
                 >
                     {/* {(opt.type !== 'button') && <input type="checkbox" checked={(value?.includes(opt?.value))} onChange={(e) => {
                         const newValue = (e.target.checked) ? (
@@ -71,7 +71,59 @@ export default function CustomSelect({
                     }} />} */}
                     <span>{opt?.label}</span>
                 </div>
-            ))}</div>
-        </div>
+                {(opt.innerOptions) && renderOptions(opt.innerOptions, (level + 1))}
+            </>
+        ))
+    }
+
+    const displayCurrentValue = (options?: CustomSelectOption[]): string => {
+        if (!options || value === undefined) return '';
+
+        const findPath = (
+            opts: CustomSelectOption[],
+            currentPath: string[]
+        ): string[] | null => {
+            for (const opt of opts) {
+                const newPath = [...currentPath, String(opt.label)];
+
+                if (opt.value === value) {
+                    return newPath;
+                }
+
+                if (opt.innerOptions) {
+                    const subPath = findPath(opt.innerOptions, newPath);
+                    if (subPath) return subPath;
+                }
+            }
+            return null;
+        };
+
+        const path = findPath(options, []);
+        return path ? path.join(' >> ') : '';
+    };
+
+
+
+    return (
+        <>
+            <div className={`custom-select ${isExpanded ? 'expanded' : ''} ${className}`} ref={containerRef}>
+                <div className="custom-select__display" ref={displayRef} onClick={() => setIsExpanded(p => !p)}>
+                    <div className="custom-select__display-left">{displayCurrentValue(options)}</div>
+                    <div className="custom-select__display-right">▽</div>
+                </div>
+                <div className="custom-select__dropdown --desktop-only">{renderOptions(options, 0)}</div>
+
+                <div className="custom-select__mobile-dropdown-modal --mobile-only" onClick={(e) => {
+                    if (!e.currentTarget.closest('.custom-select.--mobile-only')) {
+                        setIsExpanded(false)
+                    }
+                }}>
+                    <div className={`custom-select --mobile-only ${isExpanded ? 'expanded' : ''}`}>
+                        {isExpanded && <h1>Выберите значение</h1>}
+                        <div className="custom-select__dropdown">{renderOptions(options, 0)}</div>
+                    </div>
+                </div>
+            </div>
+        </>
     );
 }

@@ -124,8 +124,11 @@
 
 .task-management-modal__select .multi-select__dropdown,
 .task-management-modal__select .custom-select__dropdown {
-    background-color: var(--tm-dropdown-bg);
-    color: var(--tm-dropdown-text);
+    /* background-color: var(--tm-dropdown-bg);
+    color: var(--tm-dropdown-text); */
+    border: 2px solid var(--tm-dropdown-bg);
+    color: var(--tm-dropdown-bg);
+    background-color: var(--tm-dropdown-text);
 }
 
 .task-management-modal .multi-select__option:hover,

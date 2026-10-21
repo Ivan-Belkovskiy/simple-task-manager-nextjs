@@ -202,7 +202,7 @@ export default function TaskItemsEditor({ items, onChange, disabled, mode = "edi
                                                 <input
                                                     type="text"
                                                     className="task-items-editor__quantity task-items-editor__quantity--expanded"
-                                                    placeholder="Например: 2 шт, 5 л, до конца дня"
+                                                    placeholder={(mode === 'editor') ? "Например: 2 шт, 5 л, до конца дня" : ""}
                                                     value={it.quantity ?? ''}
                                                     onChange={e => updateItem(section.kind, i, { quantity: e.target.value })}
                                                     disabled={disabled || mode === 'completion'}

@@ -8,6 +8,8 @@ import { Dispatch, RefObject, SetStateAction, useEffect, useRef, useState } from
 import MultiSelect from "../UI/MultiSelect/MultiSelect";
 import InteractiveList from "../UI/InteractiveList/InteractiveList";
 import { getLocalDateString } from "@/utils/datetime";
+import CustomSelect from "../UI/CustomSelect/CustomSelect";
+import { formatCategoryOptions } from "@/utils/utils";
 
 interface StateFilterDefinition {
     disp: string;
@@ -61,9 +63,42 @@ export default function TaskList({ isEditMode, initialTasks, categories, priorit
         if (document) bodyRef.current = document.body;
     }, []);
 
+    const getChildCategoryIdsIterative = (
+        categories: Category[],
+        parentId: number
+    ): number[] => {
+        const resultIds: number[] = [];
+        const queue: number[] = [parentId];
+
+        while (queue.length > 0) {
+            const currentId = queue.shift();
+
+            const children = categories.filter((c) => c.parent_id === currentId).map((c) => c.id);
+
+            resultIds.push(...children);
+            queue.push(...children);
+        }
+
+        return resultIds;
+    };
+
+    const filterByCategory = (
+        task: Task,
+        categories: Category[],
+        filterId: number
+    ) => {
+        if (task.category_id === null) return false;
+
+        const childIds = getChildCategoryIdsIterative(categories, filterId);
+        const targetIds = [filterId, ...childIds];
+
+        return targetIds.includes(task.category_id);
+    };
+
+
     const filteredTasks = initialTasks.filter(t => {
 
-        const matchCategory = filterCategory === '[[ANY]]' || t.category_id === Number(filterCategory);
+        const matchCategory = filterCategory === '[[ANY]]' || filterByCategory(t, categories, Number(filterCategory));
 
         const matchPriority = filterPriority === '[[ANY]]' || t.priority_id === Number(filterPriority);
 
@@ -80,13 +115,15 @@ export default function TaskList({ isEditMode, initialTasks, categories, priorit
         const endDate = hasEndDate ? new Date(filterDatetime[1]).getTime() : null;
         const taskDate = t.complete_before_date ? new Date(t.complete_before_date).getTime() : null;
 
-        if (!taskDate) return hasStartDate || hasEndDate ? false : true;
+        if (!taskDate) return hasStartDate || hasEndDate ? false : (matchCategory && matchPriority && matchUsers && matchString && matchState);
 
         const matchStart = startDate ? taskDate >= startDate : true;
         const matchEnd = endDate ? taskDate <= endDate : true;
 
         return matchCategory && matchPriority && matchUsers && matchString && matchState && matchStart && matchEnd;
     });
+
+    const formattedCategories = formatCategoryOptions(categories);
 
     return (
         <div className="task-list">
@@ -209,7 +246,22 @@ export default function TaskList({ isEditMode, initialTasks, categories, priorit
                         <div className="task-list__filters-row">
                             <div className="task-list__filter">
                                 <div className="task-list__label">Категория:</div>
-                                <select
+                                <CustomSelect
+                                    className="task-list__select task-category-select"
+                                    value={filterCategory}
+                                    onSelect={(v) => setFilterCategory(v)}
+                                    options={[
+                                        { label: 'Любая', value: '[[ANY]]' },
+                                        ...formattedCategories,
+                                        // {
+                                        //     label: 'Управление категориями...',
+                                        //     value: 'addCategory',
+                                        //     type: 'button',
+                                        //     btnCallback: onOpenCategoryModal,
+                                        // },
+                                    ]}
+                                />
+                                {/* <select
                                     className="task-list__select"
                                     value={filterCategory}
                                     onChange={(e) => {
@@ -220,7 +272,7 @@ export default function TaskList({ isEditMode, initialTasks, categories, priorit
                                     {categories.map(c => (
                                         <option value={c.id} key={c.id}>{c.name}</option>
                                     ))}
-                                </select>
+                                </select> */}
                             </div>
                             <div className="task-list__filter">
                                 <div className="task-list__label">Приоритет:</div>

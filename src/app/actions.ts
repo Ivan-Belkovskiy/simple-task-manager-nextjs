@@ -325,7 +325,13 @@ export async function deleteUser(id: number) {
 }
 
 
-export async function createCategory(name: string) {
+export async function createCategory({
+    name,
+    parentId
+}: {
+    name: string;
+    parentId: number | null;
+}) {
     try {
 
         const user = await getCurrentUser();
@@ -336,6 +342,7 @@ export async function createCategory(name: string) {
             data: {
                 name,
                 account_id: user.id,
+                parent_id: parentId,
             }
         });
 
@@ -353,11 +360,32 @@ export async function deleteCategory(id: number) {
 
         if (!user) return { success: false, error: "Не авторизован!" };
 
-        await prisma.task_categories.delete({
-            where: {
-                id: id,
-                account_id: user.id,
-            }
+        const res = await prisma.$transaction(async (tx) => {
+
+            const toDelete = await prisma.task_categories.findUnique({
+                where: {
+                    id,
+                    account_id: user.id
+                }
+            });
+
+            if (!toDelete) return { success: false, error: "Категория не найдена или принадлежит другому пользователю!" };
+
+            await prisma.task_categories.updateMany({
+                where: {
+                    parent_id: toDelete.id,
+                },
+                data: {
+                    parent_id: toDelete.parent_id,
+                }
+            });
+
+            await prisma.task_categories.delete({
+                where: {
+                    id: id,
+                    account_id: user.id,
+                }
+            });
         });
 
         revalidatePath('/');

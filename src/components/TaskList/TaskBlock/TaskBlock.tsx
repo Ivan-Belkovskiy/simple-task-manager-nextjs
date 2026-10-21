@@ -98,7 +98,7 @@ export default function TaskBlock({ isEditMode, idx, data, categories, users, pr
 
                 <div className="task-block__infobox category-infobox">
                     <span className="task-block__infobox-label">Категория</span>
-                    <span className="task-block__infobox-value">{data.priority?.name || " — "}</span>
+                    <span className="task-block__infobox-value">{data.category?.name || " — "}</span>
                 </div>
 
                 <div className="task-block__infobox users-infobox">
@@ -200,7 +200,7 @@ export default function TaskBlock({ isEditMode, idx, data, categories, users, pr
 
                             <div className="task-block__infobox category-infobox">
                                 <span className="task-block__infobox-label">Категория</span>
-                                <span className="task-block__infobox-value">{data.priority?.name || " — "}</span>
+                                <span className="task-block__infobox-value">{data.category?.name || " — "}</span>
                             </div>
                         </div>
 

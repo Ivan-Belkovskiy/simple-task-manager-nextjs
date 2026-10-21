@@ -141,6 +141,14 @@
     padding: 4px;
     cursor: pointer;
     margin-left: 6px;
+
+    &.task-category-select {
+        width: 260px;
+
+        .custom-select__option.selected {
+            background-color: #0400ff;
+        }
+    }
 }
 
 .task-list__select.user-filter-select {

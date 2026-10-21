@@ -7,7 +7,6 @@ datasource db {
   provider = "postgresql"
 }
 
-
 enum AccountAccessLevel {
   USER
   MANAGER
@@ -20,15 +19,15 @@ enum AccountTokenType {
 }
 
 enum TaskItemKind {
-  ITEM        
-  ACTION      
-  REQUIREMENT 
+  ITEM
+  ACTION
+  REQUIREMENT
 }
 
 enum NotificationFormat {
-  POPUP       
-  MODAL       
-  FULLSCREEN  
+  POPUP
+  MODAL
+  FULLSCREEN
 }
 
 enum NotificationPlatform {
@@ -36,7 +35,6 @@ enum NotificationPlatform {
   DESKTOP
   MOBILE
 }
-
 
 model app_accounts {
   id String @id @default(uuid(7)) @db.Uuid
@@ -60,11 +58,11 @@ model app_accounts {
 
   created_at DateTime @default(now()) @db.Timestamptz(6)
 
-  tasks            tasks[]
-  task_categories  task_categories[]
-  user_records     users[]
-  sessions         sessions[]
-  account_tokens   account_tokens[]
+  tasks           tasks[]
+  task_categories task_categories[]
+  user_records    users[]
+  sessions        sessions[]
+  account_tokens  account_tokens[]
 }
 
 model sessions {
@@ -98,14 +96,15 @@ model account_tokens {
   @@index([expires_at])
 }
 
-
 model task_categories {
-  id         Int     @id @default(autoincrement())
-  name       String  @db.VarChar(140)
-  account_id String  @db.Uuid
+  id         Int    @id @default(autoincrement())
+  name       String @db.VarChar(140)
+  account_id String @db.Uuid
 
   account app_accounts @relation(fields: [account_id], references: [id], onDelete: Cascade)
   tasks   tasks[]
+
+  parent_id Int?
 
   @@unique([account_id, name])
   @@index([account_id])
@@ -120,9 +119,9 @@ model task_priorities {
 }
 
 model users {
-  id         Int     @id @default(autoincrement())
-  name       String  @db.VarChar(160)
-  account_id String  @db.Uuid
+  id         Int    @id @default(autoincrement())
+  name       String @db.VarChar(160)
+  account_id String @db.Uuid
 
   account    app_accounts @relation(fields: [account_id], references: [id], onDelete: Cascade)
   task_users task_users[]
@@ -154,9 +153,9 @@ model tasks {
   complete_info        String?
   account_id           String    @db.Uuid
 
-  account     app_accounts @relation(fields: [account_id], references: [id], onDelete: Cascade)
-  category    task_categories? @relation(fields: [category_id], references: [id], onUpdate: NoAction)
-  priority    task_priorities? @relation(fields: [priority_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  account  app_accounts     @relation(fields: [account_id], references: [id], onDelete: Cascade)
+  category task_categories? @relation(fields: [category_id], references: [id], onUpdate: NoAction, onDelete: SetNull)
+  priority task_priorities? @relation(fields: [priority_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   subtasks           subtasks[]
   task_notifications task_notifications[]
@@ -212,8 +211,8 @@ model task_dependencies {
   depends_on_id Int
   created_at    DateTime @default(now()) @db.Timestamptz(6)
 
-  task       tasks @relation("TaskDependencies", fields: [task_id],       references: [id], onDelete: Cascade)
-  depends_on tasks @relation("TaskDependents",   fields: [depends_on_id], references: [id], onDelete: Cascade)
+  task       tasks @relation("TaskDependencies", fields: [task_id], references: [id], onDelete: Cascade)
+  depends_on tasks @relation("TaskDependents", fields: [depends_on_id], references: [id], onDelete: Cascade)
 
   @@id([task_id, depends_on_id])
   @@index([depends_on_id])
@@ -236,12 +235,12 @@ model task_notifications {
 }
 
 model ai_generation_cache {
-    id           Int      @id @default(autoincrement())
-    cache_key    String   @unique @db.VarChar(500)
-    payload      Json
-    hit_count    Int      @default(0)
-    created_at   DateTime @default(now()) @db.Timestamptz(6)
-    last_used_at DateTime @default(now()) @db.Timestamptz(6)
+  id           Int      @id @default(autoincrement())
+  cache_key    String   @unique @db.VarChar(500)
+  payload      Json
+  hit_count    Int      @default(0)
+  created_at   DateTime @default(now()) @db.Timestamptz(6)
+  last_used_at DateTime @default(now()) @db.Timestamptz(6)
 
-    @@index([last_used_at])
+  @@index([last_used_at])
 }
