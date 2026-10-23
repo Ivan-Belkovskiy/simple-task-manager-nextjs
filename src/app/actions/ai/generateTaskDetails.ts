@@ -63,6 +63,20 @@ export async function generateTaskDetails(
         }
     }
 
+    if (prompts) {
+        console.log(`\n\n\n` + `
+${SYSTEM_PROMPT}
+
+${(prompts.length === 0) ? "" : "Вот список предыдущих промптов, которые нужно использовать для сохранения контекста:"}
+
+${prompts.slice(0, (prompts.length - 1)).map(p => `${p.prompt}`).join("\n")}
+
+${(prompts.length > 0) ? "Вот дополнительный промпт от пользователя для детализации ответа:" : ""}
+${prompts[prompts.length - 1].prompt}
+
+`);
+    }
+
     const attempts = getKeysCount();
     let lastError: string | undefined;
 
@@ -75,16 +89,17 @@ export async function generateTaskDetails(
                 model: process.env.GEMINI_MODEL ?? 'gemini-3.5-flash-lite',
                 contents: buildUserPrompt(name, description),
                 config: {
-                    systemInstruction: (prompts) ? `
-                    ${SYSTEM_PROMPT}
-                    
-                    ${(prompts.length === 0) ? "" : "Вот список предыдущих промптов, которые нужно использовать для сохранения контекста:"}
+                    systemInstruction: (prompts) ? `\n
+${SYSTEM_PROMPT}
 
-                    ${prompts.slice(0, (prompts.length - 1)).map(p => `${p.prompt}\n`)}
-                    ${(prompts.length > 0) ? "Вот дополнительный промпт от пользователя для детализации ответа:" : ""}
-                    ${prompts[prompts.length - 1].prompt}
+${(prompts.length === 0) ? "" : "Вот список предыдущих промптов, которые нужно использовать для сохранения контекста:"}
 
-                    ` : SYSTEM_PROMPT,
+${prompts.slice(0, (prompts.length - 1)).map(p => `${p.prompt}`).join("\n")}
+
+${(prompts.length > 0) ? "Вот дополнительный промпт от пользователя для детализации ответа:" : ""}
+${prompts[prompts.length - 1].prompt}
+
+` : SYSTEM_PROMPT,
                     responseMimeType: 'application/json',
                     responseSchema: {
                         type: 'OBJECT',

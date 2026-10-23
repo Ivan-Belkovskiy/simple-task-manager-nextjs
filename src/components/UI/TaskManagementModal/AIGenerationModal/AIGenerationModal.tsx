@@ -17,7 +17,7 @@ export interface AIPromptData {
     isSubmitted?: boolean;
 };
 
-export default function AIGenerationModal({ initialData, onClose }: { initialData: TaskFormData; onClose?: () => void; }) {
+export default function AIGenerationModal({ initialData, onApply, onClose }: { initialData: TaskFormData; onApply?: (data: GeneratedData) => void; onClose?: () => void; }) {
 
     const [generated, setGenerated] = useState<GeneratedData>({
         subtasks: initialData.subtasks || [],
@@ -30,16 +30,16 @@ export default function AIGenerationModal({ initialData, onClose }: { initialDat
 
     
     const [prompts, setPrompts] = useState<AIPromptData[]>([
-        {
-            prompt: 'Пример промпта',
-            generatedData: null,
-            isSubmitted: true,
-        },
-         {
-            prompt: 'Пример промпта',
-            generatedData: null,
-            isSubmitted: true,
-        },
+        // {
+        //     prompt: 'Пример промпта',
+        //     generatedData: null,
+        //     isSubmitted: true,
+        // },
+        //  {
+        //     prompt: 'Пример промпта',
+        //     generatedData: null,
+        //     isSubmitted: true,
+        // },
         {
             prompt: '',
             generatedData: null,
@@ -162,8 +162,10 @@ export default function AIGenerationModal({ initialData, onClose }: { initialDat
                             disabled
                         />
                         <div className="ai-generation-modal__buttons">
-                            <button className="ai-generation-modal__button">Редактировать данные</button>
-                            <button className="ai-generation-modal__button">Применить изменения</button>
+                            <button className="ai-generation-modal__button" disabled>Редактировать данные</button>
+                            <button className="ai-generation-modal__button" onClick={() => {
+                                if (currentPrompt.generatedData) onApply?.(currentPrompt.generatedData);
+                                }} disabled={isGenerating || !currentPrompt.generatedData}>Применить изменения</button>
                         </div>
                     </div>
                 </div>
