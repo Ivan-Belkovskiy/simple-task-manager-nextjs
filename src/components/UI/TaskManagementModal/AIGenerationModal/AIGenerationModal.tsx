@@ -30,21 +30,21 @@ export default function AIGenerationModal({ initialData, onApply, onClose }: { i
 
     
     const [prompts, setPrompts] = useState<AIPromptData[]>([
-        {
-            prompt: 'Пример длинного промпта, заданного ИИ для генерации детализированных подзадач и предметов',
-            generatedData: null,
-            isSubmitted: true,
-        },
-         {
-            prompt: 'Дополнительное уточнение, чтобы задачи были точнее!!!',
-            generatedData: null,
-            isSubmitted: true,
-        },
-        {
-            prompt: 'Новый длинный промпт, для проверки скроллинга внутри блока промптов',
-            generatedData: null,
-            isSubmitted: true,
-        },
+        // {
+        //     prompt: 'Пример длинного промпта, заданного ИИ для генерации детализированных подзадач и предметов',
+        //     generatedData: null,
+        //     isSubmitted: true,
+        // },
+        //  {
+        //     prompt: 'Дополнительное уточнение, чтобы задачи были точнее!!!',
+        //     generatedData: null,
+        //     isSubmitted: true,
+        // },
+        // {
+        //     prompt: 'Новый длинный промпт, для проверки скроллинга внутри блока промптов',
+        //     generatedData: null,
+        //     isSubmitted: true,
+        // },
         {
             prompt: '',
             generatedData: null,
