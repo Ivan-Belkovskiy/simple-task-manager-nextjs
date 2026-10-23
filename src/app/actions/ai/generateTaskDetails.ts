@@ -7,6 +7,7 @@ import { getNextApiKey, createClient, getKeysCount } from '@/lib/gemini/client';
 import { GeneratedTaskSchema, type GeneratedTask } from '@/lib/gemini/schemas';
 import { SYSTEM_PROMPT, buildUserPrompt } from '@/lib/gemini/prompts';
 import { AIPromptData } from '@/components/UI/TaskManagementModal/AIGenerationModal/AIGenerationModal';
+import { TaskFormData } from '@/components/UI/TaskManagementModal/types';
 
 export interface GenerateResult {
     success: boolean;
@@ -25,6 +26,7 @@ export async function generateTaskDetails(
     name: string,
     description: string,
     prompts?: AIPromptData[],
+    currentData?: Partial<TaskFormData>,
 ): Promise<GenerateResult> {
     const user = await getCurrentUser();
     if (!user) return { success: false, error: 'Не авторизован' };
@@ -95,6 +97,21 @@ ${SYSTEM_PROMPT}
 ${(prompts.length === 0) ? "" : "Вот список предыдущих промптов, которые нужно использовать для сохранения контекста:"}
 
 ${prompts.slice(0, (prompts.length - 1)).map(p => `${p.prompt}`).join("\n")}
+
+${(currentData?.subtasks && currentData.subtasks.length > 0) ? `
+Текущие подзадачи (в виде JSON):
+
+${JSON.stringify(currentData?.subtasks, null, 2)}
+
+` : ""}
+
+${(currentData?.subtasks && currentData.subtasks.length > 0) ? `
+Текущие предметы/действия/условия (в виде JSON):
+
+${JSON.stringify(currentData?.items, null, 2)}
+
+` : ""}
+
 
 ${(prompts.length > 0) ? "Вот дополнительный промпт от пользователя для детализации ответа:" : ""}
 ${prompts[prompts.length - 1].prompt}
