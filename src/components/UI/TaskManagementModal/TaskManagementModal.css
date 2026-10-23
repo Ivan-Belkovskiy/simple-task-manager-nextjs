@@ -18,14 +18,14 @@
 }
 
 .task-management-modal__overlay.task-modal--edit {
-    --tm-color: #d1ab00;
+    --tm-color: #b19000;
     --tm-accent: #fbff00;
     --tm-dropdown-bg: #d1ab00;
     --tm-dropdown-text: #fff;
     --tm-highlight: #fffb00;
     --tm-confirm-bg: #3bd100;
     --tm-confirm-text: #fff;
-    --tm-confirm-hover: #288d00;
+    --tm-confirm-hover: #8f7500;
 }
 
 .task-management-modal__overlay.task-modal--reupload {

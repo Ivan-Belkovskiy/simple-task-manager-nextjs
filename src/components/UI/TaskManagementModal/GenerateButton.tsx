@@ -114,7 +114,8 @@ export default function GenerateButton(props: Props) {
                 ) : cachedHit ? 'Данные загружены из кэша' : (props.action === 'generation' && props.generations) ? (
                     <>
                         <span>✨ Сгенерировать данные</span>
-                        <span className='generations-count'>[Доступно {(props.generations.max - props.generations.current)} / {props.generations.max}]</span>
+                        <span className='generations-count --desktop-only'>[Доступно {(props.generations.max - props.generations.current)} / {props.generations.max}]</span>
+                        <span className='generations-count --mobile-only'>[{(props.generations.max - props.generations.current)} / {props.generations.max}]</span>
                     </>
                 ) : `✨ Сгенерировать данные`}
             </button>

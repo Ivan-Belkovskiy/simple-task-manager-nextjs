@@ -30,16 +30,21 @@ export default function AIGenerationModal({ initialData, onApply, onClose }: { i
 
     
     const [prompts, setPrompts] = useState<AIPromptData[]>([
-        // {
-        //     prompt: 'Пример промпта',
-        //     generatedData: null,
-        //     isSubmitted: true,
-        // },
-        //  {
-        //     prompt: 'Пример промпта',
-        //     generatedData: null,
-        //     isSubmitted: true,
-        // },
+        {
+            prompt: 'Пример длинного промпта, заданного ИИ для генерации детализированных подзадач и предметов',
+            generatedData: null,
+            isSubmitted: true,
+        },
+         {
+            prompt: 'Дополнительное уточнение, чтобы задачи были точнее!!!',
+            generatedData: null,
+            isSubmitted: true,
+        },
+        {
+            prompt: 'Новый длинный промпт, для проверки скроллинга внутри блока промптов',
+            generatedData: null,
+            isSubmitted: true,
+        },
         {
             prompt: '',
             generatedData: null,
@@ -80,7 +85,7 @@ export default function AIGenerationModal({ initialData, onApply, onClose }: { i
         <div className="ai-generation-modal__overlay">
             <div className="ai-generation-modal">
                 <header className="ai-generation-modal__header">
-                    <h1 className="ai-generation-modal__title">Генерация данных задачи</h1>
+                    <h1 className="ai-generation-modal__title">Генерация данных</h1>
                     <button
                         className="ai-generation-modal__close-modal-btn"
                         onClick={onClose}

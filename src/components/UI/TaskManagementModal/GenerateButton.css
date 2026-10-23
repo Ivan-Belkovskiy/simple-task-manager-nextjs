@@ -60,3 +60,27 @@
 .generate-button--cached {
     background: linear-gradient(135deg, #f39c12 0%, #f1c40f 100%);
 }
+
+span.generations-count {
+    &.--desktop-only {
+        display: none;
+    }
+
+    &.--mobile-only {
+        display: flex;
+    }
+}
+
+@media (min-width: 1024px) {
+
+    span.generations-count {
+        &.--desktop-only {
+            display: flex !important;
+        }
+
+        &.--mobile-only {
+            display: none;
+        }
+    }
+
+}
