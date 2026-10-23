@@ -35,7 +35,10 @@ export async function POST(request: Request) {
                 { status: 400, headers }
             );
         }
-        const result = await createCategory(name);
+        const result = await createCategory({
+            name,
+            parentId: null,
+        });
         return NextResponse.json(result, { headers });
     } catch (error) {
         console.error('Ошибка создания категории:', error);
