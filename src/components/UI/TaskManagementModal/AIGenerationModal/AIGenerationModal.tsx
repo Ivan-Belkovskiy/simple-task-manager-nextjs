@@ -54,7 +54,7 @@ export default function AIGenerationModal({ initialData, onApply, onClose }: { i
 
     const [current, setCurrent] = useState(prompts.length - 1);
 
-    const currentPrompt = prompts[prompts.length - 1];
+    const currentPrompt = prompts[current];
 
     const updatePromptData = (idx: number, data: Partial<AIPromptData>) => {
         setPrompts(p => p.map((_, i) => (i === idx) ? ({
