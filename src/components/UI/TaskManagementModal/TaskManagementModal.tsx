@@ -12,6 +12,7 @@ import NotificationSettings from './NotificationSettings';
 import UserListModal from '../UserListModal/UserListModal';
 import CategoryListModal from '../CategoryListModal/CategoryListModal';
 import SimpleModal from '../NEW/SimpleModal/SimpleModal';
+import AIGenerationModal from './AIGenerationModal/AIGenerationModal';
 
 export default function TaskManagementModal({
     mode, taskData, categories, priorities, users, onClose,
@@ -22,6 +23,8 @@ export default function TaskManagementModal({
 
     const [userModalOpened, setUserModalOpened] = useState(false);
     const [categoryModalOpened, setCategoryModalOpened] = useState(false);
+
+    const [IsAIGenerationModalOpened, setAIGenerationModalOpened] = useState(false);
 
     const handleClose = () => {
         form.reset();
@@ -64,9 +67,11 @@ export default function TaskManagementModal({
                     />
 
                     <GenerateButton
-                        data={form.data}
-                        onApply={(patch) => form.setData(p => ({ ...p, ...patch }))}
-                        disabled={form.isLoading}
+                        action="open-modal"
+                        onClick={() => setAIGenerationModalOpened(true)}
+                    // data={form.data}
+                    // onApply={(patch) => form.setData(p => ({ ...p, ...patch }))}
+                    // disabled={form.isLoading}
                     />
 
                     {!form.data.disableCompleteBeforeDate && !form.data.isCompleted && (
@@ -107,6 +112,13 @@ export default function TaskManagementModal({
 
             {userModalOpened && <UserListModal users={users} onClose={() => setUserModalOpened(false)} />}
             {categoryModalOpened && <CategoryListModal categories={categories} onClose={() => setCategoryModalOpened(false)} />}
+
+            {IsAIGenerationModalOpened && (
+                <AIGenerationModal
+                    initialData={form.data}
+                    onClose={() => setAIGenerationModalOpened(false)}
+                />
+            )}
 
 
         </div>

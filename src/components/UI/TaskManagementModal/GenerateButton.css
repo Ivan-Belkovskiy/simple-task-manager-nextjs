@@ -23,6 +23,11 @@
     align-items: center;
     gap: 10px;
     user-select: none;
+
+    span.generations-count {
+        opacity: 0.75;
+        font-style: italic;
+    }
 }
 
 .generate-button:hover:not(:disabled) {

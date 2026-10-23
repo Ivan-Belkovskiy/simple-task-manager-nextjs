@@ -6,12 +6,13 @@ import { prisma } from '@/lib/prisma';
 import { getNextApiKey, createClient, getKeysCount } from '@/lib/gemini/client';
 import { GeneratedTaskSchema, type GeneratedTask } from '@/lib/gemini/schemas';
 import { SYSTEM_PROMPT, buildUserPrompt } from '@/lib/gemini/prompts';
+import { AIPromptData } from '@/components/UI/TaskManagementModal/AIGenerationModal/AIGenerationModal';
 
 export interface GenerateResult {
     success: boolean;
     data?: GeneratedTask;
     error?: string;
-    cached?: boolean; 
+    cached?: boolean;
 }
 
 function hashKey(name: string, description: string): string {
@@ -22,7 +23,8 @@ function hashKey(name: string, description: string): string {
 
 export async function generateTaskDetails(
     name: string,
-    description: string
+    description: string,
+    prompts?: AIPromptData[],
 ): Promise<GenerateResult> {
     const user = await getCurrentUser();
     if (!user) return { success: false, error: 'Не авторизован' };
@@ -32,31 +34,33 @@ export async function generateTaskDetails(
     }
 
     const cacheKey = hashKey(name, description);
+    if (!prompts) {
 
-    try {
-        const cached = await prisma.ai_generation_cache.findUnique({
-            where: { cache_key: cacheKey },
-        });
+        try {
+            const cached = await prisma.ai_generation_cache.findUnique({
+                where: { cache_key: cacheKey },
+            });
 
-        if (cached) {
-            prisma.ai_generation_cache
-                .update({
-                    where: { cache_key: cacheKey },
-                    data: {
-                        hit_count: { increment: 1 },
-                        last_used_at: new Date(),
-                    },
-                })
-                .catch(err => console.error('Ошибка обновления статистики кэша:', err));
+            if (cached) {
+                prisma.ai_generation_cache
+                    .update({
+                        where: { cache_key: cacheKey },
+                        data: {
+                            hit_count: { increment: 1 },
+                            last_used_at: new Date(),
+                        },
+                    })
+                    .catch(err => console.error('Ошибка обновления статистики кэша:', err));
 
-            return {
-                success: true,
-                data: cached.payload as GeneratedTask,
-                cached: true,
-            };
+                return {
+                    success: true,
+                    data: cached.payload as GeneratedTask,
+                    cached: true,
+                };
+            }
+        } catch (error) {
+            console.error('Ошибка чтения кэша:', error);
         }
-    } catch (error) {
-        console.error('Ошибка чтения кэша:', error);
     }
 
     const attempts = getKeysCount();
@@ -71,7 +75,16 @@ export async function generateTaskDetails(
                 model: process.env.GEMINI_MODEL ?? 'gemini-3.5-flash-lite',
                 contents: buildUserPrompt(name, description),
                 config: {
-                    systemInstruction: SYSTEM_PROMPT,
+                    systemInstruction: (prompts) ? `
+                    ${SYSTEM_PROMPT}
+                    
+                    ${(prompts.length === 0) ? "" : "Вот список предыдущих промптов, которые нужно использовать для сохранения контекста:"}
+
+                    ${prompts.slice(0, (prompts.length - 1)).map(p => `${p.prompt}\n`)}
+                    ${(prompts.length > 0) ? "Вот дополнительный промпт от пользователя для детализации ответа:" : ""}
+                    ${prompts[prompts.length - 1].prompt}
+
+                    ` : SYSTEM_PROMPT,
                     responseMimeType: 'application/json',
                     responseSchema: {
                         type: 'OBJECT',
@@ -118,25 +131,27 @@ export async function generateTaskDetails(
 
             const parsed = GeneratedTaskSchema.safeParse(JSON.parse(raw));
             if (!parsed.success) {
-                console.error('Gemini вернул невалидный JSON:', parsed.error);
+                console.error('Gemini сгенерировал невалидный JSON:', parsed.error);
                 lastError = 'Некорректный ответ модели';
                 continue;
             }
 
-            try {
-                await prisma.ai_generation_cache.upsert({
-                    where: { cache_key: cacheKey },
-                    create: {
-                        cache_key: cacheKey,
-                        payload: parsed.data,
-                    },
-                    update: {
-                        payload: parsed.data,
-                        last_used_at: new Date(),
-                    },
-                });
-            } catch (error) {
-                console.error('Ошибка записи в кэш:', error);
+            if (!prompts) {
+                try {
+                    await prisma.ai_generation_cache.upsert({
+                        where: { cache_key: cacheKey },
+                        create: {
+                            cache_key: cacheKey,
+                            payload: parsed.data,
+                        },
+                        update: {
+                            payload: parsed.data,
+                            last_used_at: new Date(),
+                        },
+                    });
+                } catch (error) {
+                    console.error('Ошибка записи в кэш:', error);
+                }
             }
 
             return { success: true, data: parsed.data, cached: false };
