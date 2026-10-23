@@ -116,7 +116,10 @@ export default function TaskManagementModal({
             {IsAIGenerationModalOpened && (
                 <AIGenerationModal
                     initialData={form.data}
-                    onApply={(patch) => form.setData(p => ({ ...p, ...patch }))}
+                    onApply={(patch) => {
+                        form.setData(p => ({ ...p, ...patch }));
+                        setAIGenerationModalOpened(false);
+                    }}
                     onClose={() => setAIGenerationModalOpened(false)}
                 />
             )}
