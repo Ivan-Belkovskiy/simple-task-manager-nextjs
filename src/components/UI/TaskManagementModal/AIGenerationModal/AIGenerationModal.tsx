@@ -79,6 +79,8 @@ export default function AIGenerationModal({ initialData, onApply, onClose }: { i
             subtasks: data.subtasks || [],
             items: data.items || [],
         });
+
+        setCurrent(prompts.length - 1);
     }
 
     return (
@@ -139,7 +141,6 @@ export default function AIGenerationModal({ initialData, onApply, onClose }: { i
                                     setGenerating(true);
                                 }}
                                 onGenerationEnd={() => {
-                                    setCurrent(prompts.length - 1);
                                     setGenerating(false);
                                     
                                 }}
