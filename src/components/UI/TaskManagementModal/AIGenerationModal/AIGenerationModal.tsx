@@ -139,7 +139,9 @@ export default function AIGenerationModal({ initialData, onApply, onClose }: { i
                                     setGenerating(true);
                                 }}
                                 onGenerationEnd={() => {
+                                    setCurrent(prompts.length - 1);
                                     setGenerating(false);
+                                    
                                 }}
                                 data={initialData}
                                 onApply={updateGenerated}
