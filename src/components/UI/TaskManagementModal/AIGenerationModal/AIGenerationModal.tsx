@@ -80,7 +80,7 @@ export default function AIGenerationModal({ initialData, onApply, onClose }: { i
             items: data.items || [],
         });
 
-        setCurrent(prompts.length - 1);
+        setCurrent(prompts.length);
     }
 
     return (
