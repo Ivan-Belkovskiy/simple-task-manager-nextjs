@@ -32,7 +32,17 @@ export default function AIGenerationModal({ initialData, onApply, onClose }: { i
     const [prompts, setPrompts] = useState<AIPromptData[]>([
         // {
         //     prompt: 'Пример длинного промпта, заданного ИИ для генерации детализированных подзадач и предметов',
-        //     generatedData: null,
+        //     generatedData: {
+        //         subtasks: [
+        //             {
+        //                 name: 'Новая подзадача',
+        //                 description: '',
+        //                 order: 1,
+        //                 completed: false,
+        //             }
+        //         ],
+        //         items: [],
+        //     },
         //     isSubmitted: true,
         // },
         //  {
@@ -127,7 +137,9 @@ export default function AIGenerationModal({ initialData, onApply, onClose }: { i
                             <div className="ai-generation-modal__prompt-input">
                                 <textarea
                                     className="ai-generation-modal__input"
-                                    value={currentPrompt.prompt}
+                                    // value={currentPrompt.prompt}
+                                    value={prompts[prompts.length - 1].prompt}
+                                    onClick={() => setCurrent(prompts.length - 1)}
                                     onChange={(e) => updatePromptData(prompts.length - 1, {
                                         prompt: e.target.value
                                     })}
