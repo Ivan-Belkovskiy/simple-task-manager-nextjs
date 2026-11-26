@@ -30,7 +30,7 @@ export async function proxy(request: NextRequest) {
         requestHeaders.delete('X-User-Id');
         requestHeaders.delete('X-User-Login');
         requestHeaders.set('X-User-Id', String(payload.userId));
-        requestHeaders.set('X-User-Login', payload.login);
+        requestHeaders.set('X-User-Login', Buffer.from(payload.login, 'utf-8').toString('base64'));
 
         return NextResponse.next({
             request: { headers: requestHeaders },

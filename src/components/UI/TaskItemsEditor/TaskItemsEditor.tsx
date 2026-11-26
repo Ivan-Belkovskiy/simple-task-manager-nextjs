@@ -21,10 +21,10 @@ const SECTIONS: {
 }[] = [
         {
             kind: 'ITEM',
-            title: 'Необходимые предметы',
-            completionTitle: 'Имеются необходимые предметы',
-            addLabel: '+ Добавить предмет',
-            placeholder: 'Название предмета',
+            title: 'Необходимые инструменты / предметы',
+            completionTitle: 'Имеются необходимые инструменты',
+            addLabel: '+ Добавить инструмент',
+            placeholder: 'Название инструмента',
         },
         {
             kind: 'ACTION',

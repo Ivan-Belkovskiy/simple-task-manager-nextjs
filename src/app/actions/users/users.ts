@@ -70,7 +70,7 @@ export async function registerUser(data: UserRegisterData): Promise<AuthResult> 
         return { success: false, error: 'Пароли не совпадают' };
     }
     if (data.password.length < 6) {
-        return { success: false, error: 'Пароль должен быть не короче 6 символов' };
+        return { success: false, error: 'Пароль не должен быть короче 6 символов' };
     }
 
     const userExists = await prisma.app_accounts.findUnique({
